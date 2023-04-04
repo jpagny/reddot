@@ -33,7 +33,7 @@ public class TopicController {
 
             return new ResponseEntity<>(topic, HttpStatus.OK);
 
-        } catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         }
