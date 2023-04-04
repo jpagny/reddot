@@ -83,7 +83,9 @@ public class TopicServiceImplement implements TopicService {
         TopicEntity topicUpdated = topicRepository.save(topicToUpdate);
 
         log.info("Successfully updated topic with id '{}', name '{}', description '{}'",
-                topicUpdated.getId(), topicUpdated.getName(), topicUpdated.getDescription());
+                topicUpdated.getId(),
+                topicUpdated.getName(),
+                topicUpdated.getDescription());
 
         return topicMapper.toDTO(topicUpdated);
     }

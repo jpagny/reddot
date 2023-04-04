@@ -153,34 +153,36 @@ public class TopicServiceImplementTest {
     }
 
     @Test
+    @DisplayName("Given existing topic when update topic then topicDTO with new values returned")
     public void givenExistingTopic_whenUpdateTopic_thenTopicDTOWithNewValuesReturned() throws ResourceNotFoundException {
-
-        // TO FIX !
-
         // given
-        TopicDTO existingTopic = TopicDTO.builder().id(1L).name("Test").label("Test topic").description("This is a test topic").build();
+        TopicDTO existingTopicTDO = TopicDTO.builder().id(1L).name("Test").label("Test topic").description("This is a test topic").build();
+        TopicEntity existingTopicEntity = new TopicEntity(1L, "Test", "Test topic", "This is a test topic");
+
         String updatedName = "updatedName";
         String updatedDescription = "updated description";
-        TopicDTO updatedTopicDTO = TopicDTO.builder().id(1L).name(updatedName).label("Test topic").description(updatedDescription).build();
+        TopicDTO updatedTopicDTO = TopicDTO.builder()
+                .id(existingTopicTDO.getId())
+                .name(updatedName)
+                .label(existingTopicTDO.getLabel())
+                .description(updatedDescription)
+                .build();
 
-        TopicEntity expectedEntity = new TopicEntity();
-        expectedEntity.setId(1L);
-        expectedEntity.setName("Test");
-        expectedEntity.setLabel("Test topic");
-        expectedEntity.setDescription("This is a test topic");
+        TopicEntity expectedEntity = new TopicEntity(1L, "Test", "Test topic", "This is a test topic");
 
         // mock
-        when(topicRepository.findById(existingTopic.getId())).thenReturn(Optional.of(expectedEntity));
-        when(topicRepository.save(any(TopicEntity.class))).thenReturn(expectedEntity);
+        when(topicRepository.findById(existingTopicTDO.getId())).thenReturn(Optional.of(existingTopicEntity));
+        when(topicMapper.toEntity(updatedTopicDTO)).thenReturn(expectedEntity);
+        when(topicRepository.save(expectedEntity)).thenReturn(expectedEntity);
         when(topicMapper.toDTO(expectedEntity)).thenReturn(updatedTopicDTO);
 
         // when
         TopicDTO result = topicService.update(updatedTopicDTO);
 
         // then
-        verify(topicRepository).findById(existingTopic.getId());
+        verify(topicRepository).findById(existingTopicTDO.getId());
         verify(topicRepository).save(any(TopicEntity.class));
-        assertThat(result.getId()).isEqualTo(existingTopic.getId());
+        assertThat(result.getId()).isEqualTo(existingTopicTDO.getId());
         assertThat(result.getName()).isEqualTo(updatedName);
         assertThat(result.getDescription()).isEqualTo(updatedDescription);
     }
