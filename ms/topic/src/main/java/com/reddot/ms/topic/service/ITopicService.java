@@ -6,7 +6,7 @@ import com.reddot.ms.topic.exception.ResourceNotFoundException;
 
 import java.util.List;
 
-public interface TopicService {
+public interface ITopicService {
 
     TopicDTO getById(Long id) throws ResourceNotFoundException;
 

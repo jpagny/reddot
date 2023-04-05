@@ -2,11 +2,11 @@ package com.reddot.ms.topic.service.implement;
 
 import com.reddot.ms.topic.data.dto.TopicDTO;
 import com.reddot.ms.topic.data.entity.TopicEntity;
-import com.reddot.ms.topic.exception.ResourceAlreadyExistException;
-import com.reddot.ms.topic.exception.ResourceNotFoundException;
 import com.reddot.ms.topic.data.mapper.TopicMapper;
 import com.reddot.ms.topic.data.repository.TopicRepository;
-import com.reddot.ms.topic.service.TopicService;
+import com.reddot.ms.topic.exception.ResourceAlreadyExistException;
+import com.reddot.ms.topic.exception.ResourceNotFoundException;
+import com.reddot.ms.topic.service.ITopicService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Transactional
 @AllArgsConstructor
 @Slf4j
-public class TopicServiceImplement implements TopicService {
+public class TopicServiceImplement implements ITopicService {
 
     private final TopicMapper topicMapper;
     private final TopicRepository topicRepository;

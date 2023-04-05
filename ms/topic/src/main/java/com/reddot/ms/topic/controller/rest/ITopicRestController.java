@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/topics")
-public interface TopicRestController {
+public interface ITopicRestController {
     @GetMapping(value = "/", produces = {"application/json"})
     ResponseEntity<ApiResponse> getAllTopics();
 

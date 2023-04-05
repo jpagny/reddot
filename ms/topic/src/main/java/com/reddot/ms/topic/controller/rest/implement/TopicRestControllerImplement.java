@@ -1,11 +1,11 @@
 package com.reddot.ms.topic.controller.rest.implement;
 
-import com.reddot.ms.topic.controller.rest.TopicRestController;
+import com.reddot.ms.topic.controller.rest.ITopicRestController;
 import com.reddot.ms.topic.data.dto.TopicDTO;
 import com.reddot.ms.topic.exception.ResourceAlreadyExistException;
 import com.reddot.ms.topic.exception.ResourceNotFoundException;
 import com.reddot.ms.topic.response.ApiResponse;
-import com.reddot.ms.topic.service.implement.TopicServiceImplement;
+import com.reddot.ms.topic.service.ITopicService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,11 +17,11 @@ import java.util.List;
 @RestController("topicRestController")
 @AllArgsConstructor
 @Slf4j
-public class TopicRestControllerImplement implements TopicRestController {
+public class TopicRestControllerImplement implements ITopicRestController {
 
     private static final String ENDPOINT = "/topics";
 
-    private final TopicServiceImplement topicService;
+    private final ITopicService topicService;
 
     public ResponseEntity<ApiResponse> getAllTopics() {
         log.debug("Endpoint: {}. Retrieving all Topics", ENDPOINT);
