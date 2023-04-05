@@ -14,7 +14,7 @@ public interface TopicService {
 
     TopicDTO create(TopicDTO topic) throws ResourceAlreadyExistException;
 
-    TopicDTO update(TopicDTO topic) throws ResourceNotFoundException;
+    TopicDTO update(Long id, TopicDTO topic) throws ResourceNotFoundException;
 
     void delete(Long id) throws ResourceNotFoundException;
 

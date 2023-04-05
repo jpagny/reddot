@@ -177,7 +177,7 @@ public class TopicServiceImplementTest {
         when(topicMapper.toDTO(expectedEntity)).thenReturn(updatedTopicDTO);
 
         // when
-        TopicDTO result = topicService.update(updatedTopicDTO);
+        TopicDTO result = topicService.update(1L, updatedTopicDTO);
 
         // then
         verify(topicRepository).findById(existingTopicTDO.getId());
@@ -202,7 +202,7 @@ public class TopicServiceImplementTest {
         when(topicRepository.findById(nonExistingId)).thenReturn(Optional.empty());
 
         // when
-        assertThatThrownBy(() -> topicService.update(nonExistingTopic))
+        assertThatThrownBy(() -> topicService.update(1L, nonExistingTopic))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("The topic with ID " + nonExistingTopic.getId() + " does not exist.");
     }

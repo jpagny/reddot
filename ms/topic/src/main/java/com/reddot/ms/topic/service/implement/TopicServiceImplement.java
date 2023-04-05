@@ -50,7 +50,7 @@ public class TopicServiceImplement implements TopicService {
     }
 
     @Override
-    public TopicDTO create(TopicDTO topicDTO) throws ResourceAlreadyExistException {
+    public TopicDTO create(TopicDTO topicDTO) {
         log.debug("Creating new topic with name '{}', description '{}'", topicDTO.getName(), topicDTO.getDescription());
 
         TopicEntity topicToCreate = topicMapper.toEntity(topicDTO);
@@ -70,7 +70,7 @@ public class TopicServiceImplement implements TopicService {
     }
 
     @Override
-    public TopicDTO update(TopicDTO topicDTO) throws ResourceNotFoundException {
+    public TopicDTO update(Long id, TopicDTO topicDTO) throws ResourceNotFoundException {
         log.debug("Updating topic with id '{}', name '{}', description '{}'",
                 topicDTO.getId(), topicDTO.getName(), topicDTO.getDescription());
 
