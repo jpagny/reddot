@@ -19,38 +19,40 @@ import java.util.List;
 @Slf4j
 public class TopicRestControllerImplement implements TopicRestController {
 
+    private static final String ENDPOINT = "/topics";
+
     private final TopicServiceImplement topicService;
 
     public ResponseEntity<ApiResponse> getAllTopics() {
-        log.debug("Endpoint: /topics. Retrieving all Topics");
+        log.debug("Endpoint: {}. Retrieving all Topics", ENDPOINT);
         List<TopicDTO> topics = topicService.getAll();
         ApiResponse apiResponse = new ApiResponse("All topics retrieved successfully", topics);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     public ResponseEntity<ApiResponse> getTopicById(Long id) throws ResourceNotFoundException {
-        log.debug("Endpoint: /topics/{}. Retrieving Topic with id: {}", id, id);
+        log.debug("Endpoint: {}/{}. Retrieving Topic with id: {}", ENDPOINT, id, id);
         TopicDTO topic = topicService.getById(id);
         ApiResponse apiResponse = new ApiResponse("Topic with id " + id + " retrieved successfully", topic);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     public ResponseEntity<ApiResponse> createTopic(TopicDTO topicDTO) throws ResourceAlreadyExistException {
-        log.debug("Endpoint: /topics. Creating Topic with name: {}", topicDTO.getName());
+        log.debug("Endpoint: {}. Creating Topic with name: {}", ENDPOINT, topicDTO.getName());
         TopicDTO createdTopic = topicService.create(topicDTO);
         ApiResponse apiResponse = new ApiResponse("Topic with id " + createdTopic.getId() + " is created", createdTopic);
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
     public ResponseEntity<ApiResponse> updateTopic(Long id, TopicDTO topicDTO) throws ResourceNotFoundException {
-        log.debug("Endpoint: /topics/{}. Updating Topic with id: {}", id, id);
+        log.debug("Endpoint: {}/{}. Updating Topic with id: {}", ENDPOINT, id, id);
         TopicDTO updatedTopic = topicService.update(id, topicDTO);
         ApiResponse apiResponse = new ApiResponse("Topic with id " + updatedTopic.getId() + " is updated", updatedTopic);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     public ResponseEntity<ApiResponse> deleteTopic(Long id) throws ResourceNotFoundException {
-        log.debug("Endpoint: /topics/{}. Deleting Topic with id: {}", id, id);
+        log.debug("Endpoint: {}/{}. Deleting Topic with id: {}", ENDPOINT, id, id);
         topicService.delete(id);
         ApiResponse apiResponse = new ApiResponse("Topic with id " + id + " is deleted");
         return new ResponseEntity<>(apiResponse, HttpStatus.NO_CONTENT);
