@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RestController("topicController")
+@RestController("topicRestController")
 @AllArgsConstructor
 @Slf4j
 public class TopicRestControllerImplement implements TopicRestController {
