@@ -14,7 +14,7 @@ class TopicRESTRouter extends RouteBuilder {
     public void configure() {
         restConfiguration()
                 .bindingMode(RestBindingMode.json);
-        log.debug("ICII ROUTE EST PASSE");
+
         rest("/topics").description("Todo REST service")
                 .consumes("application/json")
                 .produces("application/json")
