@@ -1,7 +1,7 @@
-package com.reddot.ms.topic.controller.implement;
+package com.reddot.ms.topic.controller.rest.implement;
 
-import com.reddot.ms.topic.controller.TopicController;
-import com.reddot.ms.topic.dto.TopicDTO;
+import com.reddot.ms.topic.controller.rest.TopicRestController;
+import com.reddot.ms.topic.data.dto.TopicDTO;
 import com.reddot.ms.topic.exception.ResourceAlreadyExistException;
 import com.reddot.ms.topic.exception.ResourceNotFoundException;
 import com.reddot.ms.topic.response.ApiResponse;
@@ -17,11 +17,11 @@ import java.util.List;
 @RestController("topicController")
 @AllArgsConstructor
 @Slf4j
-public class TopicControllerImplement implements TopicController {
+public class TopicRestControllerImplement implements TopicRestController {
 
     private final TopicServiceImplement topicService;
 
-    public ResponseEntity<ApiResponse> getAll() {
+    public ResponseEntity<ApiResponse> getAllTopics() {
         log.debug("Endpoint: /topics. Retrieving all Topics");
         List<TopicDTO> topics = topicService.getAll();
         ApiResponse apiResponse = new ApiResponse("All topics retrieved successfully", topics);

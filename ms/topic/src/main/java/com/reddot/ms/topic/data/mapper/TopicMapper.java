@@ -1,7 +1,7 @@
-package com.reddot.ms.topic.mapper;
+package com.reddot.ms.topic.data.mapper;
 
-import com.reddot.ms.topic.dto.TopicDTO;
-import com.reddot.ms.topic.entity.TopicEntity;
+import com.reddot.ms.topic.data.dto.TopicDTO;
+import com.reddot.ms.topic.data.entity.TopicEntity;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

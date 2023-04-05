@@ -1,4 +1,4 @@
-package com.reddot.ms.topic.dto;
+package com.reddot.ms.topic.data.dto;
 
 import com.sun.istack.NotNull;
 import lombok.Builder;

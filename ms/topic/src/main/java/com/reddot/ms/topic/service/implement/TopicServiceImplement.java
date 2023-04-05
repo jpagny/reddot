@@ -1,11 +1,11 @@
 package com.reddot.ms.topic.service.implement;
 
-import com.reddot.ms.topic.dto.TopicDTO;
-import com.reddot.ms.topic.entity.TopicEntity;
+import com.reddot.ms.topic.data.dto.TopicDTO;
+import com.reddot.ms.topic.data.entity.TopicEntity;
 import com.reddot.ms.topic.exception.ResourceAlreadyExistException;
 import com.reddot.ms.topic.exception.ResourceNotFoundException;
-import com.reddot.ms.topic.mapper.TopicMapper;
-import com.reddot.ms.topic.repository.TopicRepository;
+import com.reddot.ms.topic.data.mapper.TopicMapper;
+import com.reddot.ms.topic.data.repository.TopicRepository;
 import com.reddot.ms.topic.service.TopicService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

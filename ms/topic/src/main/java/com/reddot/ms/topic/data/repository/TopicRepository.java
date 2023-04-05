@@ -1,6 +1,6 @@
-package com.reddot.ms.topic.repository;
+package com.reddot.ms.topic.data.repository;
 
-import com.reddot.ms.topic.entity.TopicEntity;
+import com.reddot.ms.topic.data.entity.TopicEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
-package com.reddot.ms.topic.controller;
+package com.reddot.ms.topic.controller.rest;
 
-import com.reddot.ms.topic.dto.TopicDTO;
+import com.reddot.ms.topic.data.dto.TopicDTO;
 import com.reddot.ms.topic.exception.ResourceAlreadyExistException;
 import com.reddot.ms.topic.exception.ResourceNotFoundException;
 import com.reddot.ms.topic.response.ApiResponse;
@@ -8,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/topics")
-public interface TopicController {
+public interface TopicRestController {
     @GetMapping(value = "/", produces = {"application/json"})
-    ResponseEntity<ApiResponse> getAll();
+    ResponseEntity<ApiResponse> getAllTopics();
 
     @GetMapping(value = "/{id}", produces = {"application/json"})
     ResponseEntity<ApiResponse> getTopicById(@PathVariable("id") Long id) throws ResourceNotFoundException;

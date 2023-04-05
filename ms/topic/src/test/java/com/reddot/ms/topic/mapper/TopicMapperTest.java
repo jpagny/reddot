@@ -1,7 +1,8 @@
 package com.reddot.ms.topic.mapper;
 
-import com.reddot.ms.topic.dto.TopicDTO;
-import com.reddot.ms.topic.entity.TopicEntity;
+import com.reddot.ms.topic.data.dto.TopicDTO;
+import com.reddot.ms.topic.data.entity.TopicEntity;
+import com.reddot.ms.topic.data.mapper.TopicMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

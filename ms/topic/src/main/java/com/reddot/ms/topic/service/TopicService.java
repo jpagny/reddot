@@ -1,6 +1,6 @@
 package com.reddot.ms.topic.service;
 
-import com.reddot.ms.topic.dto.TopicDTO;
+import com.reddot.ms.topic.data.dto.TopicDTO;
 import com.reddot.ms.topic.exception.ResourceAlreadyExistException;
 import com.reddot.ms.topic.exception.ResourceNotFoundException;
 

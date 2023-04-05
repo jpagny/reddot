@@ -1,8 +1,10 @@
-package com.reddot.ms.topic.entity;
+package com.reddot.ms.topic.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -21,7 +23,7 @@ public class TopicEntity {
 
     @NotBlank(message = "name is required")
     @Size(max = 100)
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String name;
 
@@ -34,5 +36,4 @@ public class TopicEntity {
     @Size(max = 500)
     @Column(name = "description")
     private String description;
-
 }
