@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
+@Service("topicService")
 @Transactional
 @AllArgsConstructor
 @Slf4j

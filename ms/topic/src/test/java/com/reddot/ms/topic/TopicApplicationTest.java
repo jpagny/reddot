@@ -6,7 +6,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TopicApplicationTests {
+class TopicApplicationTest {
 
     @Test
     void contextLoads() {
