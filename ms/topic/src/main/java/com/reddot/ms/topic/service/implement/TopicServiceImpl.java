@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Transactional
 @AllArgsConstructor
 @Slf4j
-public class TopicServiceImplement implements ITopicService {
+public class TopicServiceImpl implements ITopicService {
 
     private final TopicMapper topicMapper;
     private final TopicRepository topicRepository;

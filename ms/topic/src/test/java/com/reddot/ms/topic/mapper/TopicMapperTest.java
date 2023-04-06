@@ -20,7 +20,7 @@ public class TopicMapperTest {
     }
 
     @Test
-    @DisplayName("Given topicDTO, when mapping ToEntity, then the maps correctly")
+    @DisplayName("given topicDTO, when mapping ToEntity, then the maps correctly")
     public void givenTopicDTO_whenMappingToEntity_thenMapsCorrectly() {
         TopicDTO topicDTO = TopicDTO.builder()
                 .id(1L)
@@ -42,7 +42,7 @@ public class TopicMapperTest {
     }
 
     @Test
-    @DisplayName("Given topicEntity, when mapping ToDTO, then the maps correctly")
+    @DisplayName("given topicEntity, when mapping ToDTO, then the maps correctly")
     public void givenTopicEntity_whenMappingToDTO_thenMapsCorrectly() {
         TopicEntity topicEntity = new TopicEntity(
                 1L,

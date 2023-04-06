@@ -17,7 +17,7 @@ import java.util.List;
 @RestController("topicRestController")
 @AllArgsConstructor
 @Slf4j
-public class TopicRestControllerImplement implements ITopicRestController {
+public class TopicRestControllerImpl implements ITopicRestController {
 
     private static final String ENDPOINT = "/topics";
 

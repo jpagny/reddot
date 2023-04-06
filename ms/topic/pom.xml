@@ -38,10 +38,15 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- Mysql -->
+        <!-- Database -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- Devtool -->
@@ -87,7 +92,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.version}</version>
                 <configuration>
-                    <!--suppress UnresolvedMavenProperty -->
                     <argLine>${surefireArgLine}</argLine>
                 </configuration>
             </plugin>
@@ -133,7 +137,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.0</minimum>
+                                            <minimum>0.9</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

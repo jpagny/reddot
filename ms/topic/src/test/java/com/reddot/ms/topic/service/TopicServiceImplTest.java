@@ -2,16 +2,17 @@ package com.reddot.ms.topic.service;
 
 import com.reddot.ms.topic.data.dto.TopicDTO;
 import com.reddot.ms.topic.data.entity.TopicEntity;
-import com.reddot.ms.topic.exception.ResourceAlreadyExistException;
-import com.reddot.ms.topic.exception.ResourceNotFoundException;
 import com.reddot.ms.topic.data.mapper.TopicMapper;
 import com.reddot.ms.topic.data.repository.TopicRepository;
-import com.reddot.ms.topic.service.implement.TopicServiceImplement;
+import com.reddot.ms.topic.exception.ResourceAlreadyExistException;
+import com.reddot.ms.topic.exception.ResourceNotFoundException;
+import com.reddot.ms.topic.service.implement.TopicServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,8 +23,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-public class TopicServiceImplementTest {
+@ExtendWith(MockitoExtension.class)
+public class TopicServiceImplTest {
 
     @Mock
     private TopicRepository topicRepository;
@@ -32,11 +33,11 @@ public class TopicServiceImplementTest {
     private TopicMapper topicMapper;
 
     @InjectMocks
-    private TopicServiceImplement topicService;
+    private TopicServiceImpl topicService;
 
 
     @Test
-    @DisplayName("Given existing topic, when getById, then returns topicDTO")
+    @DisplayName("given existing topic, when getById, then returns topicDTO")
     void givenExistingTopic_whenGetById_thenReturnsTopicDTO() throws ResourceNotFoundException {
         // given
         Long topicId = 1L;
@@ -64,7 +65,7 @@ public class TopicServiceImplementTest {
     }
 
     @Test
-    @DisplayName("Given non existing topic, when getById, then throw ResourceNotFoundException")
+    @DisplayName("given non existing topic, when getById, then throw ResourceNotFoundException")
     void givenNonExistingTopic_whenGetById_thenThrowResourceNotFoundException() {
         // given
         Long topicId = 1L;
@@ -82,7 +83,7 @@ public class TopicServiceImplementTest {
     }
 
     @Test
-    @DisplayName("Given existing topics, when getAll, then returns List of topicDTO")
+    @DisplayName("given existing topics, when getAll, then returns List of topicDTO")
     public void givenExistingTopics_whenGetAll_thenReturnsListOfTopicDTOs() {
         // given
         TopicEntity topicEntity1 = new TopicEntity(1L, "topic1", "Topic 1", "Description 1");
@@ -107,7 +108,7 @@ public class TopicServiceImplementTest {
     }
 
     @Test
-    @DisplayName("Given new topicDTO, when create topic, then topic created")
+    @DisplayName("given new topicDTO, when create topic, then topic created")
     public void givenNewTopicDTO_whenCreateTopic_thenTopicCreated() throws ResourceAlreadyExistException {
         // given
         TopicDTO topicDTO = TopicDTO.builder().id(1L).name("Test").label("Test topic").description("This is a test topic").build();
@@ -134,7 +135,7 @@ public class TopicServiceImplementTest {
     }
 
     @Test
-    @DisplayName("Given an existing topic when creating a new topic with the same name then it should throw a ResourceAlreadyExistException")
+    @DisplayName("given an existing topic when creating a new topic with the same name then it should throw a ResourceAlreadyExistException")
     public void createExistingTopic_withSameName_shouldThrowResourceAlreadyExistException() {
         // given
         TopicDTO topicDTO = TopicDTO.builder().id(1L).name("Test").label("Test topic").description("This is a test topic").build();
@@ -153,7 +154,7 @@ public class TopicServiceImplementTest {
     }
 
     @Test
-    @DisplayName("Given existing topic when update topic then topicDTO with new values returned")
+    @DisplayName("given existing topic when update topic then topicDTO with new values returned")
     public void givenExistingTopic_whenUpdateTopic_thenTopicDTOWithNewValuesReturned() throws ResourceNotFoundException {
         // given
         TopicDTO existingTopicTDO = TopicDTO.builder().id(1L).name("Test").label("Test topic").description("This is a test topic").build();
@@ -188,7 +189,7 @@ public class TopicServiceImplementTest {
     }
 
     @Test
-    @DisplayName("Given non existing topic, when update topic, then throw resource NotFoundException")
+    @DisplayName("given non existing topic, when update topic, then throw resource NotFoundException")
     public void givenNonExistingTopic_whenUpdateTopic_thenThrowResourceNotFoundException() {
         // given
         Long nonExistingId = 1L;
@@ -199,6 +200,7 @@ public class TopicServiceImplementTest {
                 .description("Description of the non-existing topic")
                 .build();
 
+        // mock
         when(topicRepository.findById(nonExistingId)).thenReturn(Optional.empty());
 
         // when
@@ -208,11 +210,13 @@ public class TopicServiceImplementTest {
     }
 
     @Test
-    @DisplayName("Given existing topic, when deleting topic, then no exception is thrown")
+    @DisplayName("given existing topic, when deleting topic, then no exception is thrown")
     void givenExistingTopic_whenDeletingTopic_thenNoExceptionIsThrown() throws ResourceNotFoundException {
         // given
         Long id = 1L;
         TopicEntity topicToDelete = new TopicEntity(id, "test", "Test", "Test topic");
+
+        // mock
         when(topicRepository.findById(id)).thenReturn(Optional.of(topicToDelete));
 
         // when
@@ -223,10 +227,12 @@ public class TopicServiceImplementTest {
     }
 
     @Test
-    @DisplayName("Given non existing topic, when deleting topic, then throws ResourceNotFoundException")
+    @DisplayName("given non existing topic, when deleting topic, then throws ResourceNotFoundException")
     void givenNonExistingTopic_whenDeletingTopic_thenThrowsResourceNotFoundException() {
         // given
         Long id = 1L;
+
+        // mock
         when(topicRepository.findById(id)).thenReturn(Optional.empty());
 
         // when && then
