@@ -108,7 +108,7 @@ public class TopicRestControllerIT {
 
         // assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(apiResponse.getMessage()).isEqualTo("The topic with name 'topic_1' already exists");
+        assertThat(apiResponse.getMessage()).isEqualTo("The topic with name 'topic_1' already exists.");
     }
 
     @Test

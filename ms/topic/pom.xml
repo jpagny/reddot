@@ -103,7 +103,7 @@
                 <version>${jacoco.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>com/jpagny/openai/chat/configuration/*</exclude>
+                        <exclude>com/reddot/ms/topic/TopicApplication*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -155,6 +155,7 @@
                         </configuration>
                     </execution>
                 </executions>
+
             </plugin>
 
         </plugins>
