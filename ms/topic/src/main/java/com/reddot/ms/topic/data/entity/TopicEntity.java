@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @Data
 public class TopicEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 
