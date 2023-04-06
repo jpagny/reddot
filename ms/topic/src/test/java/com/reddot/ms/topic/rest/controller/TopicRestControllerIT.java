@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -53,7 +55,9 @@ public class TopicRestControllerIT {
 
         // act
         ResponseEntity<ApiResponse> response = restTemplate.getForEntity("/topics/1", ApiResponse.class);
-        TopicDTO retrievedTopic = objectMapper.convertValue(Objects.requireNonNull(response.getBody()).getData(), TopicDTO.class);
+        ApiResponse apiResponse = response.getBody();
+        assert apiResponse != null;
+        TopicDTO retrievedTopic = objectMapper.convertValue(apiResponse.getData(), TopicDTO.class);
 
         // assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -75,14 +79,13 @@ public class TopicRestControllerIT {
 
         // act
         ResponseEntity<ApiResponse> response = restTemplate.postForEntity("/topics/", newTopic, ApiResponse.class);
+        ApiResponse apiResponse = response.getBody();
+        assert apiResponse != null;
+        TopicDTO createdTopic = objectMapper.convertValue(apiResponse.getData(), TopicDTO.class);
 
         // assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        ApiResponse apiResponse = response.getBody();
-        assertThat(apiResponse).isNotNull();
-        assert apiResponse != null;
         assertThat(apiResponse.getMessage()).isEqualTo("Topic with id 3 is created");
-        TopicDTO createdTopic = objectMapper.convertValue(apiResponse.getData(), TopicDTO.class);
         assertThat(createdTopic.getId()).isEqualTo(3);
         assertThat(createdTopic.getName()).isEqualTo("new_topic");
         assertThat(createdTopic.getLabel()).isEqualTo("New topic");
@@ -102,13 +105,38 @@ public class TopicRestControllerIT {
 
         // act
         ResponseEntity<ApiResponse> response = restTemplate.postForEntity("/topics", newTopicWithSameName, ApiResponse.class);
+        ApiResponse apiResponse = response.getBody();
+        assert apiResponse != null;
 
         // assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        ApiResponse apiResponse = response.getBody();
-        assertThat(apiResponse).isNotNull();
-        assert apiResponse != null;
         assertThat(apiResponse.getMessage()).isEqualTo("The topic with topic_1 'name' already exists");
+    }
+
+    @Test
+    @DisplayName("given put request to topics/1 with topic to update, when updateTopic is called, then the topic is updated and returned")
+    public void givenTopicWithId_whenUpdateTopic_thenTopicIsUpdatedAndReturned() {
+        // arrange
+        Long topicId = 1L;
+        TopicDTO updatedTopicDTO = TopicDTO.builder()
+                .id(topicId)
+                .name("Updated Topic Name")
+                .label("updated")
+                .description("Updated Topic Description")
+                .build();
+
+        // act
+        HttpEntity<TopicDTO> request = new HttpEntity<>(updatedTopicDTO);
+        ResponseEntity<ApiResponse> response = restTemplate.exchange("/topics/1" + topicId, HttpMethod.PUT, request, ApiResponse.class);
+        ApiResponse apiResponse = response.getBody();
+        assert apiResponse != null;
+        TopicDTO updatedTopic = objectMapper.convertValue(apiResponse.getData(), TopicDTO.class);
+
+        // assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(topicId, updatedTopic.getId());
+        assertEquals("Updated Topic Name", updatedTopic.getName());
+        assertEquals("Updated Topic Description", updatedTopic.getDescription());
     }
 
 
