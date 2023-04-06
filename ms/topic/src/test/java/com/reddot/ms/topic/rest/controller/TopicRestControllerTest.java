@@ -4,7 +4,7 @@ import com.reddot.ms.topic.controller.rest.implement.TopicRestControllerImpl;
 import com.reddot.ms.topic.data.dto.TopicDTO;
 import com.reddot.ms.topic.exception.ResourceAlreadyExistException;
 import com.reddot.ms.topic.exception.ResourceNotFoundException;
-import com.reddot.ms.topic.response.ApiResponse;
+import com.reddot.ms.topic.response.ApiResult;
 import com.reddot.ms.topic.service.implement.TopicServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -51,7 +51,7 @@ class TopicRestControllerTest {
         when(topicService.getAll()).thenReturn(topicList);
 
         // when
-        ResponseEntity<ApiResponse> response = topicRestController.getAllTopics();
+        ResponseEntity<ApiResult> response = topicRestController.getAllTopics();
 
         // then
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -69,7 +69,7 @@ class TopicRestControllerTest {
         when(topicService.getById(topicId)).thenReturn(topicList.get(0));
 
         // when
-        ResponseEntity<ApiResponse> response = topicRestController.getTopicById(topicId);
+        ResponseEntity<ApiResult> response = topicRestController.getTopicById(topicId);
 
         // then
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -108,7 +108,7 @@ class TopicRestControllerTest {
         when(topicService.create(newTopic)).thenReturn(createdTopic);
 
         // when
-        ResponseEntity<ApiResponse> response = topicRestController.createTopic(newTopic);
+        ResponseEntity<ApiResult> response = topicRestController.addTopic(newTopic);
 
         // Then
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -126,7 +126,7 @@ class TopicRestControllerTest {
         when(topicService.create(existingTopicDTO)).thenThrow(new ResourceAlreadyExistException("topic", existingTopicDTO.getName(), "name"));
 
         // when && then
-        assertThrows(ResourceAlreadyExistException.class, () -> topicRestController.createTopic(existingTopicDTO));
+        assertThrows(ResourceAlreadyExistException.class, () -> topicRestController.addTopic(existingTopicDTO));
     }
 
     @Test
@@ -145,7 +145,7 @@ class TopicRestControllerTest {
         when(topicService.update(topicId, updatedTopicDTO)).thenReturn(updatedTopicDTO);
 
         // when
-        ResponseEntity<ApiResponse> response = topicRestController.updateTopic(topicId, updatedTopicDTO);
+        ResponseEntity<ApiResult> response = topicRestController.updateTopic(topicId, updatedTopicDTO);
 
         // then
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -174,7 +174,7 @@ class TopicRestControllerTest {
         Long topicId = 1L;
 
         // when
-        ResponseEntity<ApiResponse> response = topicRestController.deleteTopic(topicId);
+        ResponseEntity<ApiResult> response = topicRestController.deleteTopic(topicId);
 
         // then
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());

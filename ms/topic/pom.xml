@@ -18,6 +18,7 @@
 
     <properties>
         <java.version>11</java.version>
+        <openapi.version>1.7.0</openapi.version>
         <jacoco.version>0.8.9</jacoco.version>
         <maven.surefire.version>3.0.0</maven.surefire.version>
     </properties>
@@ -60,6 +61,19 @@
             <artifactId>modelmapper</artifactId>
             <version>3.1.1</version>
         </dependency>
+
+        <!-- Documentation -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-data-rest</artifactId>
+            <version>${openapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${openapi.version}</version>
+        </dependency>
+
 
         <!-- Test -->
         <dependency>

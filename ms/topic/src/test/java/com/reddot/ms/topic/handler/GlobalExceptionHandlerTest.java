@@ -3,7 +3,7 @@ package com.reddot.ms.topic.handler;
 import com.reddot.ms.topic.exception.ResourceAlreadyExistException;
 import com.reddot.ms.topic.exception.ResourceNotFoundException;
 import com.reddot.ms.topic.handle.GlobalExceptionHandler;
-import com.reddot.ms.topic.response.ApiResponse;
+import com.reddot.ms.topic.response.ApiResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class GlobalExceptionHandlerTest {
         ResourceAlreadyExistException exception = new ResourceAlreadyExistException("topic", "name", "topic");
 
         // act
-        ResponseEntity<ApiResponse> response = globalExceptionHandler.handleResourceAlreadyExistException(exception);
+        ResponseEntity<ApiResult> response = globalExceptionHandler.handleResourceAlreadyExistException(exception);
 
         // assert
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
@@ -44,7 +44,7 @@ class GlobalExceptionHandlerTest {
         ResourceNotFoundException exception = new ResourceNotFoundException("topic", "1");
 
         // act
-        ResponseEntity<ApiResponse> response = globalExceptionHandler.handleResourceNotFoundException(exception);
+        ResponseEntity<ApiResult> response = globalExceptionHandler.handleResourceNotFoundException(exception);
 
         // assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());

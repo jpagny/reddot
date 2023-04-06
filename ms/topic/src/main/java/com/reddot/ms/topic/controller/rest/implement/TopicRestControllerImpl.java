@@ -4,13 +4,18 @@ import com.reddot.ms.topic.controller.rest.ITopicRestController;
 import com.reddot.ms.topic.data.dto.TopicDTO;
 import com.reddot.ms.topic.exception.ResourceAlreadyExistException;
 import com.reddot.ms.topic.exception.ResourceNotFoundException;
-import com.reddot.ms.topic.response.ApiResponse;
+import com.reddot.ms.topic.response.ApiResult;
 import com.reddot.ms.topic.service.ITopicService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,39 +29,50 @@ public class TopicRestControllerImpl implements ITopicRestController {
 
     private final ITopicService topicService;
 
-    public ResponseEntity<ApiResponse> getAllTopics() {
+    @Operation(summary = "Retrieve all topics from the data source")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found all topics",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TopicDTO[].class))})
+    })
+    @GetMapping(value = "/", produces = {"application/json"})
+    public ResponseEntity<ApiResult> getAllTopics() {
         log.debug("Endpoint: {}. Retrieving all Topics", ENDPOINT);
         List<TopicDTO> topics = topicService.getAll();
-        ApiResponse apiResponse = new ApiResponse("All topics retrieved successfully", topics);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        ApiResult apiResult = new ApiResult("All topics retrieved successfully", topics);
+        return new ResponseEntity<>(apiResult, HttpStatus.OK);
     }
 
-    public ResponseEntity<ApiResponse> getTopicById(Long id) throws ResourceNotFoundException {
+    @GetMapping(value = "/{id}", produces = {"application/json"})
+    public ResponseEntity<ApiResult> getTopicById(@PathVariable("id") Long id) throws ResourceNotFoundException {
         log.debug("Endpoint: {}/{}. Retrieving Topic with id: {}", ENDPOINT, id, id);
         TopicDTO topic = topicService.getById(id);
-        ApiResponse apiResponse = new ApiResponse(MESSAGE_TOPIC_WITH_ID + id + " retrieved successfully", topic);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        ApiResult apiResult = new ApiResult(MESSAGE_TOPIC_WITH_ID + id + " retrieved successfully", topic);
+        return new ResponseEntity<>(apiResult, HttpStatus.OK);
     }
 
-    public ResponseEntity<ApiResponse> createTopic(TopicDTO topicDTO) throws ResourceAlreadyExistException {
+    @PostMapping(value = "/", produces = {"application/json"})
+    public ResponseEntity<ApiResult> addTopic(@RequestBody TopicDTO topicDTO) throws ResourceAlreadyExistException {
         log.debug("Endpoint: {}. Creating Topic with name: {}", ENDPOINT, topicDTO.getName());
         TopicDTO createdTopic = topicService.create(topicDTO);
-        ApiResponse apiResponse = new ApiResponse(MESSAGE_TOPIC_WITH_ID + createdTopic.getId() + " is created", createdTopic);
-        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        ApiResult apiResult = new ApiResult(MESSAGE_TOPIC_WITH_ID + createdTopic.getId() + " is created", createdTopic);
+        return new ResponseEntity<>(apiResult, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<ApiResponse> updateTopic(Long id, TopicDTO topicDTO) throws ResourceNotFoundException {
+    @PutMapping(value = "/{id}", produces = {"application/json"})
+    public ResponseEntity<ApiResult> updateTopic(@PathVariable("id") Long id, @RequestBody TopicDTO topicDTO) throws ResourceNotFoundException {
         log.debug("Endpoint: {}/{}. Updating Topic with id: {}", ENDPOINT, id, id);
         TopicDTO updatedTopic = topicService.update(id, topicDTO);
-        ApiResponse apiResponse = new ApiResponse(MESSAGE_TOPIC_WITH_ID + updatedTopic.getId() + " is updated", updatedTopic);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        ApiResult apiResult = new ApiResult(MESSAGE_TOPIC_WITH_ID + updatedTopic.getId() + " is updated", updatedTopic);
+        return new ResponseEntity<>(apiResult, HttpStatus.OK);
     }
 
-    public ResponseEntity<ApiResponse> deleteTopic(Long id) throws ResourceNotFoundException {
+    @DeleteMapping(value = "/{id}", produces = {"application/json"})
+    public ResponseEntity<ApiResult> deleteTopic(@PathVariable("id") Long id) throws ResourceNotFoundException {
         log.debug("Endpoint: {}/{}. Deleting Topic with id: {}", ENDPOINT, id, id);
         topicService.delete(id);
-        ApiResponse apiResponse = new ApiResponse(MESSAGE_TOPIC_WITH_ID + id + " is deleted");
-        return new ResponseEntity<>(apiResponse, HttpStatus.NO_CONTENT);
+        ApiResult apiResult = new ApiResult(MESSAGE_TOPIC_WITH_ID + id + " is deleted");
+        return new ResponseEntity<>(apiResult, HttpStatus.NO_CONTENT);
     }
 
 }
