@@ -13,7 +13,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -22,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@Transactional
 public class TopicRestControllerIT {
 
     @Autowired
@@ -43,18 +41,19 @@ public class TopicRestControllerIT {
     }
 
     @Test
-    @DisplayName("given get request to topics/1, when getTopicById called, then topic is returned")
+    @DisplayName("given get request to topics/xxx with an existing topic, when getTopicById called, then topic is returned")
     void givenTopicId_whenGetTopicById_thenTopicIsReturned() {
+        long topicId = 1L;
         // arrange
         TopicDTO topicExpected = TopicDTO.builder()
-                .id(1L)
+                .id(topicId)
                 .name("topic_1")
                 .label("Topic 1")
                 .description("Description 1")
                 .build();
 
         // act
-        ResponseEntity<ApiResponse> response = restTemplate.getForEntity("/topics/1", ApiResponse.class);
+        ResponseEntity<ApiResponse> response = restTemplate.getForEntity("/topics/" + topicId, ApiResponse.class);
         ApiResponse apiResponse = response.getBody();
         assert apiResponse != null;
         TopicDTO retrievedTopic = objectMapper.convertValue(apiResponse.getData(), TopicDTO.class);
@@ -90,7 +89,6 @@ public class TopicRestControllerIT {
         assertThat(createdTopic.getName()).isEqualTo("new_topic");
         assertThat(createdTopic.getLabel()).isEqualTo("New topic");
         assertThat(createdTopic.getDescription()).isEqualTo("New topic description");
-
     }
 
     @Test
@@ -104,20 +102,20 @@ public class TopicRestControllerIT {
                 .build();
 
         // act
-        ResponseEntity<ApiResponse> response = restTemplate.postForEntity("/topics", newTopicWithSameName, ApiResponse.class);
+        ResponseEntity<ApiResponse> response = restTemplate.postForEntity("/topics/", newTopicWithSameName, ApiResponse.class);
         ApiResponse apiResponse = response.getBody();
         assert apiResponse != null;
 
         // assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(apiResponse.getMessage()).isEqualTo("The topic with topic_1 'name' already exists");
+        assertThat(apiResponse.getMessage()).isEqualTo("The topic with name 'topic_1' already exists");
     }
 
     @Test
-    @DisplayName("given put request to topics/1 with topic to update, when updateTopic is called, then the topic is updated and returned")
+    @DisplayName("given put request to topics/xxx with topic existing to update, when updateTopic is called, then the topic is updated and returned")
     public void givenTopicWithId_whenUpdateTopic_thenTopicIsUpdatedAndReturned() {
         // arrange
-        Long topicId = 1L;
+        long topicId = 1L;
         TopicDTO updatedTopicDTO = TopicDTO.builder()
                 .id(topicId)
                 .name("Updated Topic Name")
@@ -127,7 +125,7 @@ public class TopicRestControllerIT {
 
         // act
         HttpEntity<TopicDTO> request = new HttpEntity<>(updatedTopicDTO);
-        ResponseEntity<ApiResponse> response = restTemplate.exchange("/topics/1" + topicId, HttpMethod.PUT, request, ApiResponse.class);
+        ResponseEntity<ApiResponse> response = restTemplate.exchange("/topics/" + topicId, HttpMethod.PUT, request, ApiResponse.class);
         ApiResponse apiResponse = response.getBody();
         assert apiResponse != null;
         TopicDTO updatedTopic = objectMapper.convertValue(apiResponse.getData(), TopicDTO.class);
@@ -137,6 +135,59 @@ public class TopicRestControllerIT {
         assertEquals(topicId, updatedTopic.getId());
         assertEquals("Updated Topic Name", updatedTopic.getName());
         assertEquals("Updated Topic Description", updatedTopic.getDescription());
+    }
+
+    @DisplayName("given put request to topics/xxx with a non-existent topic ID, when updateTopic is called, then ResourceNotFoundException is thrown")
+    @Test
+    public void givenNonExistentTopicId_whenUpdateTopic_thenResourceNotFoundExceptionIsThrown() {
+        // arrange
+        long nonExistentTopicId = 999L;
+        TopicDTO updatedTopicDTO = TopicDTO.builder()
+                .id(nonExistentTopicId)
+                .name("Updated Topic Name")
+                .label("Updated")
+                .description("Updated Topic Description")
+                .build();
+
+        HttpEntity<TopicDTO> request = new HttpEntity<>(updatedTopicDTO);
+
+        // act
+        ResponseEntity<ApiResponse> response = restTemplate.exchange("/topics/" + nonExistentTopicId, HttpMethod.PUT, request, ApiResponse.class);
+        ApiResponse apiResponse = response.getBody();
+        assert apiResponse != null;
+
+        // assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(apiResponse.getMessage()).isEqualTo("The topic with ID 999 does not exist.");
+    }
+
+    @Test
+    @DisplayName("given delete request to topics/xxx with an existing topic, when deleteTopic is called, then the topic is deleted")
+    public void givenExistingTopicId_whenDeleteTopic_thenTopicIsDeleted() {
+        // arrange
+        long existingTopicId = 1L;
+
+        // act
+        ResponseEntity<ApiResponse> response = restTemplate.exchange("/topics/" + existingTopicId, HttpMethod.DELETE, HttpEntity.EMPTY, ApiResponse.class);
+
+        // assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("given delete request to topics/xxx with a non-existent topic, when deleteTopic is called, then ResourceNotFoundException is thrown")
+    public void givenNonExistentTopicId_whenDeleteTopic_thenResourceNotFoundExceptionIsThrown() {
+        // arrange
+        long nonExistentTopicId = 999L;
+
+        // act
+        ResponseEntity<ApiResponse> response = restTemplate.exchange("/topics/" + nonExistentTopicId, HttpMethod.DELETE, HttpEntity.EMPTY, ApiResponse.class);
+        ApiResponse apiResponse = response.getBody();
+        assert apiResponse != null;
+
+        // assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(apiResponse.getMessage()).isEqualTo("The topic with ID 999 does not exist.");
     }
 
 
