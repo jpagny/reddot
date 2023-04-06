@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TopicRestControllerTest {
+class TopicRestControllerTest {
 
     @Mock
     private TopicServiceImpl topicService;
@@ -119,11 +119,14 @@ public class TopicRestControllerTest {
     @Test
     @DisplayName("given existing topicDTO, when createTopic called, then throws ResourceAlreadyExistException")
     void givenExistingTopicDTO_whenCreateTopicCalled_thenThrowsResourceAlreadyExistException() throws ResourceAlreadyExistException {
-        // given && mock
-        when(topicService.create(topicList.get(0))).thenThrow(new ResourceAlreadyExistException("topic", topicList.get(0).getName(), "name"));
+        // given
+        TopicDTO existingTopicDTO = topicList.get(0);
+
+        // mock
+        when(topicService.create(existingTopicDTO)).thenThrow(new ResourceAlreadyExistException("topic", existingTopicDTO.getName(), "name"));
 
         // when && then
-        assertThrows(ResourceAlreadyExistException.class, () -> topicRestController.createTopic(topicList.get(0)));
+        assertThrows(ResourceAlreadyExistException.class, () -> topicRestController.createTopic(existingTopicDTO));
     }
 
     @Test
@@ -154,13 +157,14 @@ public class TopicRestControllerTest {
     @DisplayName("given non existent topicId, when updateTopic called, then throws ResourceNotFoundException")
     void givenNonexistentTopicId_whenUpdateTopicCalled_thenThrowsResourceNotFoundException() throws ResourceNotFoundException {
         // given
-        Long topicId = 999L;
+        Long nonExistentTopicId = 999L;
+        TopicDTO topicToUpdate = topicList.get(0);
 
         // mock
-        when(topicService.update(topicId, topicList.get(0))).thenThrow(new ResourceNotFoundException("topic", String.valueOf(topicId)));
+        when(topicService.update(nonExistentTopicId, topicToUpdate)).thenThrow(new ResourceNotFoundException("topic", String.valueOf(nonExistentTopicId)));
 
-        // when & then
-        assertThrows(ResourceNotFoundException.class, () -> topicRestController.updateTopic(topicId, topicList.get(0)));
+        // when && then
+        assertThrows(ResourceNotFoundException.class, () -> topicRestController.updateTopic(nonExistentTopicId, topicToUpdate));
     }
 
     @Test

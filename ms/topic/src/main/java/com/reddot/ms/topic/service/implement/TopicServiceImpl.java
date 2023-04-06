@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TopicServiceImpl implements ITopicService {
 
+    private static final String MESSAGE_TOPIC = "topic";
+
     private final TopicMapper topicMapper;
     private final TopicRepository topicRepository;
 
@@ -30,7 +32,7 @@ public class TopicServiceImpl implements ITopicService {
         log.debug("Fetching topic with id {}", id);
 
         TopicEntity topicEntity = topicRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("topic", String.valueOf(id))
+                () -> new ResourceNotFoundException(MESSAGE_TOPIC, String.valueOf(id))
         );
 
         log.info("Successfully retrieved topic with id {}, name '{}', description '{}'",
@@ -58,7 +60,7 @@ public class TopicServiceImpl implements ITopicService {
         Optional<TopicEntity> topicExist = topicRepository.findByName(topicToCreate.getName());
 
         if (topicExist.isPresent()) {
-            throw new ResourceAlreadyExistException("topic", "name", topicToCreate.getName());
+            throw new ResourceAlreadyExistException(MESSAGE_TOPIC, "name", topicToCreate.getName());
         }
 
         TopicEntity topicCreated = topicRepository.save(topicToCreate);
@@ -75,7 +77,7 @@ public class TopicServiceImpl implements ITopicService {
                 topicDTO.getId(), topicDTO.getName(), topicDTO.getDescription());
 
         topicRepository.findById(topicDTO.getId()).orElseThrow(
-                () -> new ResourceNotFoundException("topic", topicDTO.getId().toString())
+                () -> new ResourceNotFoundException(MESSAGE_TOPIC, topicDTO.getId().toString())
         );
 
         TopicEntity topicToUpdate = topicMapper.toEntity(topicDTO);
@@ -95,7 +97,7 @@ public class TopicServiceImpl implements ITopicService {
         log.debug("Deleting topic with id {}", id);
 
         TopicEntity topicToDelete = topicRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("topic", String.valueOf(id))
+                () -> new ResourceNotFoundException(MESSAGE_TOPIC, String.valueOf(id))
         );
 
         topicRepository.delete(topicToDelete);

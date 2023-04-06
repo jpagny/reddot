@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TopicServiceImplTest {
+class TopicServiceImplTest {
 
     @Mock
     private TopicRepository topicRepository;
@@ -84,7 +84,7 @@ public class TopicServiceImplTest {
 
     @Test
     @DisplayName("given existing topics, when getAll, then returns List of topicDTO")
-    public void givenExistingTopics_whenGetAll_thenReturnsListOfTopicDTOs() {
+    void givenExistingTopics_whenGetAll_thenReturnsListOfTopicDTOs() {
         // given
         TopicEntity topicEntity1 = new TopicEntity(1L, "topic1", "Topic 1", "Description 1");
         TopicEntity topicEntity2 = new TopicEntity(2L, "topic2", "Topic 2", "Description 2");
@@ -109,7 +109,7 @@ public class TopicServiceImplTest {
 
     @Test
     @DisplayName("given new topicDTO, when create topic, then topic created")
-    public void givenNewTopicDTO_whenCreateTopic_thenTopicCreated() throws ResourceAlreadyExistException {
+    void givenNewTopicDTO_whenCreateTopic_thenTopicCreated() throws ResourceAlreadyExistException {
         // given
         TopicDTO topicDTO = TopicDTO.builder().id(1L).name("Test").label("Test topic").description("This is a test topic").build();
 
@@ -136,7 +136,7 @@ public class TopicServiceImplTest {
 
     @Test
     @DisplayName("given an existing topic when creating a new topic with the same name then it should throw a ResourceAlreadyExistException")
-    public void createExistingTopic_withSameName_shouldThrowResourceAlreadyExistException() {
+    void createExistingTopic_withSameName_shouldThrowResourceAlreadyExistException() {
         // given
         TopicDTO topicDTO = TopicDTO.builder().id(1L).name("Test").label("Test topic").description("This is a test topic").build();
 
@@ -155,7 +155,7 @@ public class TopicServiceImplTest {
 
     @Test
     @DisplayName("given existing topic when update topic then topicDTO with new values returned")
-    public void givenExistingTopic_whenUpdateTopic_thenTopicDTOWithNewValuesReturned() throws ResourceNotFoundException {
+    void givenExistingTopic_whenUpdateTopic_thenTopicDTOWithNewValuesReturned() throws ResourceNotFoundException {
         // given
         TopicDTO existingTopicTDO = TopicDTO.builder().id(1L).name("Test").label("Test topic").description("This is a test topic").build();
         TopicEntity existingTopicEntity = new TopicEntity(1L, "Test", "Test topic", "This is a test topic");
@@ -190,7 +190,7 @@ public class TopicServiceImplTest {
 
     @Test
     @DisplayName("given non existing topic, when update topic, then throw resource NotFoundException")
-    public void givenNonExistingTopic_whenUpdateTopic_thenThrowResourceNotFoundException() {
+    void givenNonExistingTopic_whenUpdateTopic_thenThrowResourceNotFoundException() {
         // given
         Long nonExistingId = 1L;
         TopicDTO nonExistingTopic = TopicDTO.builder()

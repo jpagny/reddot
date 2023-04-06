@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class TopicRestControllerIT {
+class TopicRestControllerIT {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -68,7 +68,7 @@ public class TopicRestControllerIT {
 
     @Test
     @DisplayName("given post request to topics/ with a new topic, when createTopic called, then topic is created")
-    public void givenPostRequestToTopicsWithANewTopic_whenCreateTopicCalled_thenTopicIsCreated() {
+    void givenPostRequestToTopicsWithANewTopic_whenCreateTopicCalled_thenTopicIsCreated() {
         // arrange
         TopicDTO newTopic = TopicDTO.builder()
                 .name("new_topic")
@@ -93,7 +93,7 @@ public class TopicRestControllerIT {
 
     @Test
     @DisplayName("given post request to topics/ with an existing topic, when createTopic called, then a conflict status is returned")
-    public void givenExistingTopic_whenCreateTopic_thenConflictStatus() {
+    void givenExistingTopic_whenCreateTopic_thenConflictStatus() {
         // arrange
         TopicDTO newTopicWithSameName = TopicDTO.builder()
                 .name("topic_1")
@@ -113,7 +113,7 @@ public class TopicRestControllerIT {
 
     @Test
     @DisplayName("given put request to topics/xxx with topic existing to update, when updateTopic is called, then the topic is updated and returned")
-    public void givenTopicWithId_whenUpdateTopic_thenTopicIsUpdatedAndReturned() {
+    void givenTopicWithId_whenUpdateTopic_thenTopicIsUpdatedAndReturned() {
         // arrange
         long topicId = 1L;
         TopicDTO updatedTopicDTO = TopicDTO.builder()
@@ -139,7 +139,7 @@ public class TopicRestControllerIT {
 
     @DisplayName("given put request to topics/xxx with a non-existent topic ID, when updateTopic is called, then ResourceNotFoundException is thrown")
     @Test
-    public void givenNonExistentTopicId_whenUpdateTopic_thenResourceNotFoundExceptionIsThrown() {
+    void givenNonExistentTopicId_whenUpdateTopic_thenResourceNotFoundExceptionIsThrown() {
         // arrange
         long nonExistentTopicId = 999L;
         TopicDTO updatedTopicDTO = TopicDTO.builder()
@@ -163,7 +163,7 @@ public class TopicRestControllerIT {
 
     @Test
     @DisplayName("given delete request to topics/xxx with an existing topic, when deleteTopic is called, then the topic is deleted")
-    public void givenExistingTopicId_whenDeleteTopic_thenTopicIsDeleted() {
+    void givenExistingTopicId_whenDeleteTopic_thenTopicIsDeleted() {
         // arrange
         long existingTopicId = 1L;
 
@@ -176,7 +176,7 @@ public class TopicRestControllerIT {
 
     @Test
     @DisplayName("given delete request to topics/xxx with a non-existent topic, when deleteTopic is called, then ResourceNotFoundException is thrown")
-    public void givenNonExistentTopicId_whenDeleteTopic_thenResourceNotFoundExceptionIsThrown() {
+    void givenNonExistentTopicId_whenDeleteTopic_thenResourceNotFoundExceptionIsThrown() {
         // arrange
         long nonExistentTopicId = 999L;
 

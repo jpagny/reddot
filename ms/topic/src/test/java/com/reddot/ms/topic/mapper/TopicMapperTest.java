@@ -10,18 +10,18 @@ import org.modelmapper.ModelMapper;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class TopicMapperTest {
+class TopicMapperTest {
 
     private TopicMapper topicMapper;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         topicMapper = new TopicMapper(new ModelMapper());
     }
 
     @Test
     @DisplayName("given topicDTO, when mapping ToEntity, then the maps correctly")
-    public void givenTopicDTO_whenMappingToEntity_thenMapsCorrectly() {
+    void givenTopicDTO_whenMappingToEntity_thenMapsCorrectly() {
         TopicDTO topicDTO = TopicDTO.builder()
                 .id(1L)
                 .name("elysium")
@@ -43,7 +43,7 @@ public class TopicMapperTest {
 
     @Test
     @DisplayName("given topicEntity, when mapping ToDTO, then the maps correctly")
-    public void givenTopicEntity_whenMappingToDTO_thenMapsCorrectly() {
+    void givenTopicEntity_whenMappingToDTO_thenMapsCorrectly() {
         TopicEntity topicEntity = new TopicEntity(
                 1L,
                 "elysium",

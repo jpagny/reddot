@@ -14,7 +14,7 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GlobalExceptionHandlerTest {
+class GlobalExceptionHandlerTest {
 
     private GlobalExceptionHandler globalExceptionHandler;
 
@@ -25,7 +25,7 @@ public class GlobalExceptionHandlerTest {
 
     @Test
     @DisplayName("given a ResourceAlreadyExistException, when handleResourceAlreadyExistException is called, then ApiResponse with CONFLICT status is returned")
-    public void givenResourceAlreadyExistException_whenHandleResourceAlreadyExistException_thenApiResponseWithConflictStatusIsReturned() {
+    void givenResourceAlreadyExistException_whenHandleResourceAlreadyExistException_thenApiResponseWithConflictStatusIsReturned() {
         // arrange
         ResourceAlreadyExistException exception = new ResourceAlreadyExistException("topic", "name", "topic");
 
@@ -39,7 +39,7 @@ public class GlobalExceptionHandlerTest {
 
     @DisplayName("Given a ResourceNotFoundException, when handleResourceNotFoundException is called, then ApiResponse with NOT_FOUND status is returned")
     @Test
-    public void givenResourceNotFoundException_whenHandleResourceNotFoundException_thenApiResponseWithNotFoundStatusIsReturned() {
+    void givenResourceNotFoundException_whenHandleResourceNotFoundException_thenApiResponseWithNotFoundStatusIsReturned() {
         // arrange
         ResourceNotFoundException exception = new ResourceNotFoundException("topic", "1");
 
