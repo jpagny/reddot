@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.application.exceptionhandler;
+package com.elysium.reddot.ms.topic.application.exception;
 
 import com.elysium.reddot.ms.topic.application.response.ApiResult;
 import com.elysium.reddot.ms.topic.domain.exception.ResourceAlreadyExistException;

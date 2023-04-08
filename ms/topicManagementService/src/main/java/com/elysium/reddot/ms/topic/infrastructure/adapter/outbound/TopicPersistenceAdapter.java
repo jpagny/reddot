@@ -34,6 +34,11 @@ public class TopicPersistenceAdapter implements TopicRepository {
     }
 
     @Override
+    public Optional<TopicDTO> findByName(String name) {
+        return topicJpaRepository.findByName(name).map(TopicEntityDTOMapper::toDTO);
+    }
+
+    @Override
     public TopicDTO save(TopicDTO topicDTO) {
         TopicJpaEntity topicJpaEntity = TopicEntityDTOMapper.toEntity(topicDTO);
         TopicJpaEntity savedTopicJpaEntity = topicJpaRepository.save(topicJpaEntity);

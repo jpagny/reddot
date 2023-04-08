@@ -10,13 +10,15 @@ import java.util.Optional;
 
 public interface TopicUseCase {
 
+    // to do : use TopicModel and not TopicDTO here !!!!
+
     List<TopicDTO> getAllTopics();
 
     Optional<TopicDTO> getTopicById(Long id) throws ResourceNotFoundException;
 
     TopicDTO createTopic(TopicDTO topic) throws ResourceAlreadyExistException;
 
-    TopicDTO updateTopic(TopicDTO topic) throws ResourceNotFoundException;
+    TopicDTO updateTopic(Long id, TopicDTO topic) throws ResourceNotFoundException;
 
     void deleteTopicById(Long id) throws ResourceNotFoundException;
 
