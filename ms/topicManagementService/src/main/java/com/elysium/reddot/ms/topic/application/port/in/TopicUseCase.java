@@ -10,8 +10,6 @@ import java.util.Optional;
 
 public interface TopicUseCase {
 
-    // to do : use TopicModel and not TopicDTO here !!!!
-
     List<TopicDTO> getAllTopics();
 
     Optional<TopicDTO> getTopicById(Long id) throws ResourceNotFoundException;

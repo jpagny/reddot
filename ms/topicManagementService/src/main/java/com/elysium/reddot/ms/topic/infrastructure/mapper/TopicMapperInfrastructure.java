@@ -1,9 +1,9 @@
 package com.elysium.reddot.ms.topic.infrastructure.mapper;
 
 import com.elysium.reddot.ms.topic.application.service.dto.TopicDTO;
-import com.elysium.reddot.ms.topic.infrastructure.adapter.outbound.persistence.TopicJpaEntity;
+import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.entity.TopicJpaEntity;
 
-public class TopicEntityDTOMapper {
+public class TopicMapperInfrastructure {
 
     public static TopicJpaEntity toEntity(TopicDTO topicDTO) {
         TopicJpaEntity topicJpaEntity = new TopicJpaEntity();

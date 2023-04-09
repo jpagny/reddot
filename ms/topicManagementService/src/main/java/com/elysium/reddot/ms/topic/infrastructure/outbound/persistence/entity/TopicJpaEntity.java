@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.infrastructure.adapter.outbound.persistence;
+package com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.entity;
 
 import javax.persistence.*;
 

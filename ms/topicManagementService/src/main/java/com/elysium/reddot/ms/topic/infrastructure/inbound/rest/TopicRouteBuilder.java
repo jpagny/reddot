@@ -1,9 +1,9 @@
-package com.elysium.reddot.ms.topic.infrastructure.adapter.inbound.rest;
+package com.elysium.reddot.ms.topic.infrastructure.inbound.rest;
 
 
-import com.elysium.reddot.ms.topic.application.service.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.application.port.in.TopicUseCase;
 import com.elysium.reddot.ms.topic.application.response.ApiResult;
+import com.elysium.reddot.ms.topic.application.service.dto.TopicDTO;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpMethods;
