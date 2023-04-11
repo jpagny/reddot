@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.domain.exception;
+package com.elysium.reddot.ms.topic.application.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String resourceType, String resourceId) {

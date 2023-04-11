@@ -1,7 +1,7 @@
 package com.elysium.reddot.ms.topic.infrastructure.outbound.persistence;
 
 
-import com.elysium.reddot.ms.topic.application.port.out.TopicRepositoryOutBound;
+import com.elysium.reddot.ms.topic.application.port.out.TopicRepositoryOutbound;
 import com.elysium.reddot.ms.topic.application.service.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicMapperInfrastructure;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.entity.TopicJpaEntity;
@@ -13,11 +13,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class TopicAdapter implements TopicRepositoryOutBound {
+public class TopicRepositoryAdapter implements TopicRepositoryOutbound {
 
     private final TopicJpaRepository topicJpaRepository;
 
-    public TopicAdapter(TopicJpaRepository topicJpaRepository) {
+    public TopicRepositoryAdapter(TopicJpaRepository topicJpaRepository) {
         this.topicJpaRepository = topicJpaRepository;
     }
 
@@ -31,6 +31,12 @@ public class TopicAdapter implements TopicRepositoryOutBound {
     @Override
     public Optional<TopicDTO> findTopicById(Long id) {
         return topicJpaRepository.findById(id)
+                .map(TopicMapperInfrastructure::toDTO);
+    }
+
+    @Override
+    public Optional<TopicDTO> findTopicByName(String name) {
+        return topicJpaRepository.findByName(name)
                 .map(TopicMapperInfrastructure::toDTO);
     }
 

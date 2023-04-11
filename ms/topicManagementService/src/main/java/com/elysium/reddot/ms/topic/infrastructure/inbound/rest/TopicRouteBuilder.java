@@ -1,8 +1,8 @@
 package com.elysium.reddot.ms.topic.infrastructure.inbound.rest;
 
 
-import com.elysium.reddot.ms.topic.application.port.in.TopicUseCase;
-import com.elysium.reddot.ms.topic.application.response.ApiResult;
+import com.elysium.reddot.ms.topic.application.service.dto.ApiResponseDTO;
+import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
 import com.elysium.reddot.ms.topic.application.service.dto.TopicDTO;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -16,10 +16,10 @@ import java.util.Optional;
 @Component
 public class TopicRouteBuilder extends RouteBuilder {
 
-    private final TopicUseCase topicUseCase;
+    private final TopicApplicationServiceImpl topicService;
 
-    public TopicRouteBuilder(TopicUseCase topicUseCase) {
-        this.topicUseCase = topicUseCase;
+    public TopicRouteBuilder(TopicApplicationServiceImpl topicService) {
+        this.topicService = topicService;
     }
 
     @Override
@@ -42,9 +42,9 @@ public class TopicRouteBuilder extends RouteBuilder {
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.GET))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .process(exchange -> {
-                    List<TopicDTO> topics = topicUseCase.getAllTopics();
-                    ApiResult apiResult = new ApiResult("All topics retrieved successfully", topics);
-                    exchange.getMessage().setBody(apiResult);
+                    List<TopicDTO> topics = topicService.getAllTopics();
+                    ApiResponseDTO apiResponseDTO = new ApiResponseDTO("All topics retrieved successfully", topics);
+                    exchange.getMessage().setBody(apiResponseDTO);
                 });
 
         from("direct:getTopicById")
@@ -52,9 +52,9 @@ public class TopicRouteBuilder extends RouteBuilder {
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .process(exchange -> {
                     Long id = Long.parseLong(exchange.getIn().getHeader("id").toString());
-                    Optional<TopicDTO> topic = topicUseCase.getTopicById(id);
-                    ApiResult apiResult = new ApiResult("Topic with id " + id + " retrieved successfully", topic);
-                    exchange.getMessage().setBody(apiResult);
+                    Optional<TopicDTO> topic = topicService.getTopicById(id);
+                    ApiResponseDTO apiResponseDTO = new ApiResponseDTO("Topic with id " + id + " retrieved successfully", topic.get());
+                    exchange.getMessage().setBody(apiResponseDTO);
                 });
 
 

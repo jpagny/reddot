@@ -1,17 +1,17 @@
-package com.elysium.reddot.ms.topic.application.response;
+package com.elysium.reddot.ms.topic.application.service.dto;
 
 
-public class ApiResult {
+public class ApiResponseDTO {
 
     private String message;
 
     private Object data;
 
-    public ApiResult(String message) {
+    public ApiResponseDTO(String message) {
         this.message = message;
     }
 
-    public ApiResult(String message, Object data) {
+    public ApiResponseDTO(String message, Object data) {
         this.message = message;
         this.data = data;
     }
@@ -23,7 +23,7 @@ public class ApiResult {
     public void setMessage(String message) {
         this.message = message;
     }
-    
+
     public Object getData() {
         return data;
     }

@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface TopicJpaRepository extends JpaRepository<TopicJpaEntity, Long> {
-    Optional<TopicModel> findByName(String name);
+    Optional<TopicJpaEntity> findByName(String name);
 }
