@@ -1,10 +1,10 @@
 package com.elysium.reddot.ms.topic.infrastructure.inbound.rest;
 
 
-import com.elysium.reddot.ms.topic.application.exception.handler.core.CamelGlobalExceptionHandler;
-import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
+import com.elysium.reddot.ms.topic.application.exception.handler.core.CamelGlobalExceptionHandler;
+import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpMethods;
@@ -18,7 +18,7 @@ import java.util.List;
 public class TopicRouteBuilder extends RouteBuilder {
 
     private final TopicApplicationServiceImpl topicService;
-    private CamelGlobalExceptionHandler camelGlobalExceptionHandler;
+    private final CamelGlobalExceptionHandler camelGlobalExceptionHandler;
 
     public TopicRouteBuilder(TopicApplicationServiceImpl topicService, CamelGlobalExceptionHandler camelGlobalExceptionHandler) {
         this.topicService = topicService;
@@ -27,7 +27,6 @@ public class TopicRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() {
-
 
         restConfiguration()
                 .component("servlet")
@@ -53,7 +52,9 @@ public class TopicRouteBuilder extends RouteBuilder {
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .process(exchange -> {
                     List<TopicDTO> topics = topicService.getAllTopics();
+
                     ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "All topics retrieved successfully", topics);
+
                     exchange.getMessage().setBody(apiResponseDTO);
                 });
 
@@ -63,7 +64,9 @@ public class TopicRouteBuilder extends RouteBuilder {
                 .process(exchange -> {
                     Long id = Long.parseLong(exchange.getIn().getHeader("id").toString());
                     TopicDTO topic = topicService.getTopicById(id);
+
                     ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "Topic with id " + id + " retrieved successfully", topic);
+
                     exchange.getMessage().setBody(apiResponseDTO);
                 });
 
@@ -72,7 +75,31 @@ public class TopicRouteBuilder extends RouteBuilder {
                 .process(exchange -> {
                     TopicDTO topicDTO = exchange.getIn().getBody(TopicDTO.class);
                     TopicDTO topicCreated = topicService.createTopic(topicDTO);
+
                     ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.CREATED.value(), "Topic with name " + topicCreated.getName() + " created successfully", topicCreated);
+
+                    exchange.getMessage().setBody(apiResponseDTO);
+                });
+
+        from("direct:updateTopic")
+                .process(exchange -> {
+                    Long id = exchange.getIn().getHeader("id", Long.class);
+                    TopicDTO topicDto = exchange.getIn().getBody(TopicDTO.class);
+
+                    TopicDTO updatedTopic = topicService.updateTopic(id, topicDto);
+
+                    ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "Topic with name " + updatedTopic.getName() + " updated successfully", updatedTopic);
+                    exchange.getMessage().setBody(apiResponseDTO);
+                });
+
+        from("direct:deleteTopic")
+                .process(exchange -> {
+                    Long id = exchange.getIn().getHeader("id", Long.class);
+                    TopicDTO topicDTO = topicService.getTopicById(id);
+
+                    topicService.deleteTopicById(id);
+
+                    ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "Topic with id " + id + " deleted successfully",topicDTO);
                     exchange.getMessage().setBody(apiResponseDTO);
                 });
 
