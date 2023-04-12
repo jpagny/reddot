@@ -1,6 +1,6 @@
-package com.elysium.reddot.ms.topic.application.service.mapper;
+package com.elysium.reddot.ms.topic.application.data.mapper;
 
-import com.elysium.reddot.ms.topic.application.service.dto.TopicDTO;
+import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 
 public class TopicApplicationMapper {

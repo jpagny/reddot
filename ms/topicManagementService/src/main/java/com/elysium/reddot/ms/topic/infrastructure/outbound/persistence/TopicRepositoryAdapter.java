@@ -2,7 +2,7 @@ package com.elysium.reddot.ms.topic.infrastructure.outbound.persistence;
 
 
 import com.elysium.reddot.ms.topic.application.port.out.TopicRepositoryOutbound;
-import com.elysium.reddot.ms.topic.application.service.dto.TopicDTO;
+import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicMapperInfrastructure;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.entity.TopicJpaEntity;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.repository.TopicJpaRepository;
@@ -24,6 +24,7 @@ public class TopicRepositoryAdapter implements TopicRepositoryOutbound {
     @Override
     public TopicDTO createTopic(TopicDTO topicDto) {
         TopicJpaEntity topicEntity = TopicMapperInfrastructure.toEntity(topicDto);
+        System.out.println(topicEntity.getName());
         TopicJpaEntity savedTopic = topicJpaRepository.save(topicEntity);
         return TopicMapperInfrastructure.toDTO(savedTopic);
     }

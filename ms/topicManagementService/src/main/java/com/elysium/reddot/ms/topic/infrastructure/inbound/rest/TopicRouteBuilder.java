@@ -1,10 +1,10 @@
 package com.elysium.reddot.ms.topic.infrastructure.inbound.rest;
 
 
-import com.elysium.reddot.ms.topic.application.exception.handler.CamelGlobalExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.handler.core.CamelGlobalExceptionHandler;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
-import com.elysium.reddot.ms.topic.application.service.dto.ApiResponseDTO;
-import com.elysium.reddot.ms.topic.application.service.dto.TopicDTO;
+import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
+import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpMethods;

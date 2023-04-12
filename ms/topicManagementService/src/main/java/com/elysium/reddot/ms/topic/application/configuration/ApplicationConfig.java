@@ -1,7 +1,7 @@
 package com.elysium.reddot.ms.topic.application.configuration;
 
-import com.elysium.reddot.ms.topic.application.exception.handler.CamelGlobalExceptionHandler;
-import com.elysium.reddot.ms.topic.application.exception.handler.ExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.handler.core.CamelGlobalExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.handler.core.ExceptionHandler;
 import com.elysium.reddot.ms.topic.application.port.out.TopicRepositoryOutbound;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationService;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;

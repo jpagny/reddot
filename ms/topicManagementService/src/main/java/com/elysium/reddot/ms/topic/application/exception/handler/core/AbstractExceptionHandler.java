@@ -1,6 +1,6 @@
-package com.elysium.reddot.ms.topic.application.exception.handler;
+package com.elysium.reddot.ms.topic.application.exception.handler.core;
 
-import com.elysium.reddot.ms.topic.application.service.dto.ApiResponseDTO;
+import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import org.apache.camel.Exchange;
 
 public abstract class AbstractExceptionHandler implements ExceptionHandler {

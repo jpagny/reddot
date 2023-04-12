@@ -1,26 +1,27 @@
 package com.elysium.reddot.ms.topic.application.service;
 
+import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
+import com.elysium.reddot.ms.topic.application.data.mapper.TopicApplicationMapper;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.topic.application.port.in.TopicManagement;
 import com.elysium.reddot.ms.topic.application.port.out.TopicRepositoryOutbound;
-import com.elysium.reddot.ms.topic.application.service.dto.TopicDTO;
-import com.elysium.reddot.ms.topic.application.service.mapper.TopicApplicationMapper;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @Slf4j
 public class TopicApplicationServiceImpl implements TopicApplicationService {
 
     private static final String MESSAGE_TOPIC = "topic";
-
     private final TopicManagement domainService;
     private final TopicRepositoryOutbound topicRepository;
 

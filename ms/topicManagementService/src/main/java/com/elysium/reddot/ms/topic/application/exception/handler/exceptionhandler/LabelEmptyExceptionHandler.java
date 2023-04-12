@@ -1,6 +1,6 @@
-package com.elysium.reddot.ms.topic.application.exception.handler.exception;
+package com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler;
 
-import com.elysium.reddot.ms.topic.application.exception.handler.AbstractExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.handler.core.AbstractExceptionHandler;
 import com.elysium.reddot.ms.topic.domain.exception.LabelEmptyException;
 import org.apache.camel.Exchange;
 import org.springframework.http.HttpStatus;

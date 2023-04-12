@@ -1,6 +1,5 @@
-package com.elysium.reddot.ms.topic.application.exception.handler;
+package com.elysium.reddot.ms.topic.application.exception.handler.core;
 
-import com.elysium.reddot.ms.topic.application.exception.handler.ExceptionHandler;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 

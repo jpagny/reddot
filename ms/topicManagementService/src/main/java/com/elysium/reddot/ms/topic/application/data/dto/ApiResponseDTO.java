@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.application.service.dto;
+package com.elysium.reddot.ms.topic.application.data.dto;
 
 
 import lombok.Getter;

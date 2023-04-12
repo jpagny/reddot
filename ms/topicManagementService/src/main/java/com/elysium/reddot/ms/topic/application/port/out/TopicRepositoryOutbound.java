@@ -1,6 +1,6 @@
 package com.elysium.reddot.ms.topic.application.port.out;
 
-import com.elysium.reddot.ms.topic.application.service.dto.TopicDTO;
+import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 
 import java.util.List;
 import java.util.Optional;
