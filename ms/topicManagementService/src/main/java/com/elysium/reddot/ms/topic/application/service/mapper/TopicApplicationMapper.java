@@ -17,8 +17,8 @@ public class TopicApplicationMapper {
     public static TopicModel toModel(TopicDTO topicDTO) {
         return new TopicModel(
                 topicDTO.getId(),
-                topicDTO.getLabel(),
                 topicDTO.getName(),
+                topicDTO.getLabel(),
                 topicDTO.getDescription()
         );
     }

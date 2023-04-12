@@ -6,6 +6,7 @@ import com.elysium.reddot.ms.topic.application.port.in.TopicManagement;
 import com.elysium.reddot.ms.topic.application.port.out.TopicRepositoryOutbound;
 import com.elysium.reddot.ms.topic.application.service.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.application.service.mapper.TopicApplicationMapper;
+import com.elysium.reddot.ms.topic.domain.exception.LabelEmptyException;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
         this.topicRepository = userRepositoryOutbound;
     }
 
-    public Optional<TopicDTO> getTopicById(Long id) throws ResourceNotFoundException {
+    public TopicDTO getTopicById(Long id) {
         log.debug("Fetching topic with id {}", id);
 
         TopicDTO topicDTO = topicRepository.findTopicById(id).orElseThrow(
@@ -40,9 +41,10 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
         log.info("Successfully retrieved topic with id {}, name '{}', description '{}'",
                 id, topicDTO.getName(), topicDTO.getDescription());
 
-        return Optional.of(topicDTO);
+        return topicDTO;
     }
 
+    @Override
     public List<TopicDTO> getAllTopics() {
         log.info("Fetching all topics from database...");
 
@@ -51,7 +53,9 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public TopicDTO createTopic(TopicDTO topicDto) {
+
         log.debug("Creating new topic with name '{}', description '{}'", topicDto.getName(), topicDto.getDescription());
 
         Optional<TopicDTO> existingTopic = topicRepository.findTopicByName(topicDto.getName());
@@ -61,6 +65,7 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
         }
 
         TopicModel topicModel = TopicApplicationMapper.toModel(topicDto);
+
         domainService.validateTopic(topicModel);
 
         TopicDTO topicCreated = topicRepository.createTopic(topicDto);
@@ -71,6 +76,7 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
         return topicCreated;
     }
 
+    @Override
     public TopicDTO updateTopic(Long id, TopicDTO topicDto) throws ResourceNotFoundException {
         log.debug("Updating topic with id '{}', label '{}', description '{}'",
                 topicDto.getId(), topicDto.getLabel(), topicDto.getDescription());
@@ -95,6 +101,7 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
         return topicUpdated;
     }
 
+    @Override
     public void deleteTopicById(Long id) throws ResourceNotFoundException {
         log.debug("Deleting topic with id {}", id);
 

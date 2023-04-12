@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.topic.application.configuration;
 
+import com.elysium.reddot.ms.topic.application.exception.CamelGlobalExceptionHandler;
 import com.elysium.reddot.ms.topic.application.port.out.TopicRepositoryOutbound;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationService;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
@@ -25,5 +26,10 @@ public class ApplicationConfig {
     @Bean
     public TopicApplicationService topicApplicationService(TopicDomainService topicDomainService, TopicRepositoryOutbound userRepositoryOutbound) {
         return new TopicApplicationServiceImpl(topicDomainService, userRepositoryOutbound);
+    }
+
+    @Bean
+    public CamelGlobalExceptionHandler camelGlobalExceptionHandler() {
+        return new CamelGlobalExceptionHandler();
     }
 }
