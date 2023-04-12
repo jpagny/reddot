@@ -1,6 +1,7 @@
 package com.elysium.reddot.ms.topic.application.configuration;
 
-import com.elysium.reddot.ms.topic.application.exception.CamelGlobalExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.handler.CamelGlobalExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.handler.ExceptionHandler;
 import com.elysium.reddot.ms.topic.application.port.out.TopicRepositoryOutbound;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationService;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
@@ -9,6 +10,8 @@ import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.TopicRepo
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.repository.TopicJpaRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class ApplicationConfig {
@@ -29,7 +32,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public CamelGlobalExceptionHandler camelGlobalExceptionHandler() {
-        return new CamelGlobalExceptionHandler();
+    public CamelGlobalExceptionHandler camelGlobalExceptionHandler(List<ExceptionHandler> exceptionHandlers) {
+        return new CamelGlobalExceptionHandler(exceptionHandlers);
     }
 }

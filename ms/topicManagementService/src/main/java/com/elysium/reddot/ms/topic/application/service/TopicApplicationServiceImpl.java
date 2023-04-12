@@ -1,12 +1,11 @@
 package com.elysium.reddot.ms.topic.application.service;
 
-import com.elysium.reddot.ms.topic.application.exception.ResourceAlreadyExistException;
-import com.elysium.reddot.ms.topic.application.exception.ResourceNotFoundException;
+import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.topic.application.port.in.TopicManagement;
 import com.elysium.reddot.ms.topic.application.port.out.TopicRepositoryOutbound;
 import com.elysium.reddot.ms.topic.application.service.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.application.service.mapper.TopicApplicationMapper;
-import com.elysium.reddot.ms.topic.domain.exception.LabelEmptyException;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

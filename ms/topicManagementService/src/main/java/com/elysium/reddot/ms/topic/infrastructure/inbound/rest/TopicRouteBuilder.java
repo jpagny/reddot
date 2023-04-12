@@ -1,7 +1,7 @@
 package com.elysium.reddot.ms.topic.infrastructure.inbound.rest;
 
 
-import com.elysium.reddot.ms.topic.application.exception.CamelGlobalExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.handler.CamelGlobalExceptionHandler;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
 import com.elysium.reddot.ms.topic.application.service.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.service.dto.TopicDTO;
