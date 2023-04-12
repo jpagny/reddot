@@ -4,13 +4,11 @@ import com.elysium.reddot.ms.topic.application.port.in.TopicManagement;
 import com.elysium.reddot.ms.topic.domain.exception.LabelEmptyException;
 import com.elysium.reddot.ms.topic.domain.exception.NameEmptyException;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
-import org.springframework.stereotype.Component;
 
 public class TopicDomainService implements TopicManagement {
 
     @Override
     public void validateTopic(TopicModel topicModel) {
-
         if (topicModel.getName() == null
                 || topicModel.getName().isEmpty()
                 || topicModel.getName().isBlank()) {
