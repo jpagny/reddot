@@ -10,7 +10,6 @@ public class ApiResponseDTO {
     private final String message;
     private final Object data;
 
-
     public ApiResponseDTO(int status, String message, Object data) {
         this.status = status;
         this.message = message;

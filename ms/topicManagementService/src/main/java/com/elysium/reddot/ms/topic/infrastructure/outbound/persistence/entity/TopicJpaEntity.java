@@ -14,7 +14,7 @@ import javax.persistence.*;
 public class TopicJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "topic_seq_generator")
-    @SequenceGenerator(name = "topic_seq_generator", sequenceName = "topic_seq")
+    @SequenceGenerator(name = "topic_seq_generator", sequenceName = "topic_seq", allocationSize = 1)
     private Long id;
 
     private String name;

@@ -71,7 +71,7 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
         TopicModel topicModel = TopicApplicationMapper.toModel(topicToCreateDTO);
 
         try {
-            domainService.validateTopic(topicModel);
+            domainService.validateBuildTopic(topicModel);
         } catch (Exception exception) {
             throw new ResourceBadValueException(MESSAGE_TOPIC, exception.getMessage());
         }

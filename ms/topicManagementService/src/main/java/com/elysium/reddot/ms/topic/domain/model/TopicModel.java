@@ -2,7 +2,7 @@ package com.elysium.reddot.ms.topic.domain.model;
 
 import java.util.Objects;
 
-public class TopicModel {
+public class TopicModel implements Cloneable {
     private Long id;
     private String name;
     private String label;
@@ -67,5 +67,15 @@ public class TopicModel {
                 ", description='" + description + '\'' +
                 '}';
     }
+
+    @Override
+    public TopicModel clone() {
+        try {
+            return (TopicModel) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError("Cloning failed for TopicModel", e);
+        }
+    }
+
 
 }

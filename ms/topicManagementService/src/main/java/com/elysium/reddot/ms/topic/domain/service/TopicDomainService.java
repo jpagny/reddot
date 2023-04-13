@@ -8,28 +8,41 @@ import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 public class TopicDomainService implements TopicManagement {
 
     @Override
-    public void validateTopic(TopicModel topicModel) {
-        if (topicModel.getName() == null
-                || topicModel.getName().isEmpty()
-                || topicModel.getName().isBlank()) {
-            throw new NameEmptyException();
-        }
+    public void validateBuildTopic(TopicModel topicModel) {
+        validateName(topicModel.getName());
+        validateLabel(topicModel.getLabel());
+    }
 
-        if (topicModel.getLabel() == null
-                || topicModel.getLabel().isEmpty()
-                || topicModel.getLabel().isBlank()) {
-            throw new LabelEmptyException();
-        }
+    @Override
+    public void validateUpdateTopic(TopicModel topicModel) {
+        validateLabel(topicModel.getLabel());
     }
 
     @Override
     public TopicModel updateTopic(TopicModel existingTopic, TopicModel topicToUpdate) {
 
-        validateTopic(topicToUpdate);
+        validateUpdateTopic(topicToUpdate);
 
         existingTopic.setLabel(topicToUpdate.getLabel());
         existingTopic.setDescription(topicToUpdate.getDescription());
 
-        return existingTopic;
+        return existingTopic.clone();
     }
+
+    private boolean isBlank(String str) {
+        return str == null || str.trim().isEmpty();
+    }
+
+    private void validateName(String name) {
+        if (isBlank(name)) {
+            throw new NameEmptyException();
+        }
+    }
+
+    private void validateLabel(String label) {
+        if (isBlank(label)) {
+            throw new LabelEmptyException();
+        }
+    }
+
 }
