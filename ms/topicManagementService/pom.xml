@@ -19,7 +19,7 @@
     <properties>
         <java.version>11</java.version>
         <camel.version>3.20.2</camel.version>
-        <jacoco.version>0.8.7</jacoco.version>
+        <jacoco.version>0.8.9</jacoco.version>
         <maven.surefire.version>3.0.0</maven.surefire.version>
     </properties>
 
@@ -81,7 +81,6 @@
     <build>
         <plugins>
             <plugin>
-
                 <!-- plugin springboot -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -112,7 +111,6 @@
                 <version>${jacoco.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>com/reddot/ms/topic/TopicApplication*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -164,6 +162,7 @@
                         </configuration>
                     </execution>
                 </executions>
+
             </plugin>
 
         </plugins>
