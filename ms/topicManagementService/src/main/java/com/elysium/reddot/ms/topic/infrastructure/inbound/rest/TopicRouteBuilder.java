@@ -47,7 +47,7 @@ public class TopicRouteBuilder extends RouteBuilder {
 
         from("direct:getAllTopics")
                 .routeId("getAllTopics")
-                .log("Route '${routeId}': Path '${endpointUri}': Retrieving all topics")
+                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Retrieving all topics")
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .process(exchange -> {
                     List<TopicDTO> topics = topicService.getAllTopics();
@@ -55,7 +55,7 @@ public class TopicRouteBuilder extends RouteBuilder {
                             "All topics retrieved successfully", topics);
                     exchange.getMessage().setBody(apiResponseDTO);
                 })
-                .log("Route '${routeId}': Path '${endpointUri}': Successfully retrieved all topics");
+                .log("Route '${routeId}': Path 'Path '${header.CamelHttpUri}': Successfully retrieved all topics");
 
         from("direct:getTopicById")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Getting topic with id '${header.id}'")
