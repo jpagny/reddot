@@ -6,6 +6,6 @@ public interface TopicManagement {
 
     void validateTopic(TopicModel topic);
 
-    TopicModel updateTopicProperties(TopicModel existingTopic, TopicModel topicToUpdate);
+    TopicModel updateTopic(TopicModel existingTopic, TopicModel topicToUpdate);
 
 }

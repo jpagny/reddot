@@ -55,17 +55,20 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
     }
 
     @Override
-    public TopicDTO createTopic(TopicDTO topicDto) {
+    public TopicDTO createTopic(TopicDTO topicToCreateDTO) {
 
-        log.debug("Creating new topic with name '{}', description '{}'", topicDto.getName(), topicDto.getDescription());
+        log.debug("Creating new topic with name '{}', label '{}, description '{}'",
+                topicToCreateDTO.getName(),
+                topicToCreateDTO.getLabel(),
+                topicToCreateDTO.getDescription());
 
-        Optional<TopicDTO> existingTopic = topicRepository.findTopicByName(topicDto.getName());
+        Optional<TopicDTO> existingTopic = topicRepository.findTopicByName(topicToCreateDTO.getName());
 
         if (existingTopic.isPresent()) {
-            throw new ResourceAlreadyExistException(MESSAGE_TOPIC, "name", topicDto.getName());
+            throw new ResourceAlreadyExistException(MESSAGE_TOPIC, "name", topicToCreateDTO.getName());
         }
 
-        TopicModel topicModel = TopicApplicationMapper.toModel(topicDto);
+        TopicModel topicModel = TopicApplicationMapper.toModel(topicToCreateDTO);
 
         try {
             domainService.validateTopic(topicModel);
@@ -73,43 +76,47 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
             throw new ResourceBadValueException(MESSAGE_TOPIC, exception.getMessage());
         }
 
-        TopicDTO topicCreated = topicRepository.createTopic(topicDto);
+        TopicDTO topicCreatedDTO = topicRepository.createTopic(topicToCreateDTO);
 
-        log.info("Successfully created topic with id {}, name '{}', description '{}'",
-                topicCreated.getId(), topicCreated.getName(), topicCreated.getDescription());
+        log.info("Successfully created topic with id {}, name '{}', label '{}' description '{}'",
+                topicCreatedDTO.getId(),
+                topicCreatedDTO.getName(),
+                topicCreatedDTO.getLabel(),
+                topicCreatedDTO.getDescription());
 
-        return topicCreated;
+        return topicCreatedDTO;
     }
 
     @Override
-    public TopicDTO updateTopic(Long id, TopicDTO topicDto) {
-        log.debug("Updating topic with id '{}', label '{}', description '{}'",
-                id, topicDto.getLabel(), topicDto.getDescription());
+    public TopicDTO updateTopic(Long id, TopicDTO topicToUpdateDTO) {
+        log.debug("Updating topic with id '{}', name '{}', label '{}', description '{}'",
+                id, topicToUpdateDTO.getName(), topicToUpdateDTO.getLabel(), topicToUpdateDTO.getDescription());
 
-        TopicDTO existingTopic = topicRepository.findTopicById(id).orElseThrow(
+        TopicDTO existingTopicDTO = topicRepository.findTopicById(id).orElseThrow(
                 () -> new ResourceNotFoundException(MESSAGE_TOPIC, String.valueOf(id))
         );
 
-        TopicModel existingTopicModel = TopicApplicationMapper.toModel(existingTopic);
-        TopicModel topicToUpdateModel = TopicApplicationMapper.toModel(topicDto);
+        TopicModel existingTopicModel = TopicApplicationMapper.toModel(existingTopicDTO);
+        TopicModel topicToUpdateModel = TopicApplicationMapper.toModel(topicToUpdateDTO);
 
         try {
-            domainService.validateTopic(topicToUpdateModel);
+            TopicModel topicUpdatedModel = domainService.updateTopic(existingTopicModel, topicToUpdateModel);
+            TopicDTO topicUpdatedDTO = TopicApplicationMapper.toDTO(topicUpdatedModel);
+
+            topicUpdatedDTO = topicRepository.updateTopic(topicUpdatedDTO);
+
+            log.info("Successfully updated topic with id '{}', name '{}', label'{}, description '{}'",
+                    topicUpdatedDTO.getId(),
+                    topicUpdatedDTO.getName(),
+                    topicUpdatedDTO.getLabel(),
+                    topicUpdatedDTO.getDescription());
+
+            return topicUpdatedDTO;
+
         } catch (Exception ex) {
             throw new ResourceBadValueException("topic", ex.getMessage());
+
         }
-
-        TopicModel topicUpdatedModel = domainService.updateTopicProperties(existingTopicModel, topicToUpdateModel);
-        TopicDTO topicUpdatedDTO = TopicApplicationMapper.toDTO(topicUpdatedModel);
-
-        TopicDTO topicUpdated = topicRepository.updateTopic(topicUpdatedDTO);
-
-        log.info("Successfully updated topic with id '{}', name '{}', description '{}'",
-                topicUpdated.getId(),
-                topicUpdated.getName(),
-                topicUpdated.getDescription());
-
-        return topicUpdated;
     }
 
     @Override

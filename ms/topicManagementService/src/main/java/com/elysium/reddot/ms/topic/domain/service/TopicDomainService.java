@@ -23,9 +23,13 @@ public class TopicDomainService implements TopicManagement {
     }
 
     @Override
-    public TopicModel updateTopicProperties(TopicModel existingTopic, TopicModel topicToUpdate) {
+    public TopicModel updateTopic(TopicModel existingTopic, TopicModel topicToUpdate) {
+
+        validateTopic(topicToUpdate);
+
         existingTopic.setLabel(topicToUpdate.getLabel());
         existingTopic.setDescription(topicToUpdate.getDescription());
+
         return existingTopic;
     }
 }
