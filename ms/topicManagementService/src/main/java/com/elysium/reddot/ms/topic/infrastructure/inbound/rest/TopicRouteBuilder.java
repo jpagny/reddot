@@ -1,11 +1,9 @@
 package com.elysium.reddot.ms.topic.infrastructure.inbound.rest;
 
-
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.application.exception.handler.core.CamelGlobalExceptionHandler;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.http.HttpStatus;
@@ -27,6 +25,9 @@ public class TopicRouteBuilder extends RouteBuilder {
     @Override
     public void configure() {
 
+        String mediaType = "application/json";
+        String requestId = "/{id}";
+
         restConfiguration()
                 .component("servlet")
                 .bindingMode(RestBindingMode.json);
@@ -36,19 +37,19 @@ public class TopicRouteBuilder extends RouteBuilder {
                 .process(camelGlobalExceptionHandler);
 
         rest("topics")
-                .produces("application/json")
-                .consumes("application/json")
+                .produces(mediaType)
+                .consumes(mediaType)
 
                 .get().to("direct:getAllTopics")
-                .get("/{id}").to("direct:getTopicById")
+                .get(requestId).to("direct:getTopicById")
                 .post().type(TopicDTO.class).to("direct:createTopic")
-                .put("/{id}").type(TopicDTO.class).to("direct:updateTopic")
-                .delete("/{id}").to("direct:deleteTopic");
+                .put(requestId).type(TopicDTO.class).to("direct:updateTopic")
+                .delete(requestId).to("direct:deleteTopic");
 
+        // Get all topics
         from("direct:getAllTopics")
                 .routeId("getAllTopics")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Retrieving all topics")
-                .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .process(exchange -> {
                     List<TopicDTO> topics = topicService.getAllTopics();
                     ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(),
@@ -57,6 +58,7 @@ public class TopicRouteBuilder extends RouteBuilder {
                 })
                 .log("Route '${routeId}': Path 'Path '${header.CamelHttpUri}': Successfully retrieved all topics");
 
+        // Get topic by id
         from("direct:getTopicById")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Getting topic with id '${header.id}'")
                 .process(exchange -> {
@@ -69,6 +71,7 @@ public class TopicRouteBuilder extends RouteBuilder {
                 })
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully retrieved topic with id '${header.id}'");
 
+        // Create topic
         from("direct:createTopic")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Creating a new topic")
                 .process(exchange -> {
@@ -80,6 +83,7 @@ public class TopicRouteBuilder extends RouteBuilder {
                 })
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully created topic with name '${body.data.name}'");
 
+        // Update topic
         from("direct:updateTopic")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Updating topic with id '${header.id}'")
                 .process(exchange -> {
@@ -93,9 +97,9 @@ public class TopicRouteBuilder extends RouteBuilder {
                 })
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully updated topic with id '${header.id}' and name '${body.data.name}'");
 
+        // Delete topic
         from("direct:deleteTopic")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Deleting topic with id '${header.id}'")
-                .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .process(exchange -> {
                     Long id = exchange.getIn().getHeader("id", Long.class);
                     TopicDTO topicDTO = topicService.getTopicById(id);

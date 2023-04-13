@@ -26,7 +26,7 @@ public class TopicDomainService implements TopicManagement {
         existingTopic.setLabel(topicToUpdate.getLabel());
         existingTopic.setDescription(topicToUpdate.getDescription());
 
-        return existingTopic.clone();
+        return existingTopic;
     }
 
     private boolean isBlank(String str) {

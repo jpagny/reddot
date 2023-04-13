@@ -5,6 +5,9 @@ import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 
 public class TopicApplicationMapper {
 
+    private TopicApplicationMapper() {
+    }
+
     public static TopicDTO toDTO(TopicModel topicModel) {
         TopicDTO topicDTO = new TopicDTO();
         topicDTO.setId(topicModel.getId());

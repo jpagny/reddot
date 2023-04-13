@@ -5,6 +5,9 @@ import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.entity.To
 
 public class TopicMapperInfrastructure {
 
+    private TopicMapperInfrastructure() {
+    }
+
     public static TopicJpaEntity toEntity(TopicDTO topicDTO) {
         TopicJpaEntity topicJpaEntity = new TopicJpaEntity();
         topicJpaEntity.setId(topicDTO.getId());

@@ -114,7 +114,7 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
             return topicUpdatedDTO;
 
         } catch (Exception ex) {
-            throw new ResourceBadValueException("topic", ex.getMessage());
+            throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, ex.getMessage());
 
         }
     }
