@@ -3,6 +3,7 @@ package com.elysium.reddot.ms.topic.application.service;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.application.data.mapper.TopicApplicationMapper;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.topic.application.exception.exception.ResourceBadValueException;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.topic.application.port.in.TopicManagement;
 import com.elysium.reddot.ms.topic.application.port.out.TopicRepositoryOutbound;
@@ -66,7 +67,11 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
 
         TopicModel topicModel = TopicApplicationMapper.toModel(topicDto);
 
-        domainService.validateTopic(topicModel);
+        try {
+            domainService.validateTopic(topicModel);
+        } catch (Exception exception) {
+            throw new ResourceBadValueException(MESSAGE_TOPIC, exception.getMessage());
+        }
 
         TopicDTO topicCreated = topicRepository.createTopic(topicDto);
 
@@ -77,16 +82,22 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
     }
 
     @Override
-    public TopicDTO updateTopic(Long id, TopicDTO topicDto) throws ResourceNotFoundException {
+    public TopicDTO updateTopic(Long id, TopicDTO topicDto) {
         log.debug("Updating topic with id '{}', label '{}', description '{}'",
-                topicDto.getId(), topicDto.getLabel(), topicDto.getDescription());
+                id, topicDto.getLabel(), topicDto.getDescription());
 
         TopicDTO existingTopic = topicRepository.findTopicById(id).orElseThrow(
-                () -> new ResourceNotFoundException(MESSAGE_TOPIC, topicDto.getId().toString())
+                () -> new ResourceNotFoundException(MESSAGE_TOPIC, String.valueOf(id))
         );
 
         TopicModel existingTopicModel = TopicApplicationMapper.toModel(existingTopic);
         TopicModel topicToUpdateModel = TopicApplicationMapper.toModel(topicDto);
+
+        try {
+            domainService.validateTopic(topicToUpdateModel);
+        } catch (Exception ex) {
+            throw new ResourceBadValueException("topic", ex.getMessage());
+        }
 
         TopicModel topicUpdatedModel = domainService.updateTopicProperties(existingTopicModel, topicToUpdateModel);
         TopicDTO topicUpdatedDTO = TopicApplicationMapper.toDTO(topicUpdatedModel);

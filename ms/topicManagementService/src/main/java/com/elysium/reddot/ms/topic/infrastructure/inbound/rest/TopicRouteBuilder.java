@@ -41,14 +41,13 @@ public class TopicRouteBuilder extends RouteBuilder {
                 .produces("application/json")
                 .consumes("application/json")
 
-                .get().routeId("getAllTopics").to("direct:getAllTopics")
-                .get("/{id}").routeId("getTopicById").to("direct:getTopicById")
-                .post().type(TopicDTO.class).routeId("createTopic").to("direct:createTopic")
-                .put("/{id}").type(TopicDTO.class).routeId("updateTopic").to("direct:updateTopic")
-                .delete("/{id}").routeId("deleteTopic").to("direct:deleteTopic");
+                .get().routeId("processGetAllTopics").to("direct:getAllTopics")
+                .get("/{id}").routeId("processGetTopicById").to("direct:getTopicById")
+                .post().type(TopicDTO.class).routeId("processCreateTopic").to("direct:createTopic")
+                .put("/{id}").type(TopicDTO.class).routeId("processUpdateTopic").to("direct:updateTopic")
+                .delete("/{id}").routeId("processDeleteTopic").to("direct:deleteTopic");
 
         from("direct:getAllTopics")
-                .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.GET))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .process(exchange -> {
                     List<TopicDTO> topics = topicService.getAllTopics();
@@ -59,8 +58,6 @@ public class TopicRouteBuilder extends RouteBuilder {
                 });
 
         from("direct:getTopicById")
-                .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.GET))
-                .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .process(exchange -> {
                     Long id = Long.parseLong(exchange.getIn().getHeader("id").toString());
                     TopicDTO topic = topicService.getTopicById(id);
@@ -71,7 +68,6 @@ public class TopicRouteBuilder extends RouteBuilder {
                 });
 
         from("direct:createTopic")
-                .routeId("processCreateTopic")
                 .process(exchange -> {
                     TopicDTO topicDTO = exchange.getIn().getBody(TopicDTO.class);
                     TopicDTO topicCreated = topicService.createTopic(topicDTO);
@@ -93,6 +89,7 @@ public class TopicRouteBuilder extends RouteBuilder {
                 });
 
         from("direct:deleteTopic")
+                .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .process(exchange -> {
                     Long id = exchange.getIn().getHeader("id", Long.class);
                     TopicDTO topicDTO = topicService.getTopicById(id);
