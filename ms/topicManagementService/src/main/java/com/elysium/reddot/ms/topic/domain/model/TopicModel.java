@@ -3,8 +3,8 @@ package com.elysium.reddot.ms.topic.domain.model;
 import java.util.Objects;
 
 public class TopicModel implements Cloneable {
-    private Long id;
-    private String name;
+    private final Long id;
+    private final String name;
     private String label;
     private String description;
 
@@ -21,10 +21,6 @@ public class TopicModel implements Cloneable {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getLabel() {

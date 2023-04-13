@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TopicApplicationServiceImpl implements TopicApplicationService {
 
-    private static final String MESSAGE_TOPIC = "topic";
+    private static final String RESOURCE_NAME_TOPIC = "topic";
     private final TopicManagement domainService;
     private final TopicRepositoryOutbound topicRepository;
 
@@ -36,7 +36,7 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
         log.debug("Fetching topic with id {}", id);
 
         TopicDTO topicDTO = topicRepository.findTopicById(id).orElseThrow(
-                () -> new ResourceNotFoundException(MESSAGE_TOPIC, String.valueOf(id))
+                () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
         );
 
         log.info("Successfully retrieved topic with id {}, name '{}', description '{}'",
@@ -65,7 +65,7 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
         Optional<TopicDTO> existingTopic = topicRepository.findTopicByName(topicToCreateDTO.getName());
 
         if (existingTopic.isPresent()) {
-            throw new ResourceAlreadyExistException(MESSAGE_TOPIC, "name", topicToCreateDTO.getName());
+            throw new ResourceAlreadyExistException(RESOURCE_NAME_TOPIC, "name", topicToCreateDTO.getName());
         }
 
         TopicModel topicModel = TopicApplicationMapper.toModel(topicToCreateDTO);
@@ -73,7 +73,7 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
         try {
             domainService.validateBuildTopic(topicModel);
         } catch (Exception exception) {
-            throw new ResourceBadValueException(MESSAGE_TOPIC, exception.getMessage());
+            throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, exception.getMessage());
         }
 
         TopicDTO topicCreatedDTO = topicRepository.createTopic(topicToCreateDTO);
@@ -93,7 +93,7 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
                 id, topicToUpdateDTO.getName(), topicToUpdateDTO.getLabel(), topicToUpdateDTO.getDescription());
 
         TopicDTO existingTopicDTO = topicRepository.findTopicById(id).orElseThrow(
-                () -> new ResourceNotFoundException(MESSAGE_TOPIC, String.valueOf(id))
+                () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
         );
 
         TopicModel existingTopicModel = TopicApplicationMapper.toModel(existingTopicDTO);
@@ -124,7 +124,7 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
         log.debug("Deleting topic with id {}", id);
 
         TopicDTO topicToDelete = topicRepository.findTopicById(id).orElseThrow(
-                () -> new ResourceNotFoundException(MESSAGE_TOPIC, String.valueOf(id))
+                () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
         );
 
         topicRepository.deleteTopic(id);
