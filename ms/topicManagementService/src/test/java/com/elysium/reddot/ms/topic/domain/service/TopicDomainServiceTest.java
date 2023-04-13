@@ -1,9 +1,8 @@
-package domain.service;
+package com.elysium.reddot.ms.topic.domain.service;
 
 import com.elysium.reddot.ms.topic.domain.exception.LabelEmptyException;
 import com.elysium.reddot.ms.topic.domain.exception.NameEmptyException;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
-import com.elysium.reddot.ms.topic.domain.service.TopicDomainService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
