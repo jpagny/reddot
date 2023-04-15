@@ -98,7 +98,7 @@
     <build>
         <plugins>
             <plugin>
-                <!-- plugin springboot -->
+                <!-- Maven Springboot plugin -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
@@ -111,24 +111,48 @@
                 </configuration>
             </plugin>
 
-            <!-- Maven Surefire Plugin -->
+            <!-- Maven Surefire Plugin for tests unit -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.version}</version>
                 <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <exclude>**/*IT.java</exclude>
+                    </includes>
                     <argLine>${surefireArgLine}</argLine>
                 </configuration>
             </plugin>
 
-            <!-- Jacoco Maven Plugin -->
+            <!-- Maven Failsafe Plugin for tests integration -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.22.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>**/*IT.java</include>
+                        <exclude>**/*Test.java</exclude>
+                    </includes>
+                </configuration>
+            </plugin>
+
+
+            <!-- Maven Jacoco Plugin -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.version}</version>
                 <configuration>
-                    <excludes>
-                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
@@ -161,7 +185,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.8</minimum>
+                                            <minimum>0.9</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
