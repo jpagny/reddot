@@ -1,9 +1,8 @@
-package com.elysium.reddot.ms.topic.infrastructure.inbound.rest;
+package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
-import com.elysium.reddot.ms.topic.infrastructure.inbound.camel.GetAllTopicsProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -15,16 +14,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TopicRouteTest {
+public class GetTopicByIdProcessorTest {
 
-    private GetAllTopicsProcessor getAllTopicsProcessor;
+    private GetTopicByIdProcessor getTopicByIdProcessor;
 
     @Mock
     private TopicApplicationServiceImpl topicService;
@@ -34,27 +30,27 @@ public class TopicRouteTest {
     @BeforeEach
     public void setUp() {
         camelContext = new DefaultCamelContext();
-        getAllTopicsProcessor = new GetAllTopicsProcessor(topicService);
+        getTopicByIdProcessor = new GetTopicByIdProcessor(topicService);
     }
 
     @Test
-    public void givenTopicsExist_whenGetAllTopicsIsCalled_thenAllTopicsAreRetrieved() {
+    public void givenTopicExists_whenGetTopicByIdIsCalled_thenTopicIsRetrieved() {
         // arrange
-        TopicDTO topic1 = new TopicDTO(1L, "name 1", "Name 1", "Topic 1");
-        TopicDTO topic2 = new TopicDTO(2L, "name 2", "Name 2", "Topic 2");
-        List<TopicDTO> topicList = Arrays.asList(topic1, topic2);
+        Long id = 1L;
+        TopicDTO topic = new TopicDTO(id, "name 1", "Name 1", "Topic 1");
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "All topics retrieved successfully", topicList);
+                "Topic with id " + id + " retrieved successfully", topic);
 
         Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setHeader("CamelHttpUri", "/topics");
+        exchange.getIn().setHeader("CamelHttpUri", "/topics/" + id);
+        exchange.getIn().setHeader("id", id);
 
         // mock
-        when(topicService.getAllTopics()).thenReturn(topicList);
+        when(topicService.getTopicById(id)).thenReturn(topic);
 
         // act
-        getAllTopicsProcessor.process(exchange);
+        getTopicByIdProcessor.process(exchange);
         ApiResponseDTO actualApiResponse = exchange.getMessage().getBody(ApiResponseDTO.class);
 
         // assert
@@ -62,6 +58,5 @@ public class TopicRouteTest {
         assertEquals(expectedApiResponse.getMessage(), actualApiResponse.getMessage());
         assertEquals(expectedApiResponse.getData(), actualApiResponse.getData());
     }
-
 
 }

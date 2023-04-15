@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.infrastructure.inbound.camel;
+package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
@@ -6,23 +6,23 @@ import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceIm
 import lombok.AllArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 @AllArgsConstructor
-public class GetAllTopicsProcessor implements Processor {
+public class UpdateTopicProcessor implements Processor {
 
     private final TopicApplicationServiceImpl topicService;
 
     @Override
     public void process(Exchange exchange) {
-        List<TopicDTO> topics = topicService.getAllTopics();
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(),
-                "All topics retrieved successfully", topics);
+        Long id = exchange.getIn().getHeader("id", Long.class);
+        TopicDTO topicDto = exchange.getIn().getBody(TopicDTO.class);
+
+        TopicDTO updatedTopic = topicService.updateTopic(id, topicDto);
+
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "Topic with name " + updatedTopic.getName() + " updated successfully", updatedTopic);
         exchange.getMessage().setBody(apiResponseDTO);
     }
 }
