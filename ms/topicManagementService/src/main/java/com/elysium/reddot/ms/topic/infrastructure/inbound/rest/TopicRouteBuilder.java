@@ -1,26 +1,21 @@
 package com.elysium.reddot.ms.topic.infrastructure.inbound.rest;
 
-import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.application.exception.handler.core.CamelGlobalExceptionHandler;
-import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
+import com.elysium.reddot.ms.topic.infrastructure.inbound.camel.GetAllTopicsProcessor;
+import lombok.AllArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
+@AllArgsConstructor
 public class TopicRouteBuilder extends RouteBuilder {
 
-    private final TopicApplicationServiceImpl topicService;
+    private final GetAllTopicsProcessor getAllTopicsProcessor;
     private final CamelGlobalExceptionHandler camelGlobalExceptionHandler;
 
-    public TopicRouteBuilder(TopicApplicationServiceImpl topicService, CamelGlobalExceptionHandler camelGlobalExceptionHandler) {
-        this.topicService = topicService;
-        this.camelGlobalExceptionHandler = camelGlobalExceptionHandler;
-    }
 
     @Override
     public void configure() {
@@ -47,6 +42,14 @@ public class TopicRouteBuilder extends RouteBuilder {
                 .delete(requestId).to("direct:deleteTopic");
 
         // Get all topics
+        from("direct:getAllTopics")
+                .routeId("getAllTopics")
+                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Retrieving all topics")
+                .process(getAllTopicsProcessor)
+                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully retrieved all topics");
+
+
+        /*
         from("direct:getAllTopics")
                 .routeId("getAllTopics")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Retrieving all topics")
@@ -110,6 +113,9 @@ public class TopicRouteBuilder extends RouteBuilder {
                     exchange.getMessage().setBody(apiResponseDTO);
                 })
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully deleted topic with id '${header.id}'");
+
+
+         */
 
     }
 }

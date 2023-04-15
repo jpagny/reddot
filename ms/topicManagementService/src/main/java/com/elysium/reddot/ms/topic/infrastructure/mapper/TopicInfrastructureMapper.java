@@ -3,9 +3,9 @@ package com.elysium.reddot.ms.topic.infrastructure.mapper;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.entity.TopicJpaEntity;
 
-public class TopicMapperInfrastructure {
+public class TopicInfrastructureMapper {
 
-    private TopicMapperInfrastructure() {
+    private TopicInfrastructureMapper() {
     }
 
     public static TopicJpaEntity toEntity(TopicDTO topicDTO) {
