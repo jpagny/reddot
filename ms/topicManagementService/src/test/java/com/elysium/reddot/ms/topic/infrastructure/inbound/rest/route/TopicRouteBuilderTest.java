@@ -66,10 +66,9 @@ public class TopicRouteBuilderTest extends CamelTestSupport {
         // given
         TopicDTO topic1 = new TopicDTO(1L, "name 1", "Name 1", "Topic 1");
         TopicDTO topic2 = new TopicDTO(2L, "name 2", "Name 2", "Topic 2");
+        List<TopicDTO> topicList = Arrays.asList(topic1, topic2);
 
         Exchange exchange = new DefaultExchange(context);
-
-        List<TopicDTO> topicList = Arrays.asList(topic1, topic2);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
