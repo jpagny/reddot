@@ -51,7 +51,6 @@ public class TopicRouteBuilder extends RouteBuilder {
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully retrieved all topics")
                 .end();
 
-
         // route : get topic by id
         from(TopicRouteConstants.GET_TOPIC_BY_ID.getRouteName())
                 .routeId("getTopicById")
