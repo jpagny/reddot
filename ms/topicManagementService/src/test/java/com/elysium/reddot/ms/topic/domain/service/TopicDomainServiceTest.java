@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TopicDomainServiceTest {
+class TopicDomainServiceTest {
 
     private static TopicDomainService topicDomainService;
 
     @BeforeAll
-    public static void setUp() {
+    static void setUp() {
         topicDomainService = new TopicDomainService();
     }
 

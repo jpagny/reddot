@@ -32,7 +32,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TopicRouteBuilderTest extends CamelTestSupport {
+class TopicRouteBuilderTest extends CamelTestSupport {
 
     @Mock
     private TopicApplicationServiceImpl topicService;
@@ -62,7 +62,7 @@ public class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
-    public void givenTopicsExist_whenRouteGetAllTopicsIsCalled_thenAllTopicsAreRetrieved() {
+    void givenTopicsExist_whenRouteGetAllTopicsIsCalled_thenAllTopicsAreRetrieved() {
         // given
         TopicDTO topic1 = new TopicDTO(1L, "name 1", "Name 1", "Topic 1");
         TopicDTO topic2 = new TopicDTO(2L, "name 2", "Name 2", "Topic 2");
@@ -89,7 +89,7 @@ public class TopicRouteBuilderTest extends CamelTestSupport {
 
 
     @Test
-    public void givenExistingTopic_whenRouteGetTopicByIdIsCalledWithValidId_thenCorrectTopicIsReturned() {
+    void givenExistingTopic_whenRouteGetTopicByIdIsCalledWithValidId_thenCorrectTopicIsReturned() {
         // given
         Long topicId = 1L;
         TopicDTO topic = new TopicDTO(topicId, "name 1", "Name 1", "Topic 1");
@@ -115,7 +115,7 @@ public class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
-    public void givenNonExistingTopicId_whenRouteGetTopicByIdIsCalled_thenThrowResourceNotFoundException() {
+    void givenNonExistingTopicId_whenRouteGetTopicByIdIsCalled_thenThrowResourceNotFoundException() {
         // given
         Long nonExistingId = 99L;
         Exchange exchange = new DefaultExchange(context);
@@ -139,7 +139,7 @@ public class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
-    public void givenValidTopic_whenRouteCreateTopicIsCalled_thenTopicIsCreated() {
+    void givenValidTopic_whenRouteCreateTopicIsCalled_thenTopicIsCreated() {
         // given
         TopicDTO inputTopic = new TopicDTO(null, "name", "Name", "Description");
         TopicDTO createdTopic = new TopicDTO(1L, inputTopic.getName(), inputTopic.getLabel(), inputTopic.getDescription());
@@ -192,7 +192,7 @@ public class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
-    public void givenValidRequest_whenRouteUpdateTopicIsCalled_thenTopicIsUpdated() {
+    void givenValidRequest_whenRouteUpdateTopicIsCalled_thenTopicIsUpdated() {
         // given
         Long topicId = 1L;
         TopicDTO request = new TopicDTO(topicId, "newName", "newDescription", "newIcon");
@@ -220,7 +220,7 @@ public class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
-    public void givenInvalidRequest_whenRouteUpdateTopicIsCalled_thenResourceNotFoundExceptionIsThrown() {
+    void givenInvalidRequest_whenRouteUpdateTopicIsCalled_thenResourceNotFoundExceptionIsThrown() {
         // given
         Long nonExistingId = 99L;
         TopicDTO request = new TopicDTO(nonExistingId, "newName", "newDescription", "newIcon");
@@ -246,7 +246,7 @@ public class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
-    public void givenTopicExists_whenRouteDeleteTopicIsCalled_thenTopicIsDeleted() {
+    void givenTopicExists_whenRouteDeleteTopicIsCalled_thenTopicIsDeleted() {
         // given
         Long topicId = 1L;
         TopicDTO topicDTO = new TopicDTO(topicId, "test", "Test", "Test topic");
@@ -272,7 +272,7 @@ public class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
-    public void givenInvalidRequest_whenRouteDeleteTopicIsCalled_thenResourceNotFoundExceptionIsThrown() {
+    void givenInvalidRequest_whenRouteDeleteTopicIsCalled_thenResourceNotFoundExceptionIsThrown() {
         // given
         Long nonExistingId = 99L;
 

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TopicInfrastructureMapperTest {
+class TopicInfrastructureMapperTest {
 
     @Test
     void givenTopicDTO_whenToEntity_thenTopicJpaEntity() {

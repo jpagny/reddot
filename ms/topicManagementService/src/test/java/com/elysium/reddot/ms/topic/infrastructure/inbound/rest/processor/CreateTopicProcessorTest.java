@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CreateTopicProcessorTest {
+class CreateTopicProcessorTest {
 
     private CreateTopicProcessor createTopicProcessor;
 
@@ -28,13 +28,13 @@ public class CreateTopicProcessorTest {
     private CamelContext camelContext;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         camelContext = new DefaultCamelContext();
         createTopicProcessor = new CreateTopicProcessor(topicService);
     }
 
     @Test
-    public void givenValidTopic_whenCreateTopicIsCalled_thenTopicIsCreatedSuccessfully() {
+    void givenValidTopic_whenCreateTopicIsCalled_thenTopicIsCreatedSuccessfully() {
         // arrange
         TopicDTO topicDTO = new TopicDTO(null, "name", "Name", "Topic description");
         TopicDTO createdTopicDTO = new TopicDTO(1L, "name", "Name", "Topic description");

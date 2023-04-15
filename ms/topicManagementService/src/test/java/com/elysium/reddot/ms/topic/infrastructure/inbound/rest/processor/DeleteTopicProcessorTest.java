@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DeleteTopicProcessorTest {
+class DeleteTopicProcessorTest {
 
     private DeleteTopicProcessor deleteTopicProcessor;
 
@@ -28,13 +28,13 @@ public class DeleteTopicProcessorTest {
     private CamelContext camelContext;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         camelContext = new DefaultCamelContext();
         deleteTopicProcessor = new DeleteTopicProcessor(topicService);
     }
 
     @Test
-    public void givenValidTopicId_whenDeleteTopicIsCalled_thenTopicIsDeletedSuccessfully() {
+    void givenValidTopicId_whenDeleteTopicIsCalled_thenTopicIsDeletedSuccessfully() {
         // arrange
         Long topicId = 1L;
         TopicDTO topicDTO = new TopicDTO(topicId, "name", "Name", "Topic description");
