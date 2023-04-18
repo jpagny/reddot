@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface TopicRepositoryOutbound {
+public interface ITopicRepositoryOutbound {
     TopicDTO createTopic(TopicDTO topicDto);
 
     Optional<TopicDTO> findTopicById(Long id);

@@ -9,7 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-class TopicManagementServiceApplicationIT {
+class ITopicManagementServiceApplicationIT {
 
     @Autowired
     private ApplicationContext applicationContext;

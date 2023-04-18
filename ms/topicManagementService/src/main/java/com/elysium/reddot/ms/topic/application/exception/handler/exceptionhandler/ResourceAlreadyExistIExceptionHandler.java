@@ -1,13 +1,13 @@
 package com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler;
 
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlreadyExistException;
-import com.elysium.reddot.ms.topic.application.exception.handler.core.AbstractExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.handler.core.AbstractIExceptionHandler;
 import org.apache.camel.Exchange;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ResourceAlreadyExistExceptionHandler extends AbstractExceptionHandler {
+public class ResourceAlreadyExistIExceptionHandler extends AbstractIExceptionHandler {
 
     @Override
     public void handleException(Exchange exchange, Exception exception) {

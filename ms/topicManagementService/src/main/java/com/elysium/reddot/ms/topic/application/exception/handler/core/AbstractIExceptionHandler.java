@@ -3,11 +3,11 @@ package com.elysium.reddot.ms.topic.application.exception.handler.core;
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import org.apache.camel.Exchange;
 
-public abstract class AbstractExceptionHandler implements ExceptionHandler {
-    protected ExceptionHandler nextHandler;
+public abstract class AbstractIExceptionHandler implements IExceptionHandler {
+    protected IExceptionHandler nextHandler;
 
     @Override
-    public void setNextHandler(ExceptionHandler nextHandler) {
+    public void setNextHandler(IExceptionHandler nextHandler) {
         this.nextHandler = nextHandler;
     }
 

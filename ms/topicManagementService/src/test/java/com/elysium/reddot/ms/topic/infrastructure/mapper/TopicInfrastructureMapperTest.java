@@ -2,6 +2,7 @@ package com.elysium.reddot.ms.topic.infrastructure.mapper;
 
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.entity.TopicJpaEntity;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class TopicInfrastructureMapperTest {
 
     @Test
+    @DisplayName("given topicDTO when toEntity is called then returns topicJpaEntity")
     void givenTopicDTO_whenToEntity_thenTopicJpaEntity() {
         // given
         TopicDTO topicDTO = new TopicDTO(1L, "Test Name", "Test Label", "Test Description");
@@ -24,6 +26,7 @@ class TopicInfrastructureMapperTest {
     }
 
     @Test
+    @DisplayName("given topicJpaEntity when toDTO is called then returns topicDTO")
     void givenTopicJpaEntity_whenToDTO_thenTopicDTO() {
         // given
         TopicJpaEntity topicJpaEntity = new TopicJpaEntity();

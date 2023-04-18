@@ -2,12 +2,13 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
-import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
+import com.elysium.reddot.ms.topic.application.service.ITopicApplicationServiceImpl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -23,7 +24,7 @@ class DeleteTopicProcessorTest {
     private DeleteTopicProcessor deleteTopicProcessor;
 
     @Mock
-    private TopicApplicationServiceImpl topicService;
+    private ITopicApplicationServiceImpl topicService;
 
     private CamelContext camelContext;
 
@@ -34,7 +35,8 @@ class DeleteTopicProcessorTest {
     }
 
     @Test
-    void givenValidTopicId_whenDeleteTopicIsCalled_thenTopicIsDeletedSuccessfully() {
+    @DisplayName("given valid topicId when deleteTopic is called then topic deleted Successfully")
+    void givenValidTopicId_whenDeleteTopic_thenTopicIsDeletedSuccessfully() {
         // arrange
         Long topicId = 1L;
         TopicDTO topicDTO = new TopicDTO(topicId, "name", "Name", "Topic description");

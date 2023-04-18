@@ -2,12 +2,13 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
-import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
+import com.elysium.reddot.ms.topic.application.service.ITopicApplicationServiceImpl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -23,7 +24,7 @@ class GetTopicByIdProcessorTest {
     private GetTopicByIdProcessor getTopicByIdProcessor;
 
     @Mock
-    private TopicApplicationServiceImpl topicService;
+    private ITopicApplicationServiceImpl topicService;
 
     private CamelContext camelContext;
 
@@ -34,7 +35,8 @@ class GetTopicByIdProcessorTest {
     }
 
     @Test
-    void givenTopicExists_whenGetTopicByIdIsCalled_thenTopicIsRetrieved() {
+    @DisplayName("given topic exists when getTopicById is called then topic retrieved")
+    void givenTopicExists_whenGetTopicById_thenTopicIsRetrieved() {
         // arrange
         Long id = 1L;
         TopicDTO topic = new TopicDTO(id, "name 1", "Name 1", "Topic 1");

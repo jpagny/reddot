@@ -6,9 +6,9 @@ import org.apache.camel.Processor;
 import java.util.List;
 
 public class CamelGlobalExceptionHandler implements Processor {
-    private final ExceptionHandler exceptionHandlerChain;
+    private final IExceptionHandler exceptionHandlerChain;
 
-    public CamelGlobalExceptionHandler(List<ExceptionHandler> exceptionHandlers) {
+    public CamelGlobalExceptionHandler(List<IExceptionHandler> exceptionHandlers) {
         this.exceptionHandlerChain = buildExceptionHandlerChain(exceptionHandlers);
     }
 
@@ -18,12 +18,11 @@ public class CamelGlobalExceptionHandler implements Processor {
         exceptionHandlerChain.handleException(exchange, exception);
     }
 
-    private ExceptionHandler buildExceptionHandlerChain(List<ExceptionHandler> exceptionHandlers) {
+    private IExceptionHandler buildExceptionHandlerChain(List<IExceptionHandler> exceptionHandlers) {
         for (int i = 0; i < exceptionHandlers.size() - 1; i++) {
             exceptionHandlers.get(i).setNextHandler(exceptionHandlers.get(i + 1));
         }
         return exceptionHandlers.get(0);
     }
-
 
 }

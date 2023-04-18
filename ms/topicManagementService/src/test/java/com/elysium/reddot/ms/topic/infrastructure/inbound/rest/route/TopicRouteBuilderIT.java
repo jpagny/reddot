@@ -6,6 +6,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.support.DefaultExchange;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +30,8 @@ class TopicRouteBuilderIT {
     private ProducerTemplate template;
 
     @Test
-    void givenTopicsExist_whenRouteGetAllTopicsIsCalled_thenAllTopicsAreRetrieved() {
+    @DisplayName("given topics exist when route getAllTopics is called then all topics retrieved")
+    void givenTopicsExist_whenRouteGetAllTopics_thenAllTopicsAreRetrieved() {
         // arrange
         TopicDTO topic1 = new TopicDTO(1L, "name_1", "Label 1", "Description 1");
         TopicDTO topic2 = new TopicDTO(2L, "name_2", "Label 2", "Description 2");
@@ -52,7 +54,8 @@ class TopicRouteBuilderIT {
     }
 
     @Test
-    void givenExistingTopic_whenRouteGetTopicByIdIsCalledWithValidId_thenCorrectTopicIsReturned() {
+    @DisplayName("given existing topic when route getTopicById is called with valid id then topic returned")
+    void givenExistingTopic_whenRouteGetTopicByIdWithValidId_thenTopicReturned() {
         // given
         Long topicId = 1L;
         TopicDTO topic = new TopicDTO(topicId, "name_1", "Label 1", "Description 1");
@@ -75,7 +78,8 @@ class TopicRouteBuilderIT {
     }
 
     @Test
-    void givenNonExistingTopicId_whenRouteGetTopicByIdIsCalled_thenThrowResourceNotFoundException() {
+    @DisplayName("given non-existing topic id when route getTopicById then throw ResourceNotFoundExceptionHandler")
+    void givenNonExistingTopicId_whenRouteGetTopicById_thenThrowResourceNotFoundExceptionHandler() {
         // given
         Long nonExistingId = 99L;
         Exchange exchange = new DefaultExchange(camelContext);
@@ -96,7 +100,8 @@ class TopicRouteBuilderIT {
     }
 
     @Test
-    void givenValidTopic_whenRouteCreateTopicIsCalled_thenTopicIsCreated() {
+    @DisplayName("given valid topic when route createTopic is called then topic created")
+    void givenValidTopic_whenRouteCreateTopic_thenTopicCreated() {
         // given
         TopicDTO inputTopic = new TopicDTO(null, "name_3", "Label 3", "Description 3");
         TopicDTO createdTopic = new TopicDTO(3L, inputTopic.getName(), inputTopic.getLabel(), inputTopic.getDescription());
@@ -120,7 +125,8 @@ class TopicRouteBuilderIT {
     }
 
     @Test
-    void givenTopicExists_whenRouteCreateTopicIsCalledWithCreatingSameTopic_thenResourceAlreadyExistExceptionHandlerIsTriggered() {
+    @DisplayName("given topic exists when route createTopic is called with creating same topic then throws resourceAlreadyExistExceptionHandler")
+    void givenTopicExists_whenRouteCreateTopicWithCreatingSameTopic_thenThrowsResourceAlreadyExistExceptionHandler() {
         // given
         TopicDTO existingTopic = new TopicDTO(1L, "name_1", "Label 1", "Description 1");
 
@@ -143,7 +149,8 @@ class TopicRouteBuilderIT {
     }
 
     @Test
-    void givenValidRequest_whenRouteUpdateTopicIsCalled_thenTopicIsUpdated() {
+    @DisplayName("given valid request when route updateTopic is called then topic updated")
+    void givenValidRequest_whenRouteUpdateTopic_thenTopicUpdated() {
         // given
         Long topicId = 1L;
         TopicDTO request = new TopicDTO(topicId, "name_1", "New label", "New description");
@@ -168,7 +175,8 @@ class TopicRouteBuilderIT {
     }
 
     @Test
-    void givenInvalidRequest_whenRouteUpdateTopicIsCalled_thenResourceNotFoundExceptionIsThrown() {
+    @DisplayName("given invalid request when route updateTopic is called then throws ResourceNotFoundExceptionHandler")
+    void givenInvalidRequest_whenRouteUpdateTopic_thenResourceThrowsNotFoundExceptionHandler() {
         // given
         Long nonExistingId = 99L;
         TopicDTO request = new TopicDTO(nonExistingId, "newName", "New label", "New Description");
@@ -191,7 +199,8 @@ class TopicRouteBuilderIT {
     }
 
     @Test
-    void givenInvalidRequestWithBadValue_whenRouteUpdateTopicIsCalled_thenResourceBadValueIsThrown() {
+    @DisplayName("given invalid request with bad value when route updateTopic is called then throws ResourceBadValueHandler")
+    void givenInvalidRequestWithBadValue_whenRouteUpdateTopic_thenThrowsResourceBadValueHandler() {
         // given
         Long nonExistingId = 1L;
         TopicDTO request = new TopicDTO(nonExistingId, "name_1", null, "New description");
@@ -201,7 +210,7 @@ class TopicRouteBuilderIT {
         exchange.getIn().setBody(request);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.BAD_REQUEST.value(),
-                "The topic has bad value : Label is required.", null);
+                "The topic has bad value : label is required and cannot be empty.", null);
 
         // when
         Exchange result = template.send(TopicRouteConstants.UPDATE_TOPIC.getRouteName(), exchange);
@@ -214,7 +223,8 @@ class TopicRouteBuilderIT {
     }
 
     @Test
-    void givenTopicExists_whenRouteDeleteTopicIsCalled_thenTopicIsDeleted() {
+    @DisplayName("given topic exists when route deleteTopic is called then topic deleted")
+    void givenTopicExists_whenRouteDeleteTopic_thenTopicDeleted() {
         // given
         Long topicId = 1L;
         TopicDTO topicDTO = new TopicDTO(topicId, "name_1", "Label 1", "Description 1");
@@ -237,7 +247,8 @@ class TopicRouteBuilderIT {
     }
 
     @Test
-    void givenInvalidRequest_whenRouteDeleteTopicIsCalled_thenResourceNotFoundExceptionIsThrown() {
+    @DisplayName("given invalid request when route deleteTopic is called then throws ResourceNotFoundExceptionHandler")
+    void givenInvalidRequest_whenRouteDeleteTopic_thenResourceNotFoundExceptionHandler() {
         // given
         Long nonExistingId = 99L;
 

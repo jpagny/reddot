@@ -5,8 +5,8 @@ import com.elysium.reddot.ms.topic.application.data.mapper.TopicApplicationMappe
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceBadValueException;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
-import com.elysium.reddot.ms.topic.application.port.in.TopicManagement;
-import com.elysium.reddot.ms.topic.application.port.out.TopicRepositoryOutbound;
+import com.elysium.reddot.ms.topic.application.port.in.ITopicManagement;
+import com.elysium.reddot.ms.topic.application.port.out.ITopicRepositoryOutbound;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +20,22 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @Slf4j
-public class TopicApplicationServiceImpl implements TopicApplicationService {
+public class ITopicApplicationServiceImpl implements ITopicApplicationService {
 
     private static final String RESOURCE_NAME_TOPIC = "topic";
-    private final TopicManagement domainService;
-    private final TopicRepositoryOutbound topicRepository;
+    private final ITopicManagement domainService;
+    private final ITopicRepositoryOutbound userRepositoryOutbound;
 
     @Autowired
-    public TopicApplicationServiceImpl(TopicManagement domainService, TopicRepositoryOutbound userRepositoryOutbound) {
+    public ITopicApplicationServiceImpl(ITopicManagement domainService, ITopicRepositoryOutbound userRepositoryOutbound) {
         this.domainService = domainService;
-        this.topicRepository = userRepositoryOutbound;
+        this.userRepositoryOutbound = userRepositoryOutbound;
     }
 
     public TopicDTO getTopicById(Long id) {
         log.debug("Fetching topic with id {}", id);
 
-        TopicDTO topicDTO = topicRepository.findTopicById(id).orElseThrow(
+        TopicDTO topicDTO = userRepositoryOutbound.findTopicById(id).orElseThrow(
                 () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
         );
 
@@ -49,7 +49,7 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
     public List<TopicDTO> getAllTopics() {
         log.info("Fetching all topics from database...");
 
-        return topicRepository.findAllTopics()
+        return userRepositoryOutbound.findAllTopics()
                 .parallelStream()
                 .collect(Collectors.toList());
     }
@@ -62,7 +62,7 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
                 topicToCreateDTO.getLabel(),
                 topicToCreateDTO.getDescription());
 
-        Optional<TopicDTO> existingTopic = topicRepository.findTopicByName(topicToCreateDTO.getName());
+        Optional<TopicDTO> existingTopic = userRepositoryOutbound.findTopicByName(topicToCreateDTO.getName());
 
         if (existingTopic.isPresent()) {
             throw new ResourceAlreadyExistException(RESOURCE_NAME_TOPIC, "name", topicToCreateDTO.getName());
@@ -71,12 +71,12 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
         TopicModel topicModel = TopicApplicationMapper.toModel(topicToCreateDTO);
 
         try {
-            domainService.validateBuildTopic(topicModel);
+            domainService.validateTopicForCreation(topicModel);
         } catch (Exception exception) {
             throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, exception.getMessage());
         }
 
-        TopicDTO topicCreatedDTO = topicRepository.createTopic(topicToCreateDTO);
+        TopicDTO topicCreatedDTO = userRepositoryOutbound.createTopic(topicToCreateDTO);
 
         log.info("Successfully created topic with id {}, name '{}', label '{}' description '{}'",
                 topicCreatedDTO.getId(),
@@ -92,7 +92,7 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
         log.debug("Updating topic with id '{}', name '{}', label '{}', description '{}'",
                 id, topicToUpdateDTO.getName(), topicToUpdateDTO.getLabel(), topicToUpdateDTO.getDescription());
 
-        TopicDTO existingTopicDTO = topicRepository.findTopicById(id).orElseThrow(
+        TopicDTO existingTopicDTO = userRepositoryOutbound.findTopicById(id).orElseThrow(
                 () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
         );
 
@@ -100,10 +100,10 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
         TopicModel topicToUpdateModel = TopicApplicationMapper.toModel(topicToUpdateDTO);
 
         try {
-            TopicModel topicUpdatedModel = domainService.updateTopic(existingTopicModel, topicToUpdateModel);
+            TopicModel topicUpdatedModel = domainService.updateExistingTopicWithUpdates(existingTopicModel, topicToUpdateModel);
             TopicDTO topicUpdatedDTO = TopicApplicationMapper.toDTO(topicUpdatedModel);
 
-            topicUpdatedDTO = topicRepository.updateTopic(topicUpdatedDTO);
+            topicUpdatedDTO = userRepositoryOutbound.updateTopic(topicUpdatedDTO);
 
             log.info("Successfully updated topic with id '{}', name '{}', label'{}, description '{}'",
                     topicUpdatedDTO.getId(),
@@ -123,11 +123,11 @@ public class TopicApplicationServiceImpl implements TopicApplicationService {
     public void deleteTopicById(Long id) throws ResourceNotFoundException {
         log.debug("Deleting topic with id {}", id);
 
-        TopicDTO topicToDelete = topicRepository.findTopicById(id).orElseThrow(
+        TopicDTO topicToDelete = userRepositoryOutbound.findTopicById(id).orElseThrow(
                 () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
         );
 
-        topicRepository.deleteTopic(id);
+        userRepositoryOutbound.deleteTopic(id);
 
         log.info("Successfully deleted topic with id '{}', name '{}', description '{}'",
                 topicToDelete.getId(), topicToDelete.getName(), topicToDelete.getDescription());

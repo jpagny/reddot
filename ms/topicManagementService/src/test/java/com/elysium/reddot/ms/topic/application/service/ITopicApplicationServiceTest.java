@@ -5,7 +5,7 @@ import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlrea
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceBadValueException;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.topic.domain.service.TopicDomainService;
-import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.TopicRepositoryAdapter;
+import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.ITopicRepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,20 +21,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class TopicApplicationServiceTest {
+class ITopicApplicationServiceTest {
 
-
-    private TopicApplicationServiceImpl topicService;
+    private ITopicApplicationServiceImpl topicService;
     @Mock
-    private TopicRepositoryAdapter topicRepository;
+    private ITopicRepositoryAdapter topicRepository;
 
     @BeforeEach
     void setUp() {
         TopicDomainService topicDomainService = new TopicDomainService();
-        topicService = new TopicApplicationServiceImpl(topicDomainService, topicRepository);
+        topicService = new ITopicApplicationServiceImpl(topicDomainService, topicRepository);
     }
 
     @Test
+    @DisplayName("given valid id when getTopicById is called then returns topic")
     void givenValidId_whenGetTopicById_thenReturnsTopic() {
         // given
         Long validId = 1L;
@@ -52,6 +52,7 @@ class TopicApplicationServiceTest {
     }
 
     @Test
+    @DisplayName("given invalid id when getTopicById is called then throws ResourceNotFoundException")
     void givenInvalidId_whenGetTopicById_thenThrowsResourceNotFoundException() {
         // given
         Long invalidId = 99L;
@@ -86,6 +87,7 @@ class TopicApplicationServiceTest {
     }
 
     @Test
+    @DisplayName("given valid topicDTO when createTopic is called then topic created")
     void givenValidTopicDTO_whenCreateTopic_thenTopicCreated() {
         // given
         TopicDTO topicToCreateDTO = new TopicDTO(null, "test", "Test Label", "Test Description");
@@ -105,6 +107,7 @@ class TopicApplicationServiceTest {
     }
 
     @Test
+    @DisplayName("given existing topic when CreateTopic is called then throws ResourceAlreadyExistException")
     void givenExistingTopic_whenCreateTopic_thenThrowsResourceAlreadyExistException() {
         // given
         TopicDTO existingTopicDTO = new TopicDTO(1L, "Test Name", "Test Label", "Test Description");
@@ -120,6 +123,7 @@ class TopicApplicationServiceTest {
     }
 
     @Test
+    @DisplayName("given invalid topicDTO when createTopic is called then throws ResourceBadValueException")
     void givenInvalidTopicDTO_whenCreateTopic_thenThrowsResourceBadValueException() {
         // given
         TopicDTO invalidTopicDTO = new TopicDTO(1L, "", "Invalid Label", "Invalid Description");
@@ -135,6 +139,7 @@ class TopicApplicationServiceTest {
     }
 
     @Test
+    @DisplayName("given validTopicDTO when updateTopic is called then topic updated")
     void givenValidTopicDTO_whenUpdateTopic_thenTopicUpdated() {
         // given
         Long topicId = 1L;
@@ -156,6 +161,7 @@ class TopicApplicationServiceTest {
     }
 
     @Test
+    @DisplayName("given non-existent topic when updateTopic is called then throws ResourceNotFoundException")
     void givenNonExistentTopic_whenUpdateTopic_thenThrowsResourceNotFoundException() {
         // given
         Long nonExistentTopicId = 99L;
@@ -172,6 +178,7 @@ class TopicApplicationServiceTest {
     }
 
     @Test
+    @DisplayName("given invalid topicDTO when updateTopic is called then throws ResourceBadValueException")
     void givenInvalidTopicDTO_whenUpdateTopic_thenThrowsResourceBadValueException() {
         // given
         Long topicId = 1L;
@@ -190,6 +197,7 @@ class TopicApplicationServiceTest {
     }
 
     @Test
+    @DisplayName("given existing topic when deleteTopicById is called then topic deleted")
     void givenExistingTopic_whenDeleteTopicById_thenTopicDeleted() {
         // given
         Long topicId = 1L;
@@ -208,6 +216,7 @@ class TopicApplicationServiceTest {
     }
 
     @Test
+    @DisplayName("given non-existent topic when deleteTopicById is called then throws ResourceNotFoundException")
     void givenNonExistentTopic_whenDeleteTopicById_thenThrowsResourceNotFoundException() {
         // given
         Long nonExistentTopicId = 99L;

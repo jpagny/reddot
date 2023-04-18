@@ -2,12 +2,13 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
-import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
+import com.elysium.reddot.ms.topic.application.service.ITopicApplicationServiceImpl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -23,7 +24,7 @@ class CreateTopicProcessorTest {
     private CreateTopicProcessor createTopicProcessor;
 
     @Mock
-    private TopicApplicationServiceImpl topicService;
+    private ITopicApplicationServiceImpl topicService;
 
     private CamelContext camelContext;
 
@@ -34,7 +35,8 @@ class CreateTopicProcessorTest {
     }
 
     @Test
-    void givenValidTopic_whenCreateTopicIsCalled_thenTopicIsCreatedSuccessfully() {
+    @DisplayName("given valid topic when createTopic is called then topic created successfully")
+    void givenValidTopic_whenCreateTopic_thenTopicCreatedSuccessfully() {
         // arrange
         TopicDTO topicDTO = new TopicDTO(null, "name", "Name", "Topic description");
         TopicDTO createdTopicDTO = new TopicDTO(1L, "name", "Name", "Topic description");

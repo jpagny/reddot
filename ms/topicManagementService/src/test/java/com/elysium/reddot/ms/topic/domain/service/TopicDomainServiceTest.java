@@ -1,9 +1,10 @@
 package com.elysium.reddot.ms.topic.domain.service;
 
-import com.elysium.reddot.ms.topic.domain.exception.LabelEmptyException;
-import com.elysium.reddot.ms.topic.domain.exception.NameEmptyException;
+import com.elysium.reddot.ms.topic.domain.exception.FieldEmptyException;
+import com.elysium.reddot.ms.topic.domain.exception.FieldWithSpaceException;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,50 +19,66 @@ class TopicDomainServiceTest {
     }
 
     @Test
-    void givenTopicModelWithNullName_whenValidateBuildTopic_thenThrowsNameEmptyException() {
+    @DisplayName("given topicModel with null name= when validateTopicForCreation is called then throws FieldEmptyException")
+    void givenTopicModelWithNullName_whenValidateBuildTopic_thenThrowsFieldEmptyException() {
         // given
         TopicModel topicModel = new TopicModel(1L, null, "test", "description");
 
         // then && throw
-        assertThrows(NameEmptyException.class, () -> topicDomainService.validateBuildTopic(topicModel));
+        assertThrows(FieldEmptyException.class, () -> topicDomainService.validateTopicForCreation(topicModel));
     }
 
     @Test
-    void givenTopicModelWithBlankName_whenValidateBuildTopic_thenThrowsNameEmptyException() {
+    @DisplayName("given topicModel with blank name when validateTopicForCreation is called then throws FieldEmptyException")
+    void givenTopicModelWithBlankName_whenValidateBuildTopic_thenThrowsFieldEmptyException() {
         // given
         TopicModel topicModel = new TopicModel(1L, "", "test", "description");
 
         // then && throw
-        assertThrows(NameEmptyException.class, () -> topicDomainService.validateBuildTopic(topicModel));
+        assertThrows(FieldEmptyException.class, () -> topicDomainService.validateTopicForCreation(topicModel));
     }
 
     @Test
-    void givenTopicModelWithNullLabel_whenValidateBuildTopic_thenThrowsLabelEmptyException() {
+    @DisplayName("given topicModel with space name when validateTopicForCreation is called then throws FieldWithSpaceException")
+    void givenTopicModelWithSpaceName_whenValidateBuildTopic_thenThrowsFieldWithSpaceException() {
+        // given
+        TopicModel topicModel = new TopicModel(1L, "name 1", "test", "description");
+
+        // then && throw
+        assertThrows(FieldWithSpaceException.class, () -> topicDomainService.validateTopicForCreation(topicModel));
+    }
+
+    @Test
+    @DisplayName("given topicModel with null label when validateTopicForCreation is called then throws FieldEmptyException")
+    void givenTopicModelWithNullLabel_whenValidateBuildTopic_thenThrowsFieldEmptyException() {
         // given
         TopicModel topicModel = new TopicModel(1L, "test", null, "description");
 
         // then && throw
-        assertThrows(LabelEmptyException.class, () -> topicDomainService.validateBuildTopic(topicModel));
+        assertThrows(FieldEmptyException.class, () -> topicDomainService.validateTopicForCreation(topicModel));
     }
 
     @Test
-    void givenTopicModelWithBlankLabel_whenValidateBuildTopic_thenThrowsLabelEmptyException() {
+    @DisplayName("given topicModelWith blank label when validateTopicForCreation is called then throws FieldEmptyException")
+    void givenTopicModelWithBlankLabel_whenValidateBuildTopic_thenThrowsFieldEmptyException() {
         // given
         TopicModel topicModel = new TopicModel(1L, "test", " ", "description");
 
         // then && throw
-        assertThrows(LabelEmptyException.class, () -> topicDomainService.validateBuildTopic(topicModel));
+        assertThrows(FieldEmptyException.class, () -> topicDomainService.validateTopicForCreation(topicModel));
     }
 
     @Test
+    @DisplayName("given valid topicModel when validateTopicForCreation is called then no exception thrown")
     void givenValidTopicModel_whenValidateBuildTopic_thenNoExceptionThrown() {
         TopicModel topicModel = new TopicModel(1L, "test", "test", "description");
 
-        assertDoesNotThrow(() -> topicDomainService.validateBuildTopic(topicModel),
+        assertDoesNotThrow(() -> topicDomainService.validateTopicForCreation(topicModel),
                 "validateBuildTopic should not throw an exception for a valid TopicModel");
     }
 
     @Test
+    @DisplayName("given existing topic and topic to update when updateExistingTopicWithUpdates is called then topic updated successfully")
     void givenExistingTopicAndTopicToUpdate_whenUpdateTopic_thenTopicUpdatedSuccessfully() {
         // given
         TopicModel existingTopic = new TopicModel(1L, "test", "test", "description");
@@ -70,7 +87,7 @@ class TopicDomainServiceTest {
         topicToUpdate.setDescription("Updated Description");
 
         // when
-        TopicModel updatedTopic = topicDomainService.updateTopic(existingTopic, topicToUpdate);
+        TopicModel updatedTopic = topicDomainService.updateExistingTopicWithUpdates(existingTopic, topicToUpdate);
 
         // then
         assertEquals("Updated Label", updatedTopic.getLabel());
@@ -79,7 +96,8 @@ class TopicDomainServiceTest {
     }
 
     @Test
-    void givenTopicModelToUpdateWithBlankLabel_whenValidateUpdateTopic_thenThrowsLabelEmptyException() {
+    @DisplayName("given topicModel to update with blank label when validateTopicForCreation is called then throws FieldEmptyException")
+    void givenTopicModelToUpdateWithBlankLabel_whenValidateUpdateTopic_thenThrowsFieldEmptyException() {
         // given
         TopicModel existingTopic = new TopicModel(1L, "test", "test", "description");
         TopicModel topicToUpdate = new TopicModel(existingTopic.getId(), existingTopic.getName(), existingTopic.getLabel(), existingTopic.getDescription());
@@ -87,10 +105,11 @@ class TopicDomainServiceTest {
         topicToUpdate.setDescription("Updated Description");
 
         // then && throw
-        assertThrows(LabelEmptyException.class, () -> topicDomainService.validateBuildTopic(topicToUpdate));
+        assertThrows(FieldEmptyException.class, () -> topicDomainService.validateTopicForUpdate(topicToUpdate));
     }
 
     @Test
+    @DisplayName("test hash code")
     void testHashCode() {
         TopicModel topic1 = new TopicModel(1L, "name1", "label1", "description1");
         TopicModel topic2 = new TopicModel(1L, "name2", "label2", "description2");
@@ -103,6 +122,7 @@ class TopicDomainServiceTest {
     }
 
     @Test
+    @DisplayName("test topic equal")
     void testAreTopicsEqual() {
         TopicModel topic1 = new TopicModel(1L, "name1", "label1", "description1");
         TopicModel topic2 = new TopicModel(1L, "name2", "label2", "description2");
@@ -117,6 +137,7 @@ class TopicDomainServiceTest {
     }
 
     @Test
+    @DisplayName("test to string")
     void testToString() {
         TopicModel topic = new TopicModel(1L, "name1", "label1", "description1");
 

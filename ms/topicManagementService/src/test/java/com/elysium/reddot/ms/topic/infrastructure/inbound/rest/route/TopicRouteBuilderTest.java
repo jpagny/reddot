@@ -5,11 +5,11 @@ import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.topic.application.exception.handler.core.CamelGlobalExceptionHandler;
-import com.elysium.reddot.ms.topic.application.exception.handler.core.ExceptionHandler;
-import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler.ResourceAlreadyExistExceptionHandler;
-import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler.ResourceBadValueExceptionHandler;
-import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler.ResourceNotFoundExceptionHandler;
-import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
+import com.elysium.reddot.ms.topic.application.exception.handler.core.IExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler.ResourceAlreadyExistIExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler.ResourceBadValueIExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler.ResourceNotFoundIExceptionHandler;
+import com.elysium.reddot.ms.topic.application.service.ITopicApplicationServiceImpl;
 import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.*;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -17,6 +17,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -35,7 +36,7 @@ import static org.mockito.Mockito.when;
 class TopicRouteBuilderTest extends CamelTestSupport {
 
     @Mock
-    private TopicApplicationServiceImpl topicService;
+    private ITopicApplicationServiceImpl topicService;
 
     @Override
     protected CamelContext createCamelContext() {
@@ -44,11 +45,11 @@ class TopicRouteBuilderTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        List<ExceptionHandler> listExceptionHandlers = Arrays.asList(
-                new ResourceAlreadyExistExceptionHandler(),
-                new ResourceBadValueExceptionHandler(),
-                new ResourceNotFoundExceptionHandler());
-        CamelGlobalExceptionHandler camelGlobalExceptionHandler = new CamelGlobalExceptionHandler(listExceptionHandlers);
+        List<IExceptionHandler> listIExceptionHandlers = Arrays.asList(
+                new ResourceAlreadyExistIExceptionHandler(),
+                new ResourceBadValueIExceptionHandler(),
+                new ResourceNotFoundIExceptionHandler());
+        CamelGlobalExceptionHandler camelGlobalExceptionHandler = new CamelGlobalExceptionHandler(listIExceptionHandlers);
 
         TopicProcessorHolder topicProcessorHolder = new TopicProcessorHolder(
                 new GetAllTopicsProcessor(topicService),
@@ -62,7 +63,8 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
-    void givenTopicsExist_whenRouteGetAllTopicsIsCalled_thenAllTopicsAreRetrieved() {
+    @DisplayName("given topics exist when route getAllTopics is called then all topics retrieved")
+    void givenTopicsExist_whenRouteGetAllTopics_thenAllTopicsRetrieved() {
         // given
         TopicDTO topic1 = new TopicDTO(1L, "name 1", "Name 1", "Topic 1");
         TopicDTO topic2 = new TopicDTO(2L, "name 2", "Name 2", "Topic 2");
@@ -89,7 +91,8 @@ class TopicRouteBuilderTest extends CamelTestSupport {
 
 
     @Test
-    void givenExistingTopic_whenRouteGetTopicByIdIsCalledWithValidId_thenCorrectTopicIsReturned() {
+    @DisplayName("given existing topic when route getTopicById is called with valid id then topic returned")
+    void givenExistingTopic_whenRouteGetTopicByIdWithValidId_thenTopicReturned() {
         // given
         Long topicId = 1L;
         TopicDTO topic = new TopicDTO(topicId, "name 1", "Name 1", "Topic 1");
@@ -115,7 +118,8 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
-    void givenNonExistingTopicId_whenRouteGetTopicByIdIsCalled_thenThrowResourceNotFoundException() {
+    @DisplayName("given non-existing topic id when route getTopicById is called then throw ResourceNotFoundExceptionHandler")
+    void givenNonExistingTopicId_whenRouteGetTopicById_thenThrowResourceNotFoundExceptionHandler() {
         // given
         Long nonExistingId = 99L;
         Exchange exchange = new DefaultExchange(context);
@@ -139,7 +143,8 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
-    void givenValidTopic_whenRouteCreateTopicIsCalled_thenTopicIsCreated() {
+    @DisplayName("given valid topic when route createTopic is called then topic created")
+    void givenValidTopic_whenRouteCreateTopic_thenTopicCreated() {
         // given
         TopicDTO inputTopic = new TopicDTO(null, "name", "Name", "Description");
         TopicDTO createdTopic = new TopicDTO(1L, inputTopic.getName(), inputTopic.getLabel(), inputTopic.getDescription());
@@ -166,7 +171,8 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
-    void givenTopicExists_whenRouteCreateTopicIsCalledWithCreatingSameTopic_thenResourceAlreadyExistExceptionHandlerIsTriggered() {
+    @DisplayName("given topic exists when route createTopic is called with creating same topic then throws ResourceAlreadyExistExceptionHandler")
+    void givenTopicExists_whenRouteCreateTopicWithCreatingSameTopic_thenThrowsResourceAlreadyExistExceptionHandler() {
         // given
         TopicDTO existingTopic = new TopicDTO(1L, "name", "Name", "Topic description");
 
@@ -192,6 +198,7 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
+    @DisplayName("given valid request when route updateTopic is called then topic is updated")
     void givenValidRequest_whenRouteUpdateTopicIsCalled_thenTopicIsUpdated() {
         // given
         Long topicId = 1L;
@@ -220,7 +227,8 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
-    void givenInvalidRequest_whenRouteUpdateTopicIsCalled_thenResourceNotFoundExceptionIsThrown() {
+    @DisplayName("given invalid request when route updateTopic is called then throws ResourceNotFoundExceptionHandler")
+    void givenInvalidRequest_whenRouteUpdateTopic_thenThrowsResourceNotFoundExceptionHandler() {
         // given
         Long nonExistingId = 99L;
         TopicDTO request = new TopicDTO(nonExistingId, "newName", "newDescription", "newIcon");
@@ -246,7 +254,8 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
-    void givenTopicExists_whenRouteDeleteTopicIsCalled_thenTopicIsDeleted() {
+    @DisplayName("given topic exists when route deleteTopic is called then topic deleted")
+    void givenTopicExists_whenRouteDeleteTopic_thenTopicDeleted() {
         // given
         Long topicId = 1L;
         TopicDTO topicDTO = new TopicDTO(topicId, "test", "Test", "Test topic");
@@ -272,7 +281,8 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     }
 
     @Test
-    void givenInvalidRequest_whenRouteDeleteTopicIsCalled_thenResourceNotFoundExceptionIsThrown() {
+    @DisplayName("given invalid request when route deleteTopic is called then throws resourceNotFoundExceptionHandler")
+    void givenInvalidRequest_whenRouteDeleteTopic_thenThrowsResourceNotFoundExceptionHandler() {
         // given
         Long nonExistingId = 99L;
 

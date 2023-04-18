@@ -2,7 +2,7 @@ package com.elysium.reddot.ms.topic.infrastructure.outbound.persistence;
 
 
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
-import com.elysium.reddot.ms.topic.application.port.out.TopicRepositoryOutbound;
+import com.elysium.reddot.ms.topic.application.port.out.ITopicRepositoryOutbound;
 import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicInfrastructureMapper;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.entity.TopicJpaEntity;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.repository.TopicJpaRepository;
@@ -13,11 +13,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class TopicRepositoryAdapter implements TopicRepositoryOutbound {
+public class ITopicRepositoryAdapter implements ITopicRepositoryOutbound {
 
     private final TopicJpaRepository topicJpaRepository;
 
-    public TopicRepositoryAdapter(TopicJpaRepository topicJpaRepository) {
+    public ITopicRepositoryAdapter(TopicJpaRepository topicJpaRepository) {
         this.topicJpaRepository = topicJpaRepository;
     }
 

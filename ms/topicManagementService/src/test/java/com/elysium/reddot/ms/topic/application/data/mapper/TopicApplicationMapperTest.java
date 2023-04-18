@@ -2,6 +2,7 @@ package com.elysium.reddot.ms.topic.application.data.mapper;
 
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class TopicApplicationMapperTest {
 
     @Test
+    @DisplayName("given topicModel when toDTO is called then returns TopicDTO")
     void givenTopicModel_whenToDTO_thenTopicDTO() {
         // given
         TopicModel topicModel = new TopicModel(1L, "Test Name", "Test Label", "Test Description");
@@ -24,6 +26,7 @@ class TopicApplicationMapperTest {
     }
 
     @Test
+    @DisplayName("given topicDTO when toModel is called then returns topicModel")
     void givenTopicDTO_whenToModel_thenTopicModel() {
         // given
         TopicDTO topicDTO = new TopicDTO(1L, "Test Name", "Test Label", "Test Description");
