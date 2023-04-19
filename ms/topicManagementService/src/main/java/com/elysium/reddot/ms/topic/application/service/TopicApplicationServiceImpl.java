@@ -20,14 +20,14 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @Slf4j
-public class ITopicApplicationServiceImpl implements ITopicApplicationService {
+public class TopicApplicationServiceImpl implements ITopicApplicationService {
 
     private static final String RESOURCE_NAME_TOPIC = "topic";
     private final ITopicManagement domainService;
     private final ITopicRepositoryOutbound userRepositoryOutbound;
 
     @Autowired
-    public ITopicApplicationServiceImpl(ITopicManagement domainService, ITopicRepositoryOutbound userRepositoryOutbound) {
+    public TopicApplicationServiceImpl(ITopicManagement domainService, ITopicRepositoryOutbound userRepositoryOutbound) {
         this.domainService = domainService;
         this.userRepositoryOutbound = userRepositoryOutbound;
     }

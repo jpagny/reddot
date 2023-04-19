@@ -2,7 +2,7 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
-import com.elysium.reddot.ms.topic.application.service.ITopicApplicationServiceImpl;
+import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -27,7 +27,7 @@ class GetAllTopicsProcessorTest {
     private GetAllTopicsProcessor getAllTopicsProcessor;
 
     @Mock
-    private ITopicApplicationServiceImpl topicService;
+    private TopicApplicationServiceImpl topicService;
 
     private CamelContext camelContext;
 

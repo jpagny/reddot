@@ -23,12 +23,7 @@ public class TopicRouteBuilder extends RouteBuilder {
         restConfiguration()
                 .component("servlet")
                 .bindingMode(RestBindingMode.json)
-                .dataFormatProperty("prettyPrint", "true")
-                .apiContextPath("/api-doc")
-                .apiProperty("api.title", "My API Title")
-                .apiProperty("api.version", "1.0.0")
-                .apiProperty("cors", "true")
-                .apiProperty("base.path", "/api");
+                .dataFormatProperty("prettyPrint", "true");
 
         onException(Exception.class)
                 .handled(true)

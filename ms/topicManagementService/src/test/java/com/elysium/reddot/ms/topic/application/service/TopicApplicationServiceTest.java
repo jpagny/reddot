@@ -21,16 +21,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ITopicApplicationServiceTest {
+class TopicApplicationServiceTest {
 
-    private ITopicApplicationServiceImpl topicService;
+    private TopicApplicationServiceImpl topicService;
     @Mock
     private ITopicRepositoryAdapter topicRepository;
 
     @BeforeEach
     void setUp() {
         TopicDomainService topicDomainService = new TopicDomainService();
-        topicService = new ITopicApplicationServiceImpl(topicDomainService, topicRepository);
+        topicService = new TopicApplicationServiceImpl(topicDomainService, topicRepository);
     }
 
     @Test

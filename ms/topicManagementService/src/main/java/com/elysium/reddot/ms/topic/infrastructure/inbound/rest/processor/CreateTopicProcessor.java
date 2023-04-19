@@ -2,7 +2,7 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
-import com.elysium.reddot.ms.topic.application.service.ITopicApplicationServiceImpl;
+import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
 import lombok.AllArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class CreateTopicProcessor implements Processor {
 
-    private final ITopicApplicationServiceImpl topicService;
+    private final TopicApplicationServiceImpl topicService;
 
     @Override
     public void process(Exchange exchange) {

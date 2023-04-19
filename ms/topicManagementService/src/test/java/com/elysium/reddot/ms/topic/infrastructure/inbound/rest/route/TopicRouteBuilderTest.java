@@ -9,7 +9,7 @@ import com.elysium.reddot.ms.topic.application.exception.handler.core.IException
 import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler.ResourceAlreadyExistIExceptionHandler;
 import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler.ResourceBadValueIExceptionHandler;
 import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler.ResourceNotFoundIExceptionHandler;
-import com.elysium.reddot.ms.topic.application.service.ITopicApplicationServiceImpl;
+import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
 import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.*;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 class TopicRouteBuilderTest extends CamelTestSupport {
 
     @Mock
-    private ITopicApplicationServiceImpl topicService;
+    private TopicApplicationServiceImpl topicService;
 
     @Override
     protected CamelContext createCamelContext() {
