@@ -23,6 +23,7 @@
         <maven.surefire.version>3.0.0</maven.surefire.version>
         <spring-cloud-version>2021.0.6</spring-cloud-version>
         <spring-jaeger-version>3.3.1</spring-jaeger-version>
+        <micrometer-registry-prometheus>1.10.6</micrometer-registry-prometheus>
     </properties>
 
     <dependencyManagement>
@@ -111,7 +112,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- edge microservice -->
+        <!-- Edge microservice -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
@@ -124,6 +125,11 @@
             <groupId>io.opentracing.contrib</groupId>
             <artifactId>opentracing-spring-jaeger-cloud-starter</artifactId>
             <version>${spring-jaeger-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>${micrometer-registry-prometheus}</version>
         </dependency>
 
     </dependencies>
