@@ -1,11 +1,10 @@
 package com.elysium.reddot.ms.topic.domain.service;
 
-import com.elysium.reddot.ms.topic.application.port.in.ITopicManagement;
 import com.elysium.reddot.ms.topic.domain.exception.FieldEmptyException;
 import com.elysium.reddot.ms.topic.domain.exception.FieldWithSpaceException;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 
-public class TopicDomainService implements ITopicManagement {
+public class TopicDomainServiceImpl implements ITopicDomainService {
 
     @Override
     public void validateTopicForCreation(TopicModel topicModel) {

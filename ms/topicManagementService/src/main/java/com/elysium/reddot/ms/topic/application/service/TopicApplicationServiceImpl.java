@@ -1,13 +1,12 @@
 package com.elysium.reddot.ms.topic.application.service;
 
-import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
-import com.elysium.reddot.ms.topic.application.data.mapper.TopicApplicationMapper;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceBadValueException;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
-import com.elysium.reddot.ms.topic.application.port.in.ITopicManagement;
-import com.elysium.reddot.ms.topic.application.port.out.ITopicRepositoryOutbound;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
+import com.elysium.reddot.ms.topic.domain.port.in.ITopicManagementService;
+import com.elysium.reddot.ms.topic.domain.port.out.ITopicRepository;
+import com.elysium.reddot.ms.topic.domain.service.TopicDomainServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,33 +19,34 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @Slf4j
-public class TopicApplicationServiceImpl implements ITopicApplicationService {
+public class TopicApplicationServiceImpl implements ITopicManagementService {
 
     private static final String RESOURCE_NAME_TOPIC = "topic";
-    private final ITopicManagement domainService;
-    private final ITopicRepositoryOutbound userRepositoryOutbound;
+    private final TopicDomainServiceImpl topicDomainService;
+    private final ITopicRepository userRepositoryOutbound;
 
     @Autowired
-    public TopicApplicationServiceImpl(ITopicManagement domainService, ITopicRepositoryOutbound userRepositoryOutbound) {
-        this.domainService = domainService;
+    public TopicApplicationServiceImpl(ITopicRepository userRepositoryOutbound) {
+        this.topicDomainService = new TopicDomainServiceImpl();
         this.userRepositoryOutbound = userRepositoryOutbound;
     }
 
-    public TopicDTO getTopicById(Long id) {
+    @Override
+    public TopicModel getTopicById(Long id) {
         log.debug("Fetching topic with id {}", id);
 
-        TopicDTO topicDTO = userRepositoryOutbound.findTopicById(id).orElseThrow(
+        TopicModel foundTopicModel = userRepositoryOutbound.findTopicById(id).orElseThrow(
                 () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
         );
 
         log.info("Successfully retrieved topic with id {}, name '{}', description '{}'",
-                id, topicDTO.getName(), topicDTO.getDescription());
+                id, foundTopicModel.getName(), foundTopicModel.getDescription());
 
-        return topicDTO;
+        return foundTopicModel;
     }
 
     @Override
-    public List<TopicDTO> getAllTopics() {
+    public List<TopicModel> getAllTopics() {
         log.info("Fetching all topics from database...");
 
         return userRepositoryOutbound.findAllTopics()
@@ -55,63 +55,57 @@ public class TopicApplicationServiceImpl implements ITopicApplicationService {
     }
 
     @Override
-    public TopicDTO createTopic(TopicDTO topicToCreateDTO) {
+    public TopicModel createTopic(TopicModel topicToCreateModel) {
 
         log.debug("Creating new topic with name '{}', label '{}, description '{}'",
-                topicToCreateDTO.getName(),
-                topicToCreateDTO.getLabel(),
-                topicToCreateDTO.getDescription());
+                topicToCreateModel.getName(),
+                topicToCreateModel.getLabel(),
+                topicToCreateModel.getDescription());
 
-        Optional<TopicDTO> existingTopic = userRepositoryOutbound.findTopicByName(topicToCreateDTO.getName());
+        Optional<TopicModel> existingTopic = userRepositoryOutbound.findTopicByName(topicToCreateModel.getName());
 
         if (existingTopic.isPresent()) {
-            throw new ResourceAlreadyExistException(RESOURCE_NAME_TOPIC, "name", topicToCreateDTO.getName());
+            throw new ResourceAlreadyExistException(RESOURCE_NAME_TOPIC, "name", topicToCreateModel.getName());
         }
 
-        TopicModel topicModel = TopicApplicationMapper.toModel(topicToCreateDTO);
-
         try {
-            domainService.validateTopicForCreation(topicModel);
+            topicDomainService.validateTopicForCreation(topicToCreateModel);
         } catch (Exception exception) {
             throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, exception.getMessage());
         }
 
-        TopicDTO topicCreatedDTO = userRepositoryOutbound.createTopic(topicToCreateDTO);
+        TopicModel createdTopicModel = userRepositoryOutbound.createTopic(topicToCreateModel);
 
         log.info("Successfully created topic with id {}, name '{}', label '{}' description '{}'",
-                topicCreatedDTO.getId(),
-                topicCreatedDTO.getName(),
-                topicCreatedDTO.getLabel(),
-                topicCreatedDTO.getDescription());
+                createdTopicModel.getId(),
+                createdTopicModel.getName(),
+                createdTopicModel.getLabel(),
+                createdTopicModel.getDescription());
 
-        return topicCreatedDTO;
+        return createdTopicModel;
     }
 
     @Override
-    public TopicDTO updateTopic(Long id, TopicDTO topicToUpdateDTO) {
+    public TopicModel updateTopic(Long id, TopicModel topicToUpdateModel) {
         log.debug("Updating topic with id '{}', name '{}', label '{}', description '{}'",
-                id, topicToUpdateDTO.getName(), topicToUpdateDTO.getLabel(), topicToUpdateDTO.getDescription());
+                id, topicToUpdateModel.getName(), topicToUpdateModel.getLabel(), topicToUpdateModel.getDescription());
 
-        TopicDTO existingTopicDTO = userRepositoryOutbound.findTopicById(id).orElseThrow(
+        TopicModel existingTopicModel = userRepositoryOutbound.findTopicById(id).orElseThrow(
                 () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
         );
 
-        TopicModel existingTopicModel = TopicApplicationMapper.toModel(existingTopicDTO);
-        TopicModel topicToUpdateModel = TopicApplicationMapper.toModel(topicToUpdateDTO);
-
         try {
-            TopicModel topicUpdatedModel = domainService.updateExistingTopicWithUpdates(existingTopicModel, topicToUpdateModel);
-            TopicDTO topicUpdatedDTO = TopicApplicationMapper.toDTO(topicUpdatedModel);
+            TopicModel topicModelWithUpdates = topicDomainService.updateExistingTopicWithUpdates(existingTopicModel, topicToUpdateModel);
 
-            topicUpdatedDTO = userRepositoryOutbound.updateTopic(topicUpdatedDTO);
+            TopicModel updatedTopicModel = userRepositoryOutbound.updateTopic(topicModelWithUpdates);
 
             log.info("Successfully updated topic with id '{}', name '{}', label'{}, description '{}'",
-                    topicUpdatedDTO.getId(),
-                    topicUpdatedDTO.getName(),
-                    topicUpdatedDTO.getLabel(),
-                    topicUpdatedDTO.getDescription());
+                    updatedTopicModel.getId(),
+                    updatedTopicModel.getName(),
+                    updatedTopicModel.getLabel(),
+                    updatedTopicModel.getDescription());
 
-            return topicUpdatedDTO;
+            return updatedTopicModel;
 
         } catch (Exception ex) {
             throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, ex.getMessage());
@@ -120,10 +114,10 @@ public class TopicApplicationServiceImpl implements ITopicApplicationService {
     }
 
     @Override
-    public void deleteTopicById(Long id) throws ResourceNotFoundException {
+    public TopicModel deleteTopicById(Long id) throws ResourceNotFoundException {
         log.debug("Deleting topic with id {}", id);
 
-        TopicDTO topicToDelete = userRepositoryOutbound.findTopicById(id).orElseThrow(
+        TopicModel topicToDelete = userRepositoryOutbound.findTopicById(id).orElseThrow(
                 () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
         );
 
@@ -131,6 +125,8 @@ public class TopicApplicationServiceImpl implements ITopicApplicationService {
 
         log.info("Successfully deleted topic with id '{}', name '{}', description '{}'",
                 topicToDelete.getId(), topicToDelete.getName(), topicToDelete.getDescription());
+
+        return topicToDelete;
     }
 
 }

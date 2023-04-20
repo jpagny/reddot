@@ -3,6 +3,8 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
+import com.elysium.reddot.ms.topic.domain.model.TopicModel;
+import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicProcessorMapper;
 import lombok.AllArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -17,12 +19,16 @@ public class UpdateTopicProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        Long id = exchange.getIn().getHeader("id", Long.class);
-        TopicDTO topicDto = exchange.getIn().getBody(TopicDTO.class);
+        Long inputId = exchange.getIn().getHeader("id", Long.class);
+        TopicDTO inputTopicDTO = exchange.getIn().getBody(TopicDTO.class);
+        TopicModel topicToUpdateModel = TopicProcessorMapper.toModel(inputTopicDTO);
 
-        TopicDTO updatedTopic = topicService.updateTopic(id, topicDto);
+        TopicModel updatedTopicModel = topicService.updateTopic(inputId, topicToUpdateModel);
 
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "Topic with name " + updatedTopic.getName() + " updated successfully", updatedTopic);
+        TopicDTO updatedTopicDTO = TopicProcessorMapper.toDTO(updatedTopicModel);
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "Topic with name " + updatedTopicDTO.getName() + " updated successfully", updatedTopicDTO);
+
+        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());
         exchange.getMessage().setBody(apiResponseDTO);
     }
 }

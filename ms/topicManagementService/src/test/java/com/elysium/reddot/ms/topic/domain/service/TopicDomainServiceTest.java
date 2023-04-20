@@ -11,11 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TopicDomainServiceTest {
 
-    private static TopicDomainService topicDomainService;
+    private static TopicDomainServiceImpl topicDomainService;
 
     @BeforeAll
     static void setUp() {
-        topicDomainService = new TopicDomainService();
+        topicDomainService = new TopicDomainServiceImpl();
     }
 
     @Test

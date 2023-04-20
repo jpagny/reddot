@@ -16,7 +16,7 @@ class TopicInfrastructureMapperTest {
         TopicDTO topicDTO = new TopicDTO(1L, "Test Name", "Test Label", "Test Description");
 
         // when
-        TopicJpaEntity topicJpaEntity = TopicInfrastructureMapper.toEntity(topicDTO);
+        TopicJpaEntity topicJpaEntity = TopicPersistenceMapper.toEntity(topicDTO);
 
         // then
         assertEquals(topicDTO.getId(), topicJpaEntity.getId(), "The topic ID should match");
@@ -36,7 +36,7 @@ class TopicInfrastructureMapperTest {
         topicJpaEntity.setDescription("Test Description");
 
         // when
-        TopicDTO topicDTO = TopicInfrastructureMapper.toDTO(topicJpaEntity);
+        TopicDTO topicDTO = TopicPersistenceMapper.toDTO(topicJpaEntity);
 
         // then
         assertEquals(topicJpaEntity.getId(), topicDTO.getId(), "The topic ID should match");

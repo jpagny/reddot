@@ -4,7 +4,7 @@ import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceBadValueException;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
-import com.elysium.reddot.ms.topic.domain.service.TopicDomainService;
+import com.elysium.reddot.ms.topic.domain.service.TopicDomainServiceImpl;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.ITopicRepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +29,7 @@ class TopicApplicationServiceTest {
 
     @BeforeEach
     void setUp() {
-        TopicDomainService topicDomainService = new TopicDomainService();
+        TopicDomainServiceImpl topicDomainService = new TopicDomainServiceImpl();
         topicService = new TopicApplicationServiceImpl(topicDomainService, topicRepository);
     }
 

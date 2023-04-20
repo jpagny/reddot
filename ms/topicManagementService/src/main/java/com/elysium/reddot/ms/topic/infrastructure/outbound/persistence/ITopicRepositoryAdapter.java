@@ -1,9 +1,9 @@
 package com.elysium.reddot.ms.topic.infrastructure.outbound.persistence;
 
 
-import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
-import com.elysium.reddot.ms.topic.application.port.out.ITopicRepositoryOutbound;
-import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicInfrastructureMapper;
+import com.elysium.reddot.ms.topic.domain.model.TopicModel;
+import com.elysium.reddot.ms.topic.domain.port.out.ITopicRepository;
+import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicPersistenceMapper;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.entity.TopicJpaEntity;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.repository.TopicJpaRepository;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class ITopicRepositoryAdapter implements ITopicRepositoryOutbound {
+public class ITopicRepositoryAdapter implements ITopicRepository {
 
     private final TopicJpaRepository topicJpaRepository;
 
@@ -22,37 +22,37 @@ public class ITopicRepositoryAdapter implements ITopicRepositoryOutbound {
     }
 
     @Override
-    public TopicDTO createTopic(TopicDTO topicDto) {
-        TopicJpaEntity topicEntity = TopicInfrastructureMapper.toEntity(topicDto);
+    public TopicModel createTopic(TopicModel topicModel) {
+        TopicJpaEntity topicEntity = TopicPersistenceMapper.toEntity(topicModel);
         TopicJpaEntity savedTopic = topicJpaRepository.save(topicEntity);
-        return TopicInfrastructureMapper.toDTO(savedTopic);
+        return TopicPersistenceMapper.toModel(savedTopic);
     }
 
     @Override
-    public Optional<TopicDTO> findTopicById(Long id) {
+    public Optional<TopicModel> findTopicById(Long id) {
         return topicJpaRepository.findById(id)
-                .map(TopicInfrastructureMapper::toDTO);
+                .map(TopicPersistenceMapper::toModel);
     }
 
     @Override
-    public Optional<TopicDTO> findTopicByName(String name) {
+    public Optional<TopicModel> findTopicByName(String name) {
         return topicJpaRepository.findByName(name)
-                .map(TopicInfrastructureMapper::toDTO);
+                .map(TopicPersistenceMapper::toModel);
     }
 
     @Override
-    public List<TopicDTO> findAllTopics() {
+    public List<TopicModel> findAllTopics() {
         return topicJpaRepository.findAll()
                 .stream()
-                .map(TopicInfrastructureMapper::toDTO)
+                .map(TopicPersistenceMapper::toModel)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public TopicDTO updateTopic(TopicDTO topicDto) {
-        TopicJpaEntity topicEntity = TopicInfrastructureMapper.toEntity(topicDto);
+    public TopicModel updateTopic(TopicModel topicModel) {
+        TopicJpaEntity topicEntity = TopicPersistenceMapper.toEntity(topicModel);
         TopicJpaEntity updatedTopic = topicJpaRepository.save(topicEntity);
-        return TopicInfrastructureMapper.toDTO(updatedTopic);
+        return TopicPersistenceMapper.toModel(updatedTopic);
     }
 
     @Override
