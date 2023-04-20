@@ -2,7 +2,7 @@ package com.elysium.reddot.ms.topic.infrastructure.outbound.persistence;
 
 
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
-import com.elysium.reddot.ms.topic.domain.port.out.ITopicRepository;
+import com.elysium.reddot.ms.topic.domain.port.outbound.ITopicRepository;
 import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicPersistenceMapper;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.entity.TopicJpaEntity;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.repository.TopicJpaRepository;

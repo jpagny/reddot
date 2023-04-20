@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.domain.port.in;
+package com.elysium.reddot.ms.topic.domain.port.inbound;
 
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.topic.domain.exception.FieldEmptyException;

@@ -4,8 +4,8 @@ import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlrea
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceBadValueException;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
-import com.elysium.reddot.ms.topic.domain.port.in.ITopicManagementService;
-import com.elysium.reddot.ms.topic.domain.port.out.ITopicRepository;
+import com.elysium.reddot.ms.topic.domain.port.inbound.ITopicManagementService;
+import com.elysium.reddot.ms.topic.domain.port.outbound.ITopicRepository;
 import com.elysium.reddot.ms.topic.domain.service.TopicDomainServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.domain.port.out;
+package com.elysium.reddot.ms.topic.domain.port.outbound;
 
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 
