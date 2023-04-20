@@ -2,7 +2,6 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
 import com.elysium.reddot.ms.board.application.exception.handler.core.CamelGlobalExceptionHandler;
-import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteConstants;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.BoardProcessorHolder;
 import lombok.AllArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;

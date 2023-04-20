@@ -1,6 +1,5 @@
 package com.elysium.reddot.ms.topic.domain.port.inbound;
 
-import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.topic.domain.exception.FieldEmptyException;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 
@@ -8,7 +7,7 @@ import java.util.List;
 
 public interface ITopicManagementService {
 
-    TopicModel getTopicById(Long id) throws ResourceNotFoundException;
+    TopicModel getTopicById(Long id);
 
     List<TopicModel> getAllTopics();
 
@@ -16,6 +15,6 @@ public interface ITopicManagementService {
 
     TopicModel updateTopic(Long id, TopicModel topicModel);
 
-    TopicModel deleteTopicById(Long id) throws ResourceNotFoundException;
+    TopicModel deleteTopicById(Long id);
 
 }

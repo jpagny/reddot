@@ -2,19 +2,18 @@ package com.elysium.reddot.ms.board.application.configuration;
 
 import com.elysium.reddot.ms.board.application.exception.handler.core.CamelGlobalExceptionHandler;
 import com.elysium.reddot.ms.board.application.exception.handler.core.IExceptionHandler;
-import com.elysium.reddot.ms.board.domain.service.BoardDomainService;
+import com.elysium.reddot.ms.board.domain.service.BoardDomainServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-
 @Configuration
 public class ApplicationConfig {
 
     @Bean
-    public BoardDomainService boardService() {
-        return new BoardDomainService();
+    public BoardDomainServiceImpl userService() {
+        return new BoardDomainServiceImpl();
     }
 
     @Bean

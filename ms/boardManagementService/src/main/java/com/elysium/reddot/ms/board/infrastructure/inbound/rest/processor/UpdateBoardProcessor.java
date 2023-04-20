@@ -3,6 +3,8 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor;
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
+import com.elysium.reddot.ms.board.domain.model.BoardModel;
+import com.elysium.reddot.ms.board.infrastructure.mapper.BoardProcessorMapper;
 import lombok.AllArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -17,12 +19,16 @@ public class UpdateBoardProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        Long id = exchange.getIn().getHeader("id", Long.class);
-        BoardDTO boardDto = exchange.getIn().getBody(BoardDTO.class);
+        Long inputId = exchange.getIn().getHeader("id", Long.class);
+        BoardDTO inputBoardDTO = exchange.getIn().getBody(BoardDTO.class);
+        BoardModel boardToUpdateModel = BoardProcessorMapper.toModel(inputBoardDTO);
 
-        BoardDTO updatedBoard = boardService.updateBoard(id, boardDto);
+        BoardModel updatedBoardModel = boardService.updateBoard(inputId, boardToUpdateModel);
 
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "Board with name " + updatedBoard.getName() + " updated successfully", updatedBoard);
+        BoardDTO updatedBoardDTO = BoardProcessorMapper.toDTO(updatedBoardModel);
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "Board with name " + updatedBoardDTO.getName() + " updated successfully", updatedBoardDTO);
+
+        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());
         exchange.getMessage().setBody(apiResponseDTO);
     }
 }

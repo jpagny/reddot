@@ -3,6 +3,8 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor;
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
+import com.elysium.reddot.ms.board.domain.model.BoardModel;
+import com.elysium.reddot.ms.board.infrastructure.mapper.BoardProcessorMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -37,25 +39,27 @@ class CreateBoardProcessorTest {
     @Test
     @DisplayName("given valid board when createBoard is called then board created successfully")
     void givenValidBoard_whenCreateBoard_thenBoardCreatedSuccessfully() {
-        // arrange
-        BoardDTO boardDTO = new BoardDTO(null, "name", "Name", "Board description");
-        BoardDTO createdBoardDTO = new BoardDTO(1L, "name", "Name", "Board description");
+        // given
+        BoardDTO boardToCreateDTO = new BoardDTO(null, "name", "Name", "Board description");
+        BoardModel boardToCreateModel = new BoardModel(null, "name", "Name", "Board description");
+        BoardModel createdBoardModel = new BoardModel(1L, "name", "Name", "Board description");
+        BoardDTO expectedBoard = BoardProcessorMapper.toDTO(createdBoardModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),
-                "Board with name " + createdBoardDTO.getName() + " created successfully", createdBoardDTO);
+                "Board with name " + createdBoardModel.getName() + " created successfully", expectedBoard);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("CamelHttpUri", "/boards");
-        exchange.getIn().setBody(boardDTO);
+        exchange.getIn().setBody(boardToCreateDTO);
 
         // mock
-        when(boardService.createBoard(boardDTO)).thenReturn(createdBoardDTO);
+        when(boardService.createBoard(boardToCreateModel)).thenReturn(createdBoardModel);
 
-        // act
+        // when
         createBoardProcessor.process(exchange);
         ApiResponseDTO actualApiResponse = exchange.getMessage().getBody(ApiResponseDTO.class);
 
-        // assert
+        // then
         assertEquals(expectedApiResponse.getStatus(), actualApiResponse.getStatus());
         assertEquals(expectedApiResponse.getMessage(), actualApiResponse.getMessage());
         assertEquals(expectedApiResponse.getData(), actualApiResponse.getData());

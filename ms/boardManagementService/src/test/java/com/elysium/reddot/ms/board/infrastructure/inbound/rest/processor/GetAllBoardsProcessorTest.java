@@ -3,6 +3,8 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor;
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
+import com.elysium.reddot.ms.board.domain.model.BoardModel;
+import com.elysium.reddot.ms.board.infrastructure.mapper.BoardProcessorMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -41,18 +43,19 @@ class GetAllBoardsProcessorTest {
     @DisplayName("given boards exist when get allBoards is called then all boards retrieved")
     void givenBoardsExist_whenGetAllBoards_thenAllBoardsAreRetrieved() {
         // given
-        BoardDTO board1 = new BoardDTO(1L, "name 1", "Name 1", "Board 1");
-        BoardDTO board2 = new BoardDTO(2L, "name 2", "Name 2", "Board 2");
-        List<BoardDTO> boardList = Arrays.asList(board1, board2);
+        BoardModel board1Model = new BoardModel(1L, "name 1", "Name 1", "Board 1");
+        BoardModel board2Model = new BoardModel(2L, "name 2", "Name 2", "Board 2");
+        List<BoardModel> boardListModel = Arrays.asList(board1Model, board2Model);
+        List<BoardDTO> expectedListBoards = BoardProcessorMapper.toDTOList(boardListModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "All boards retrieved successfully", boardList);
+                "All boards retrieved successfully", expectedListBoards);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("CamelHttpUri", "/boards");
 
         // mock
-        when(boardService.getAllBoards()).thenReturn(boardList);
+        when(boardService.getAllBoards()).thenReturn(boardListModel);
 
         // when
         getAllBoardsProcessor.process(exchange);

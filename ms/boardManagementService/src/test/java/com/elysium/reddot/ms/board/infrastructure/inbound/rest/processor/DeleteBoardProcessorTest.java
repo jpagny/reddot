@@ -3,6 +3,8 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor;
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
+import com.elysium.reddot.ms.board.domain.model.BoardModel;
+import com.elysium.reddot.ms.board.infrastructure.mapper.BoardProcessorMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -16,7 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteBoardProcessorTest {
@@ -37,26 +40,26 @@ class DeleteBoardProcessorTest {
     @Test
     @DisplayName("given valid boardId when deleteBoard is called then board deleted Successfully")
     void givenValidBoardId_whenDeleteBoard_thenBoardIsDeletedSuccessfully() {
-        // arrange
+        // given
         Long boardId = 1L;
-        BoardDTO boardDTO = new BoardDTO(boardId, "name", "Name", "Board description");
+        BoardModel boardToDeleteModel = new BoardModel(boardId, "name", "Name", "Board description");
+        BoardDTO expectedBoard = BoardProcessorMapper.toDTO(boardToDeleteModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Board with id " + boardId + " deleted successfully", boardDTO);
+                "Board with id " + boardId + " deleted successfully", expectedBoard);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("CamelHttpUri", "/boards/" + boardId);
         exchange.getIn().setHeader("id", boardId);
 
         // mock
-        when(boardService.getBoardById(boardId)).thenReturn(boardDTO);
-        doNothing().when(boardService).deleteBoardById(boardId);
+        when(boardService.deleteBoardById(boardId)).thenReturn(boardToDeleteModel);
 
-        // act
+        // when
         deleteBoardProcessor.process(exchange);
         ApiResponseDTO actualApiResponse = exchange.getMessage().getBody(ApiResponseDTO.class);
 
-        // assert
+        // then
         assertEquals(expectedApiResponse.getStatus(), actualApiResponse.getStatus());
         assertEquals(expectedApiResponse.getMessage(), actualApiResponse.getMessage());
         assertEquals(expectedApiResponse.getData(), actualApiResponse.getData());

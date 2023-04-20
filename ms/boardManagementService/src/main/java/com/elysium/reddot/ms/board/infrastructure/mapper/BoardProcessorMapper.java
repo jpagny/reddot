@@ -1,11 +1,14 @@
-package com.elysium.reddot.ms.board.application.data.mapper;
+package com.elysium.reddot.ms.board.infrastructure.mapper;
 
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 
-public class BoardApplicationMapper {
+import java.util.List;
+import java.util.stream.Collectors;
 
-    private BoardApplicationMapper() {
+public class BoardProcessorMapper {
+
+    private BoardProcessorMapper() {
     }
 
     public static BoardDTO toDTO(BoardModel boardModel) {
@@ -15,6 +18,12 @@ public class BoardApplicationMapper {
         boardDTO.setName(boardModel.getName());
         boardDTO.setDescription(boardModel.getDescription());
         return boardDTO;
+    }
+
+    public static List<BoardDTO> toDTOList(List<BoardModel> boardModels) {
+        return boardModels.stream()
+                .map(BoardProcessorMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     public static BoardModel toModel(BoardDTO boardDTO) {

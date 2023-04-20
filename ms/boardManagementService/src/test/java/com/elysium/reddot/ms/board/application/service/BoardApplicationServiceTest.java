@@ -1,10 +1,9 @@
 package com.elysium.reddot.ms.board.application.service;
 
-import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
 import com.elysium.reddot.ms.board.application.exception.exception.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.board.application.exception.exception.ResourceBadValueException;
 import com.elysium.reddot.ms.board.application.exception.exception.ResourceNotFoundException;
-import com.elysium.reddot.ms.board.domain.service.BoardDomainService;
+import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.IBoardRepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,8 +28,7 @@ class BoardApplicationServiceTest {
 
     @BeforeEach
     void setUp() {
-        BoardDomainService boardDomainService = new BoardDomainService();
-        boardService = new BoardApplicationServiceImpl(boardDomainService, boardRepository);
+        boardService = new BoardApplicationServiceImpl(boardRepository);
     }
 
     @Test
@@ -38,13 +36,13 @@ class BoardApplicationServiceTest {
     void givenValidId_whenGetBoardById_thenReturnsBoard() {
         // given
         Long validId = 1L;
-        BoardDTO expectedBoard = new BoardDTO(1L, "test", "Test Name", "Test Description");
+        BoardModel expectedBoard = new BoardModel(1L, "test", "Test Name", "Test Description");
 
         // mock
         when(boardRepository.findBoardById(validId)).thenReturn(Optional.of(expectedBoard));
 
         // when
-        BoardDTO actualBoard = boardService.getBoardById(validId);
+        BoardModel actualBoard = boardService.getBoardById(validId);
 
         // then
         assertEquals(expectedBoard, actualBoard);
@@ -68,96 +66,96 @@ class BoardApplicationServiceTest {
     }
 
     @Test
-    @DisplayName("given existing boards, when getAll, then returns List of boardDTO")
-    void givenExistingBoards_whenGetAll_thenReturnsListOfBoardDTOs() {
+    @DisplayName("given existing boards, when getAll, then returns List of boards")
+    void givenExistingBoards_whenGetAll_thenReturnsListOfBoards() {
         // given
-        BoardDTO board1 = new BoardDTO(1L, "test1", "Test Name 1", "Test Description 1");
-        BoardDTO board2 = new BoardDTO(2L, "test2", "Test Name 2", "Test Description 2");
+        BoardModel board1Model = new BoardModel(1L, "test1", "Test Name 1", "Test Description 1");
+        BoardModel board2Model = new BoardModel(2L, "test2", "Test Name 2", "Test Description 2");
 
         // mock
-        List<BoardDTO> expectedBoards = Arrays.asList(board1, board2);
-        when(boardService.getAllBoards()).thenReturn(expectedBoards);
+        List<BoardModel> expectedListBoards = Arrays.asList(board1Model, board2Model);
+        when(boardService.getAllBoards()).thenReturn(expectedListBoards);
 
         // when
-        List<BoardDTO> actualBoards = boardService.getAllBoards();
+        List<BoardModel> actualBoards = boardService.getAllBoards();
 
         // then
-        assertEquals(expectedBoards, actualBoards, "The returned board list should match the expected board list");
+        assertEquals(expectedListBoards, actualBoards, "The returned board list should match the expected board list");
         verify(boardRepository, times(1)).findAllBoards();
     }
 
     @Test
-    @DisplayName("given valid boardDTO when createBoard is called then board created")
-    void givenValidBoardDTO_whenCreateBoard_thenBoardCreated() {
+    @DisplayName("given valid board when createBoard is called then board created")
+    void givenValidBoard_whenCreateBoard_thenBoardCreated() {
         // given
-        BoardDTO boardToCreateDTO = new BoardDTO(null, "test", "Test Label", "Test Description");
-        BoardDTO createdBoardDTO = new BoardDTO(1L, "test 2", "Test Label", "Test Description");
+        BoardModel boardToCreateLabel = new BoardModel(null, "test", "Test Label", "Test Description");
+        BoardModel expectedBoard = new BoardModel(1L, "test", "Test Label", "Test Description");
 
         // mock
-        when(boardRepository.findBoardByName(boardToCreateDTO.getName())).thenReturn(Optional.empty());
-        when(boardRepository.createBoard(boardToCreateDTO)).thenReturn(createdBoardDTO);
+        when(boardRepository.findBoardByName(boardToCreateLabel.getName())).thenReturn(Optional.empty());
+        when(boardRepository.createBoard(boardToCreateLabel)).thenReturn(expectedBoard);
 
         // when
-        BoardDTO actualBoardDTO = boardService.createBoard(boardToCreateDTO);
+        BoardModel actualBoardModel = boardService.createBoard(boardToCreateLabel);
 
         // then
-        assertEquals(createdBoardDTO, actualBoardDTO, "The created board should match the expected board");
-        verify(boardRepository, times(1)).findBoardByName(boardToCreateDTO.getName());
-        verify(boardRepository, times(1)).createBoard(boardToCreateDTO);
+        assertEquals(expectedBoard, actualBoardModel, "The created board should match the expected board");
+        verify(boardRepository, times(1)).findBoardByName(expectedBoard.getName());
+        verify(boardRepository, times(1)).createBoard(boardToCreateLabel);
     }
 
     @Test
-    @DisplayName("given existing board when CreateBoard is called then throws ResourceAlreadyExistException")
+    @DisplayName("given existing board when createBoard is called then throws ResourceAlreadyExistException")
     void givenExistingBoard_whenCreateBoard_thenThrowsResourceAlreadyExistException() {
         // given
-        BoardDTO existingBoardDTO = new BoardDTO(1L, "Test Name", "Test Label", "Test Description");
+        BoardModel existingBoardModel = new BoardModel(1L, "Test Name", "Test Label", "Test Description");
 
         // mock
-        when(boardRepository.findBoardByName(existingBoardDTO.getName())).thenReturn(Optional.of(existingBoardDTO));
+        when(boardRepository.findBoardByName(existingBoardModel.getName())).thenReturn(Optional.of(existingBoardModel));
 
         // when && then
         assertThrows(ResourceAlreadyExistException.class,
-                () -> boardService.createBoard(existingBoardDTO),
+                () -> boardService.createBoard(existingBoardModel),
                 "createBoard should throw a ResourceAlreadyExistException for an existing board");
-        verify(boardRepository, times(1)).findBoardByName(existingBoardDTO.getName());
+        verify(boardRepository, times(1)).findBoardByName(existingBoardModel.getName());
     }
 
     @Test
-    @DisplayName("given invalid boardDTO when createBoard is called then throws ResourceBadValueException")
-    void givenInvalidBoardDTO_whenCreateBoard_thenThrowsResourceBadValueException() {
+    @DisplayName("given invalid board when createBoard is called then throws ResourceBadValueException")
+    void givenInvalidBoard_whenCreateBoard_thenThrowsResourceBadValueException() {
         // given
-        BoardDTO invalidBoardDTO = new BoardDTO(1L, "", "Invalid Label", "Invalid Description");
+        BoardModel invalidBoardModel = new BoardModel(1L, "", "Invalid Label", "Invalid Description");
 
         // mock
-        when(boardRepository.findBoardByName(invalidBoardDTO.getName())).thenReturn(Optional.empty());
+        when(boardRepository.findBoardByName(invalidBoardModel.getName())).thenReturn(Optional.empty());
 
         // when && then
         assertThrows(ResourceBadValueException.class,
-                () -> boardService.createBoard(invalidBoardDTO),
+                () -> boardService.createBoard(invalidBoardModel),
                 "createBoard should throw a ResourceBadValueException for an invalid board");
-        verify(boardRepository, times(1)).findBoardByName(invalidBoardDTO.getName());
+        verify(boardRepository, times(1)).findBoardByName(invalidBoardModel.getName());
     }
 
     @Test
-    @DisplayName("given validBoardDTO when updateBoard is called then board updated")
-    void givenValidBoardDTO_whenUpdateBoard_thenBoardUpdated() {
+    @DisplayName("given validBoard when updateBoard is called then board updated")
+    void givenValidBoard_whenUpdateBoard_thenBoardUpdated() {
         // given
         Long boardId = 1L;
-        BoardDTO existingBoardDTO = new BoardDTO(boardId, "Old Name", "OldLabel", "Old Description");
-        BoardDTO boardToUpdateDTO = new BoardDTO(boardId, "Old Name", "NewLabel", "NewDescription");
-        BoardDTO updatedBoardDTO = new BoardDTO(boardId, "Old Name", "NewLabel", "NewDescription");
+        BoardModel existingBoardModel = new BoardModel(boardId, "Old Name", "OldLabel", "Old Description");
+        BoardModel boardToUpdateModel = new BoardModel(boardId, "Old Name", "NewLabel", "NewDescription");
+        BoardModel expectedBoard = new BoardModel(boardId, "Old Name", "NewLabel", "NewDescription");
 
         // mock
-        when(boardRepository.findBoardById(boardId)).thenReturn(Optional.of(existingBoardDTO));
-        when(boardRepository.updateBoard(updatedBoardDTO)).thenReturn(updatedBoardDTO);
+        when(boardRepository.findBoardById(boardId)).thenReturn(Optional.of(existingBoardModel));
+        when(boardRepository.updateBoard(expectedBoard)).thenReturn(expectedBoard);
 
         // when
-        BoardDTO actualBoardDTO = boardService.updateBoard(1L, boardToUpdateDTO);
+        BoardModel actualBoardDTO = boardService.updateBoard(1L, boardToUpdateModel);
 
         // then
-        assertEquals(updatedBoardDTO, actualBoardDTO, "The updated board should match the expected board");
+        assertEquals(expectedBoard, actualBoardDTO, "The updated board should match the expected board");
         verify(boardRepository, times(1)).findBoardById(boardId);
-        verify(boardRepository, times(1)).updateBoard(updatedBoardDTO);
+        verify(boardRepository, times(1)).updateBoard(expectedBoard);
     }
 
     @Test
@@ -165,33 +163,33 @@ class BoardApplicationServiceTest {
     void givenNonExistentBoard_whenUpdateBoard_thenThrowsResourceNotFoundException() {
         // given
         Long nonExistentBoardId = 99L;
-        BoardDTO boardToUpdateDTO = new BoardDTO(nonExistentBoardId, "New Name", "New Label", "New Description");
+        BoardModel boardToUpdateModel = new BoardModel(nonExistentBoardId, "New Name", "New Label", "New Description");
 
         // mock
         when(boardRepository.findBoardById(nonExistentBoardId)).thenReturn(Optional.empty());
 
         // then && when
         assertThrows(ResourceNotFoundException.class,
-                () -> boardService.updateBoard(nonExistentBoardId, boardToUpdateDTO),
+                () -> boardService.updateBoard(nonExistentBoardId, boardToUpdateModel),
                 "updateBoard should throw a ResourceNotFoundException for a non-existent board");
         verify(boardRepository, times(1)).findBoardById(nonExistentBoardId);
     }
 
     @Test
-    @DisplayName("given invalid boardDTO when updateBoard is called then throws ResourceBadValueException")
-    void givenInvalidBoardDTO_whenUpdateBoard_thenThrowsResourceBadValueException() {
+    @DisplayName("given invalid board when updateBoard is called then throws ResourceBadValueException")
+    void givenInvalidBoard_whenUpdateBoard_thenThrowsResourceBadValueException() {
         // given
         Long boardId = 1L;
-        BoardDTO existingBoardDTO = new BoardDTO(boardId, "Old Name", "Old Label", "Old Description");
-        BoardDTO invalidBoardToUpdateDTO = new BoardDTO(boardId, "Invalid Name", "", "Invalid Description");
+        BoardModel existingBoardModel = new BoardModel(boardId, "Old Name", "Old Label", "Old Description");
+        BoardModel invalidBoardToUpdateModel = new BoardModel(boardId, "Invalid Name", "", "Invalid Description");
 
         // mock
-        when(boardRepository.findBoardById(boardId)).thenReturn(Optional.of(existingBoardDTO));
+        when(boardRepository.findBoardById(boardId)).thenReturn(Optional.of(existingBoardModel));
 
         // when && then
         assertThrows(ResourceBadValueException.class,
                 () -> boardService.updateBoard
-                        (boardId, invalidBoardToUpdateDTO),
+                        (boardId, invalidBoardToUpdateModel),
                 "updateBoard should throw a ResourceBadValueException for an invalid board");
         verify(boardRepository, times(1)).findBoardById(boardId);
     }
@@ -201,10 +199,10 @@ class BoardApplicationServiceTest {
     void givenExistingBoard_whenDeleteBoardById_thenBoardDeleted() {
         // given
         Long boardId = 1L;
-        BoardDTO existingBoardDTO = new BoardDTO(boardId, "Test Name", "Test Label", "Test Description");
+        BoardModel existingBoardModel = new BoardModel(boardId, "Test Name", "Test Label", "Test Description");
 
         // mock
-        when(boardRepository.findBoardById(boardId)).thenReturn(Optional.of(existingBoardDTO));
+        when(boardRepository.findBoardById(boardId)).thenReturn(Optional.of(existingBoardModel));
 
         // when
         assertDoesNotThrow(() -> boardService.deleteBoardById(boardId),

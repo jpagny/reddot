@@ -12,5 +12,4 @@ public class BoardDTO {
     private String name;
     private String label;
     private String description;
-
 }

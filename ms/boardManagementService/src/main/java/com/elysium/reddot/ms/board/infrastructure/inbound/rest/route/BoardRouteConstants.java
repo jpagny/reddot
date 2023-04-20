@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.board.infrastructure.constant;
+package com.elysium.reddot.ms.board.infrastructure.inbound.rest.route;
 
 public enum BoardRouteConstants {
 

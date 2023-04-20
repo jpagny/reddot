@@ -1,12 +1,11 @@
 package com.elysium.reddot.ms.board.domain.service;
 
-import com.elysium.reddot.ms.board.application.port.in.IBoardManagement;
+
 import com.elysium.reddot.ms.board.domain.exception.FieldEmptyException;
 import com.elysium.reddot.ms.board.domain.exception.FieldWithSpaceException;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 
-
-public class BoardDomainService implements IBoardManagement {
+public class BoardDomainServiceImpl implements IBoardDomainService {
 
     @Override
     public void validateBoardForCreation(BoardModel boardModel) {
@@ -20,13 +19,13 @@ public class BoardDomainService implements IBoardManagement {
     }
 
     @Override
-    public BoardModel updateExistingBoardWithUpdates(BoardModel existingBoard, BoardModel boardToUpdate) {
-        validateBoardForUpdate(boardToUpdate);
+    public BoardModel updateExistingBoardWithUpdates(BoardModel existingTopic, BoardModel topicUpdates) {
+        validateBoardForUpdate(topicUpdates);
 
-        existingBoard.setLabel(boardToUpdate.getLabel());
-        existingBoard.setDescription(boardToUpdate.getDescription());
+        existingTopic.setLabel(topicUpdates.getLabel());
+        existingTopic.setDescription(topicUpdates.getDescription());
 
-        return existingBoard;
+        return existingTopic;
     }
 
     private void validateName(String name) {

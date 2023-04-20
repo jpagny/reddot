@@ -10,8 +10,9 @@ import com.elysium.reddot.ms.board.application.exception.handler.exceptionhandle
 import com.elysium.reddot.ms.board.application.exception.handler.exceptionhandler.ResourceBadValueIExceptionHandler;
 import com.elysium.reddot.ms.board.application.exception.handler.exceptionhandler.ResourceNotFoundIExceptionHandler;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
-import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteConstants;
+import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.*;
+import com.elysium.reddot.ms.board.infrastructure.mapper.BoardProcessorMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -67,18 +68,19 @@ class BoardRouteBuilderTest extends CamelTestSupport {
     @DisplayName("given boards exist when route getAllBoards is called then all boards retrieved")
     void givenBoardsExist_whenRouteGetAllBoards_thenAllBoardsRetrieved() {
         // given
-        BoardDTO board1 = new BoardDTO(1L, "name 1", "Name 1", "Board 1");
-        BoardDTO board2 = new BoardDTO(2L, "name 2", "Name 2", "Board 2");
-        List<BoardDTO> boardList = Arrays.asList(board1, board2);
+        BoardModel board1Model = new BoardModel(1L, "name 1", "Name 1", "Board 1");
+        BoardModel board2Model = new BoardModel(2L, "name 2", "Name 2", "Board 2");
+        List<BoardModel> boardListModel = Arrays.asList(board1Model, board2Model);
+        List<BoardDTO> expectedListBoards = BoardProcessorMapper.toDTOList(boardListModel);
 
         Exchange exchange = new DefaultExchange(context);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "All boards retrieved successfully", boardList);
+                "All boards retrieved successfully", expectedListBoards);
 
         // mock
-        when(boardService.getAllBoards()).thenReturn(boardList);
+        when(boardService.getAllBoards()).thenReturn(boardListModel);
 
         // when
         Exchange responseExchange = template.send("direct:getAllBoards", exchange);
@@ -96,14 +98,15 @@ class BoardRouteBuilderTest extends CamelTestSupport {
     void givenExistingBoard_whenRouteGetBoardByIdWithValidId_thenBoardReturned() {
         // given
         Long boardId = 1L;
-        BoardDTO board = new BoardDTO(boardId, "name 1", "Name 1", "Board 1");
+        BoardModel board = new BoardModel(boardId, "name 1", "Name 1", "Board 1");
+        BoardDTO expectedBoard =  new BoardDTO(boardId, "name 1", "Name 1", "Board 1");
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("id", boardId);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Board with id 1 retrieved successfully", board);
+                "Board with id 1 retrieved successfully", expectedBoard);
 
         // mock
         when(boardService.getBoardById(boardId)).thenReturn(board);
@@ -147,19 +150,21 @@ class BoardRouteBuilderTest extends CamelTestSupport {
     @DisplayName("given valid board when route createBoard is called then board created")
     void givenValidBoard_whenRouteCreateBoard_thenBoardCreated() {
         // given
-        BoardDTO inputBoard = new BoardDTO(null, "name", "Name", "Description");
-        BoardDTO createdBoard = new BoardDTO(1L, inputBoard.getName(), inputBoard.getLabel(), inputBoard.getDescription());
+        BoardDTO inputBoardDTO = new BoardDTO(null, "name", "Name", "Description");
+        BoardModel inputBoardModel = new BoardModel(null, "name", "Name", "Description");
+        BoardModel createdBoardModel = new BoardModel(1L, inputBoardModel.getName(), inputBoardModel.getLabel(), inputBoardModel.getDescription());
+        BoardDTO expectedBoard = BoardProcessorMapper.toDTO(createdBoardModel);
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        exchange.getIn().setBody(inputBoard);
+        exchange.getIn().setBody(inputBoardDTO);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),
-                "Board with name " + createdBoard.getName() + " created successfully", createdBoard);
+                "Board with name " + expectedBoard.getName() + " created successfully", expectedBoard);
 
         // mock
-        when(boardService.createBoard(inputBoard)).thenReturn(createdBoard);
+        when(boardService.createBoard(inputBoardModel)).thenReturn(createdBoardModel);
 
         // when
         Exchange responseExchange = template.send(BoardRouteConstants.CREATE_BOARD.getRouteName(), exchange);
@@ -175,10 +180,11 @@ class BoardRouteBuilderTest extends CamelTestSupport {
     @DisplayName("given board exists when route createBoard is called with creating same board then throws ResourceAlreadyExistExceptionHandler")
     void givenBoardExists_whenRouteCreateBoardWithCreatingSameBoard_thenThrowsResourceAlreadyExistExceptionHandler() {
         // given
-        BoardDTO existingBoard = new BoardDTO(1L, "name", "Name", "Board description");
+        BoardDTO existingBoardDTO = new BoardDTO(1L, "name", "Name", "Board description");
+        BoardModel existingBoardModel = new BoardModel(1L, "name", "Name", "Board description");
 
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setBody(existingBoard);
+        exchange.getIn().setBody(existingBoardDTO);
         exchange.getIn().setHeader(Exchange.HTTP_METHOD, "POST");
 
         // expected
@@ -186,7 +192,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
                 "The board with name 'name' already exists.", null);
 
         // mock
-        when(boardService.createBoard(existingBoard)).thenThrow(new ResourceAlreadyExistException("board", "name", "name"));
+        when(boardService.createBoard(existingBoardModel)).thenThrow(new ResourceAlreadyExistException("board", "name", "name"));
 
         // when
         Exchange responseExchange = template.send(BoardRouteConstants.CREATE_BOARD.getRouteName(), exchange);
@@ -203,19 +209,21 @@ class BoardRouteBuilderTest extends CamelTestSupport {
     void givenValidRequest_whenRouteUpdateBoardIsCalled_thenBoardIsUpdated() {
         // given
         Long boardId = 1L;
-        BoardDTO request = new BoardDTO(boardId, "newName", "newDescription", "newIcon");
-        BoardDTO updatedBoard = new BoardDTO(boardId, "newName", "newDescription", "newIcon");
+        BoardDTO inputBoardDTO = new BoardDTO(boardId, "newName", "newDescription", "newIcon");
+        BoardModel requestModel = new BoardModel(boardId, "newName", "newDescription", "newIcon");
+        BoardModel updatedBoard = new BoardModel(boardId, "newName", "newDescription", "newIcon");
+        BoardDTO expectedBoard = BoardProcessorMapper.toDTO(updatedBoard);
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("id", boardId);
-        exchange.getIn().setBody(request);
+        exchange.getIn().setBody(inputBoardDTO);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Board with name " + updatedBoard.getName() + " updated successfully", updatedBoard);
+                "Board with name " + updatedBoard.getName() + " updated successfully", expectedBoard);
 
         // mock
-        when(boardService.updateBoard(boardId, request)).thenReturn(updatedBoard);
+        when(boardService.updateBoard(boardId, requestModel)).thenReturn(updatedBoard);
 
         // when
         Exchange responseExchange = template.send(BoardRouteConstants.UPDATE_BOARD.getRouteName(), exchange);
@@ -232,11 +240,12 @@ class BoardRouteBuilderTest extends CamelTestSupport {
     void givenInvalidRequest_whenRouteUpdateBoard_thenThrowsResourceNotFoundExceptionHandler() {
         // given
         Long nonExistingId = 99L;
-        BoardDTO request = new BoardDTO(nonExistingId, "newName", "newDescription", "newIcon");
+        BoardDTO inputRequestDTO = new BoardDTO(nonExistingId, "newName", "newDescription", "newIcon");
+        BoardModel request = new BoardModel(nonExistingId, "newName", "newDescription", "newIcon");
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("id", nonExistingId);
-        exchange.getIn().setBody(request);
+        exchange.getIn().setBody(inputRequestDTO);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.NOT_FOUND.value(),
                 "The board with ID 99 does not exist.", null);
@@ -259,23 +268,24 @@ class BoardRouteBuilderTest extends CamelTestSupport {
     void givenBoardExists_whenRouteDeleteBoard_thenBoardDeleted() {
         // given
         Long boardId = 1L;
-        BoardDTO boardDTO = new BoardDTO(boardId, "test", "Test", "Test board");
+        BoardModel boardModel = new BoardModel(boardId, "test", "Test", "Test board");
+        BoardDTO expectedBoard = new BoardDTO(boardId, "test", "Test", "Test board");
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("id", boardId);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Board with id " + boardId + " deleted successfully", boardDTO);
+                "Board with id " + boardId + " deleted successfully", expectedBoard);
 
         // mock
-        when(boardService.getBoardById(1L)).thenReturn(boardDTO);
+        when(boardService.deleteBoardById(1L)).thenReturn(boardModel);
 
         // when
         Exchange result = template.send(BoardRouteConstants.DELETE_BOARD.getRouteName(), exchange);
         ApiResponseDTO actualResponse = result.getMessage().getBody(ApiResponseDTO.class);
 
-        // assert
+        // then
         assertEquals(expectedApiResponse.getStatus(), actualResponse.getStatus());
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
         assertEquals(expectedApiResponse.getData(), actualResponse.getData());

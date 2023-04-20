@@ -1,9 +1,9 @@
 package com.elysium.reddot.ms.board.infrastructure.outbound.persistence;
 
 
-import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
-import com.elysium.reddot.ms.board.application.port.out.IBoardRepositoryOutbound;
-import com.elysium.reddot.ms.board.infrastructure.mapper.BoardInfrastructureMapper;
+import com.elysium.reddot.ms.board.domain.model.BoardModel;
+import com.elysium.reddot.ms.board.domain.port.outbound.IBoardRepository;
+import com.elysium.reddot.ms.board.infrastructure.mapper.BoardPersistenceMapper;
 import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.entity.BoardJpaEntity;
 import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.repository.BoardJpaRepository;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class IBoardRepositoryAdapter implements IBoardRepositoryOutbound {
+public class IBoardRepositoryAdapter implements IBoardRepository {
 
     private final BoardJpaRepository boardJpaRepository;
 
@@ -22,37 +22,37 @@ public class IBoardRepositoryAdapter implements IBoardRepositoryOutbound {
     }
 
     @Override
-    public BoardDTO createBoard(BoardDTO boardDto) {
-        BoardJpaEntity boardEntity = BoardInfrastructureMapper.toEntity(boardDto);
+    public BoardModel createBoard(BoardModel boardModel) {
+        BoardJpaEntity boardEntity = BoardPersistenceMapper.toEntity(boardModel);
         BoardJpaEntity savedBoard = boardJpaRepository.save(boardEntity);
-        return BoardInfrastructureMapper.toDTO(savedBoard);
+        return BoardPersistenceMapper.toModel(savedBoard);
     }
 
     @Override
-    public Optional<BoardDTO> findBoardById(Long id) {
+    public Optional<BoardModel> findBoardById(Long id) {
         return boardJpaRepository.findById(id)
-                .map(BoardInfrastructureMapper::toDTO);
+                .map(BoardPersistenceMapper::toModel);
     }
 
     @Override
-    public Optional<BoardDTO> findBoardByName(String name) {
+    public Optional<BoardModel> findBoardByName(String name) {
         return boardJpaRepository.findByName(name)
-                .map(BoardInfrastructureMapper::toDTO);
+                .map(BoardPersistenceMapper::toModel);
     }
 
     @Override
-    public List<BoardDTO> findAllBoards() {
+    public List<BoardModel> findAllBoards() {
         return boardJpaRepository.findAll()
                 .stream()
-                .map(BoardInfrastructureMapper::toDTO)
+                .map(BoardPersistenceMapper::toModel)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public BoardDTO updateBoard(BoardDTO boardDto) {
-        BoardJpaEntity boardEntity = BoardInfrastructureMapper.toEntity(boardDto);
+    public BoardModel updateBoard(BoardModel boardModel) {
+        BoardJpaEntity boardEntity = BoardPersistenceMapper.toEntity(boardModel);
         BoardJpaEntity updatedBoard = boardJpaRepository.save(boardEntity);
-        return BoardInfrastructureMapper.toDTO(updatedBoard);
+        return BoardPersistenceMapper.toModel(updatedBoard);
     }
 
     @Override

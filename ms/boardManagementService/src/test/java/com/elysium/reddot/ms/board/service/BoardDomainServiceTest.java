@@ -1,9 +1,9 @@
-package com.elysium.reddot.ms.board.domain.service;
+package com.elysium.reddot.ms.board.service;
 
 import com.elysium.reddot.ms.board.domain.exception.FieldEmptyException;
 import com.elysium.reddot.ms.board.domain.exception.FieldWithSpaceException;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
-import com.elysium.reddot.ms.board.domain.service.BoardDomainService;
+import com.elysium.reddot.ms.board.domain.service.BoardDomainServiceImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BoardDomainServiceTest {
 
-    private static BoardDomainService boardDomainService;
+    private static BoardDomainServiceImpl boardDomainService;
 
     @BeforeAll
     static void setUp() {
-        boardDomainService = new BoardDomainService();
+        boardDomainService = new BoardDomainServiceImpl();
     }
 
     @Test

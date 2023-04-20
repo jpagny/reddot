@@ -2,7 +2,6 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
-import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteConstants;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;

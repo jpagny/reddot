@@ -1,13 +1,12 @@
 package com.elysium.reddot.ms.board.application.service;
 
-import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
-import com.elysium.reddot.ms.board.application.data.mapper.BoardApplicationMapper;
 import com.elysium.reddot.ms.board.application.exception.exception.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.board.application.exception.exception.ResourceBadValueException;
 import com.elysium.reddot.ms.board.application.exception.exception.ResourceNotFoundException;
-import com.elysium.reddot.ms.board.application.port.in.IBoardManagement;
-import com.elysium.reddot.ms.board.application.port.out.IBoardRepositoryOutbound;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
+import com.elysium.reddot.ms.board.domain.port.inbound.IBoardManagementService;
+import com.elysium.reddot.ms.board.domain.port.outbound.IBoardRepository;
+import com.elysium.reddot.ms.board.domain.service.BoardDomainServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,117 +19,114 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @Slf4j
-public class BoardApplicationServiceImpl implements IBoardApplicationService {
+public class BoardApplicationServiceImpl implements IBoardManagementService {
 
-    private static final String RESOURCE_NAME_BOARD = "board";
-    private final IBoardManagement boardDomainService;
-    private final IBoardRepositoryOutbound boardRepositoryOutbound;
+    private static final String RESOURCE_NAME_TOPIC = "board";
+    private final BoardDomainServiceImpl boardDomainService;
+    private final IBoardRepository boardRepository;
 
     @Autowired
-    public BoardApplicationServiceImpl(IBoardManagement boardDomainService, IBoardRepositoryOutbound boardRepositoryOutbound) {
-        this.boardDomainService = boardDomainService;
-        this.boardRepositoryOutbound = boardRepositoryOutbound;
-    }
-
-    public BoardDTO getBoardById(Long id) {
-        log.debug("Fetching board with id {}", id);
-
-        BoardDTO boardDTO = boardRepositoryOutbound.findBoardById(id).orElseThrow(
-                () -> new ResourceNotFoundException(RESOURCE_NAME_BOARD, String.valueOf(id))
-        );
-
-        log.info("Successfully retrieved board with id {}, name '{}', description '{}'",
-                id, boardDTO.getName(), boardDTO.getDescription());
-
-        return boardDTO;
+    public BoardApplicationServiceImpl(IBoardRepository boardRepository) {
+        this.boardDomainService = new BoardDomainServiceImpl();
+        this.boardRepository = boardRepository;
     }
 
     @Override
-    public List<BoardDTO> getAllBoards() {
+    public BoardModel getBoardById(Long id) {
+        log.debug("Fetching board with id {}", id);
+
+        BoardModel foundBoardModel = boardRepository.findBoardById(id).orElseThrow(
+                () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
+        );
+
+        log.info("Successfully retrieved board with id {}, name '{}', description '{}'",
+                id, foundBoardModel.getName(), foundBoardModel.getDescription());
+
+        return foundBoardModel;
+    }
+
+    @Override
+    public List<BoardModel> getAllBoards() {
         log.info("Fetching all boards from database...");
 
-        return boardRepositoryOutbound.findAllBoards()
+        return boardRepository.findAllBoards()
                 .parallelStream()
                 .collect(Collectors.toList());
     }
 
     @Override
-    public BoardDTO createBoard(BoardDTO boardToCreateDTO) {
+    public BoardModel createBoard(BoardModel boardToCreateModel) {
 
         log.debug("Creating new board with name '{}', label '{}, description '{}'",
-                boardToCreateDTO.getName(),
-                boardToCreateDTO.getLabel(),
-                boardToCreateDTO.getDescription());
+                boardToCreateModel.getName(),
+                boardToCreateModel.getLabel(),
+                boardToCreateModel.getDescription());
 
-        Optional<BoardDTO> existingBoard = boardRepositoryOutbound.findBoardByName(boardToCreateDTO.getName());
+        Optional<BoardModel> existingBoard = boardRepository.findBoardByName(boardToCreateModel.getName());
 
         if (existingBoard.isPresent()) {
-            throw new ResourceAlreadyExistException(RESOURCE_NAME_BOARD, "name", boardToCreateDTO.getName());
+            throw new ResourceAlreadyExistException(RESOURCE_NAME_TOPIC, "name", boardToCreateModel.getName());
         }
-
-        BoardModel boardModel = BoardApplicationMapper.toModel(boardToCreateDTO);
 
         try {
-            boardDomainService.validateBoardForCreation(boardModel);
+            boardDomainService.validateBoardForCreation(boardToCreateModel);
         } catch (Exception exception) {
-            throw new ResourceBadValueException(RESOURCE_NAME_BOARD, exception.getMessage());
+            throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, exception.getMessage());
         }
 
-        BoardDTO boardCreatedDTO = boardRepositoryOutbound.createBoard(boardToCreateDTO);
+        BoardModel createdBoardModel = boardRepository.createBoard(boardToCreateModel);
 
         log.info("Successfully created board with id {}, name '{}', label '{}' description '{}'",
-                boardCreatedDTO.getId(),
-                boardCreatedDTO.getName(),
-                boardCreatedDTO.getLabel(),
-                boardCreatedDTO.getDescription());
+                createdBoardModel.getId(),
+                createdBoardModel.getName(),
+                createdBoardModel.getLabel(),
+                createdBoardModel.getDescription());
 
-        return boardCreatedDTO;
+        return createdBoardModel;
     }
 
     @Override
-    public BoardDTO updateBoard(Long id, BoardDTO boardToUpdateDTO) {
+    public BoardModel updateBoard(Long id, BoardModel boardToUpdateModel) {
         log.debug("Updating board with id '{}', name '{}', label '{}', description '{}'",
-                id, boardToUpdateDTO.getName(), boardToUpdateDTO.getLabel(), boardToUpdateDTO.getDescription());
+                id, boardToUpdateModel.getName(), boardToUpdateModel.getLabel(), boardToUpdateModel.getDescription());
 
-        BoardDTO existingBoardDTO = boardRepositoryOutbound.findBoardById(id).orElseThrow(
-                () -> new ResourceNotFoundException(RESOURCE_NAME_BOARD, String.valueOf(id))
+        BoardModel existingBoardModel = boardRepository.findBoardById(id).orElseThrow(
+                () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
         );
 
-        BoardModel existingBoardModel = BoardApplicationMapper.toModel(existingBoardDTO);
-        BoardModel boardToUpdateModel = BoardApplicationMapper.toModel(boardToUpdateDTO);
-
         try {
-            BoardModel boardUpdatedModel = boardDomainService.updateExistingBoardWithUpdates(existingBoardModel, boardToUpdateModel);
-            BoardDTO boardUpdatedDTO = BoardApplicationMapper.toDTO(boardUpdatedModel);
+            BoardModel boardModelWithUpdates = boardDomainService.updateExistingBoardWithUpdates(existingBoardModel, boardToUpdateModel);
 
-            boardUpdatedDTO = boardRepositoryOutbound.updateBoard(boardUpdatedDTO);
+            BoardModel updatedBoardModel = boardRepository.updateBoard(boardModelWithUpdates);
 
             log.info("Successfully updated board with id '{}', name '{}', label'{}, description '{}'",
-                    boardUpdatedDTO.getId(),
-                    boardUpdatedDTO.getName(),
-                    boardUpdatedDTO.getLabel(),
-                    boardUpdatedDTO.getDescription());
+                    updatedBoardModel.getId(),
+                    updatedBoardModel.getName(),
+                    updatedBoardModel.getLabel(),
+                    updatedBoardModel.getDescription());
 
-            return boardUpdatedDTO;
+            return updatedBoardModel;
 
         } catch (Exception ex) {
-            throw new ResourceBadValueException(RESOURCE_NAME_BOARD, ex.getMessage());
+            throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, ex.getMessage());
 
         }
     }
 
     @Override
-    public void deleteBoardById(Long id) throws ResourceNotFoundException {
+    public BoardModel deleteBoardById(Long id) throws ResourceNotFoundException {
         log.debug("Deleting board with id {}", id);
 
-        BoardDTO boardToDelete = boardRepositoryOutbound.findBoardById(id).orElseThrow(
-                () -> new ResourceNotFoundException(RESOURCE_NAME_BOARD, String.valueOf(id))
+        BoardModel boardToDelete = boardRepository.findBoardById(id).orElseThrow(
+                () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
         );
 
-        boardRepositoryOutbound.deleteBoard(id);
+        boardRepository.deleteBoard(id);
 
         log.info("Successfully deleted board with id '{}', name '{}', description '{}'",
                 boardToDelete.getId(), boardToDelete.getName(), boardToDelete.getDescription());
+
+        return boardToDelete;
     }
 
 }

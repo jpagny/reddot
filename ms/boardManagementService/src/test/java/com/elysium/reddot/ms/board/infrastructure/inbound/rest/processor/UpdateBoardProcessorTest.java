@@ -3,6 +3,8 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor;
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
+import com.elysium.reddot.ms.board.domain.model.BoardModel;
+import com.elysium.reddot.ms.board.infrastructure.mapper.BoardProcessorMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -37,12 +39,14 @@ class UpdateBoardProcessorTest {
     @Test
     @DisplayName("given valid board when updateBoard is called then board updated successfully")
     void givenValidBoard_whenUpdateBoard_thenBoardIsUpdatedSuccessfully() {
-        // arrange
+        // given
         Long boardId = 1L;
         BoardDTO updatedBoardDTO = new BoardDTO(boardId, "new_name", "New Name", "New Board description");
+        BoardModel updatedBoardModel = new BoardModel(boardId, "new_name", "New Name", "New Board description");
+        BoardDTO expectedBoard = BoardProcessorMapper.toDTO(updatedBoardModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Board with name " + updatedBoardDTO.getName() + " updated successfully", updatedBoardDTO);
+                "Board with name " + updatedBoardModel.getName() + " updated successfully", expectedBoard);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("CamelHttpUri", "/boards/" + boardId);
@@ -50,13 +54,13 @@ class UpdateBoardProcessorTest {
         exchange.getIn().setBody(updatedBoardDTO);
 
         // mock
-        when(boardService.updateBoard(boardId, updatedBoardDTO)).thenReturn(updatedBoardDTO);
+        when(boardService.updateBoard(boardId, updatedBoardModel)).thenReturn(updatedBoardModel);
 
-        // act
+        // when
         updateBoardProcessor.process(exchange);
         ApiResponseDTO actualApiResponse = exchange.getMessage().getBody(ApiResponseDTO.class);
 
-        // assert
+        // then
         assertEquals(expectedApiResponse.getStatus(), actualApiResponse.getStatus());
         assertEquals(expectedApiResponse.getMessage(), actualApiResponse.getMessage());
         assertEquals(expectedApiResponse.getData(), actualApiResponse.getData());
