@@ -23,19 +23,19 @@ public class TopicApplicationServiceImpl implements ITopicManagementService {
 
     private static final String RESOURCE_NAME_TOPIC = "topic";
     private final TopicDomainServiceImpl topicDomainService;
-    private final ITopicRepository userRepositoryOutbound;
+    private final ITopicRepository topicRepository;
 
     @Autowired
-    public TopicApplicationServiceImpl(ITopicRepository userRepositoryOutbound) {
+    public TopicApplicationServiceImpl(ITopicRepository topicRepository) {
         this.topicDomainService = new TopicDomainServiceImpl();
-        this.userRepositoryOutbound = userRepositoryOutbound;
+        this.topicRepository = topicRepository;
     }
 
     @Override
     public TopicModel getTopicById(Long id) {
         log.debug("Fetching topic with id {}", id);
 
-        TopicModel foundTopicModel = userRepositoryOutbound.findTopicById(id).orElseThrow(
+        TopicModel foundTopicModel = topicRepository.findTopicById(id).orElseThrow(
                 () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
         );
 
@@ -49,7 +49,7 @@ public class TopicApplicationServiceImpl implements ITopicManagementService {
     public List<TopicModel> getAllTopics() {
         log.info("Fetching all topics from database...");
 
-        return userRepositoryOutbound.findAllTopics()
+        return topicRepository.findAllTopics()
                 .parallelStream()
                 .collect(Collectors.toList());
     }
@@ -62,7 +62,7 @@ public class TopicApplicationServiceImpl implements ITopicManagementService {
                 topicToCreateModel.getLabel(),
                 topicToCreateModel.getDescription());
 
-        Optional<TopicModel> existingTopic = userRepositoryOutbound.findTopicByName(topicToCreateModel.getName());
+        Optional<TopicModel> existingTopic = topicRepository.findTopicByName(topicToCreateModel.getName());
 
         if (existingTopic.isPresent()) {
             throw new ResourceAlreadyExistException(RESOURCE_NAME_TOPIC, "name", topicToCreateModel.getName());
@@ -74,7 +74,7 @@ public class TopicApplicationServiceImpl implements ITopicManagementService {
             throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, exception.getMessage());
         }
 
-        TopicModel createdTopicModel = userRepositoryOutbound.createTopic(topicToCreateModel);
+        TopicModel createdTopicModel = topicRepository.createTopic(topicToCreateModel);
 
         log.info("Successfully created topic with id {}, name '{}', label '{}' description '{}'",
                 createdTopicModel.getId(),
@@ -90,14 +90,14 @@ public class TopicApplicationServiceImpl implements ITopicManagementService {
         log.debug("Updating topic with id '{}', name '{}', label '{}', description '{}'",
                 id, topicToUpdateModel.getName(), topicToUpdateModel.getLabel(), topicToUpdateModel.getDescription());
 
-        TopicModel existingTopicModel = userRepositoryOutbound.findTopicById(id).orElseThrow(
+        TopicModel existingTopicModel = topicRepository.findTopicById(id).orElseThrow(
                 () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
         );
 
         try {
             TopicModel topicModelWithUpdates = topicDomainService.updateExistingTopicWithUpdates(existingTopicModel, topicToUpdateModel);
 
-            TopicModel updatedTopicModel = userRepositoryOutbound.updateTopic(topicModelWithUpdates);
+            TopicModel updatedTopicModel = topicRepository.updateTopic(topicModelWithUpdates);
 
             log.info("Successfully updated topic with id '{}', name '{}', label'{}, description '{}'",
                     updatedTopicModel.getId(),
@@ -117,11 +117,11 @@ public class TopicApplicationServiceImpl implements ITopicManagementService {
     public TopicModel deleteTopicById(Long id) throws ResourceNotFoundException {
         log.debug("Deleting topic with id {}", id);
 
-        TopicModel topicToDelete = userRepositoryOutbound.findTopicById(id).orElseThrow(
+        TopicModel topicToDelete = topicRepository.findTopicById(id).orElseThrow(
                 () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
         );
 
-        userRepositoryOutbound.deleteTopic(id);
+        topicRepository.deleteTopic(id);
 
         log.info("Successfully deleted topic with id '{}', name '{}', description '{}'",
                 topicToDelete.getId(), topicToDelete.getName(), topicToDelete.getDescription());

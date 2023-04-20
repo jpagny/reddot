@@ -1,10 +1,9 @@
 package com.elysium.reddot.ms.topic.application.service;
 
-import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceBadValueException;
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
-import com.elysium.reddot.ms.topic.domain.service.TopicDomainServiceImpl;
+import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.ITopicRepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,8 +28,7 @@ class TopicApplicationServiceTest {
 
     @BeforeEach
     void setUp() {
-        TopicDomainServiceImpl topicDomainService = new TopicDomainServiceImpl();
-        topicService = new TopicApplicationServiceImpl(topicDomainService, topicRepository);
+        topicService = new TopicApplicationServiceImpl(topicRepository);
     }
 
     @Test
@@ -38,13 +36,13 @@ class TopicApplicationServiceTest {
     void givenValidId_whenGetTopicById_thenReturnsTopic() {
         // given
         Long validId = 1L;
-        TopicDTO expectedTopic = new TopicDTO(1L, "test", "Test Name", "Test Description");
+        TopicModel expectedTopic = new TopicModel(1L, "test", "Test Name", "Test Description");
 
         // mock
         when(topicRepository.findTopicById(validId)).thenReturn(Optional.of(expectedTopic));
 
         // when
-        TopicDTO actualTopic = topicService.getTopicById(validId);
+        TopicModel actualTopic = topicService.getTopicById(validId);
 
         // then
         assertEquals(expectedTopic, actualTopic);
@@ -68,96 +66,96 @@ class TopicApplicationServiceTest {
     }
 
     @Test
-    @DisplayName("given existing topics, when getAll, then returns List of topicDTO")
-    void givenExistingTopics_whenGetAll_thenReturnsListOfTopicDTOs() {
+    @DisplayName("given existing topics, when getAll, then returns List of topics")
+    void givenExistingTopics_whenGetAll_thenReturnsListOfTopics() {
         // given
-        TopicDTO topic1 = new TopicDTO(1L, "test1", "Test Name 1", "Test Description 1");
-        TopicDTO topic2 = new TopicDTO(2L, "test2", "Test Name 2", "Test Description 2");
+        TopicModel topic1Model = new TopicModel(1L, "test1", "Test Name 1", "Test Description 1");
+        TopicModel topic2Model = new TopicModel(2L, "test2", "Test Name 2", "Test Description 2");
 
         // mock
-        List<TopicDTO> expectedTopics = Arrays.asList(topic1, topic2);
-        when(topicService.getAllTopics()).thenReturn(expectedTopics);
+        List<TopicModel> expectedListTopics = Arrays.asList(topic1Model, topic2Model);
+        when(topicService.getAllTopics()).thenReturn(expectedListTopics);
 
         // when
-        List<TopicDTO> actualTopics = topicService.getAllTopics();
+        List<TopicModel> actualTopics = topicService.getAllTopics();
 
         // then
-        assertEquals(expectedTopics, actualTopics, "The returned topic list should match the expected topic list");
+        assertEquals(expectedListTopics, actualTopics, "The returned topic list should match the expected topic list");
         verify(topicRepository, times(1)).findAllTopics();
     }
 
     @Test
-    @DisplayName("given valid topicDTO when createTopic is called then topic created")
-    void givenValidTopicDTO_whenCreateTopic_thenTopicCreated() {
+    @DisplayName("given valid topic when createTopic is called then topic created")
+    void givenValidTopic_whenCreateTopic_thenTopicCreated() {
         // given
-        TopicDTO topicToCreateDTO = new TopicDTO(null, "test", "Test Label", "Test Description");
-        TopicDTO createdTopicDTO = new TopicDTO(1L, "test 2", "Test Label", "Test Description");
+        TopicModel topicToCreateLabel = new TopicModel(null, "test", "Test Label", "Test Description");
+        TopicModel expectedTopic = new TopicModel(1L, "test", "Test Label", "Test Description");
 
         // mock
-        when(topicRepository.findTopicByName(topicToCreateDTO.getName())).thenReturn(Optional.empty());
-        when(topicRepository.createTopic(topicToCreateDTO)).thenReturn(createdTopicDTO);
+        when(topicRepository.findTopicByName(topicToCreateLabel.getName())).thenReturn(Optional.empty());
+        when(topicRepository.createTopic(topicToCreateLabel)).thenReturn(expectedTopic);
 
         // when
-        TopicDTO actualTopicDTO = topicService.createTopic(topicToCreateDTO);
+        TopicModel actualTopicModel = topicService.createTopic(topicToCreateLabel);
 
         // then
-        assertEquals(createdTopicDTO, actualTopicDTO, "The created topic should match the expected topic");
-        verify(topicRepository, times(1)).findTopicByName(topicToCreateDTO.getName());
-        verify(topicRepository, times(1)).createTopic(topicToCreateDTO);
+        assertEquals(expectedTopic, actualTopicModel, "The created topic should match the expected topic");
+        verify(topicRepository, times(1)).findTopicByName(expectedTopic.getName());
+        verify(topicRepository, times(1)).createTopic(topicToCreateLabel);
     }
 
     @Test
-    @DisplayName("given existing topic when CreateTopic is called then throws ResourceAlreadyExistException")
+    @DisplayName("given existing topic when createTopic is called then throws ResourceAlreadyExistException")
     void givenExistingTopic_whenCreateTopic_thenThrowsResourceAlreadyExistException() {
         // given
-        TopicDTO existingTopicDTO = new TopicDTO(1L, "Test Name", "Test Label", "Test Description");
+        TopicModel existingTopicModel = new TopicModel(1L, "Test Name", "Test Label", "Test Description");
 
         // mock
-        when(topicRepository.findTopicByName(existingTopicDTO.getName())).thenReturn(Optional.of(existingTopicDTO));
+        when(topicRepository.findTopicByName(existingTopicModel.getName())).thenReturn(Optional.of(existingTopicModel));
 
         // when && then
         assertThrows(ResourceAlreadyExistException.class,
-                () -> topicService.createTopic(existingTopicDTO),
+                () -> topicService.createTopic(existingTopicModel),
                 "createTopic should throw a ResourceAlreadyExistException for an existing topic");
-        verify(topicRepository, times(1)).findTopicByName(existingTopicDTO.getName());
+        verify(topicRepository, times(1)).findTopicByName(existingTopicModel.getName());
     }
 
     @Test
-    @DisplayName("given invalid topicDTO when createTopic is called then throws ResourceBadValueException")
-    void givenInvalidTopicDTO_whenCreateTopic_thenThrowsResourceBadValueException() {
+    @DisplayName("given invalid topic when createTopic is called then throws ResourceBadValueException")
+    void givenInvalidTopic_whenCreateTopic_thenThrowsResourceBadValueException() {
         // given
-        TopicDTO invalidTopicDTO = new TopicDTO(1L, "", "Invalid Label", "Invalid Description");
+        TopicModel invalidTopicModel = new TopicModel(1L, "", "Invalid Label", "Invalid Description");
 
         // mock
-        when(topicRepository.findTopicByName(invalidTopicDTO.getName())).thenReturn(Optional.empty());
+        when(topicRepository.findTopicByName(invalidTopicModel.getName())).thenReturn(Optional.empty());
 
         // when && then
         assertThrows(ResourceBadValueException.class,
-                () -> topicService.createTopic(invalidTopicDTO),
+                () -> topicService.createTopic(invalidTopicModel),
                 "createTopic should throw a ResourceBadValueException for an invalid topic");
-        verify(topicRepository, times(1)).findTopicByName(invalidTopicDTO.getName());
+        verify(topicRepository, times(1)).findTopicByName(invalidTopicModel.getName());
     }
 
     @Test
-    @DisplayName("given validTopicDTO when updateTopic is called then topic updated")
-    void givenValidTopicDTO_whenUpdateTopic_thenTopicUpdated() {
+    @DisplayName("given validTopic when updateTopic is called then topic updated")
+    void givenValidTopic_whenUpdateTopic_thenTopicUpdated() {
         // given
         Long topicId = 1L;
-        TopicDTO existingTopicDTO = new TopicDTO(topicId, "Old Name", "OldLabel", "Old Description");
-        TopicDTO topicToUpdateDTO = new TopicDTO(topicId, "Old Name", "NewLabel", "NewDescription");
-        TopicDTO updatedTopicDTO = new TopicDTO(topicId, "Old Name", "NewLabel", "NewDescription");
+        TopicModel existingTopicModel = new TopicModel(topicId, "Old Name", "OldLabel", "Old Description");
+        TopicModel topicToUpdateModel = new TopicModel(topicId, "Old Name", "NewLabel", "NewDescription");
+        TopicModel expectedTopic = new TopicModel(topicId, "Old Name", "NewLabel", "NewDescription");
 
         // mock
-        when(topicRepository.findTopicById(topicId)).thenReturn(Optional.of(existingTopicDTO));
-        when(topicRepository.updateTopic(updatedTopicDTO)).thenReturn(updatedTopicDTO);
+        when(topicRepository.findTopicById(topicId)).thenReturn(Optional.of(existingTopicModel));
+        when(topicRepository.updateTopic(expectedTopic)).thenReturn(expectedTopic);
 
         // when
-        TopicDTO actualTopicDTO = topicService.updateTopic(1L, topicToUpdateDTO);
+        TopicModel actualTopicDTO = topicService.updateTopic(1L, topicToUpdateModel);
 
         // then
-        assertEquals(updatedTopicDTO, actualTopicDTO, "The updated topic should match the expected topic");
+        assertEquals(expectedTopic, actualTopicDTO, "The updated topic should match the expected topic");
         verify(topicRepository, times(1)).findTopicById(topicId);
-        verify(topicRepository, times(1)).updateTopic(updatedTopicDTO);
+        verify(topicRepository, times(1)).updateTopic(expectedTopic);
     }
 
     @Test
@@ -165,33 +163,33 @@ class TopicApplicationServiceTest {
     void givenNonExistentTopic_whenUpdateTopic_thenThrowsResourceNotFoundException() {
         // given
         Long nonExistentTopicId = 99L;
-        TopicDTO topicToUpdateDTO = new TopicDTO(nonExistentTopicId, "New Name", "New Label", "New Description");
+        TopicModel topicToUpdateModel = new TopicModel(nonExistentTopicId, "New Name", "New Label", "New Description");
 
         // mock
         when(topicRepository.findTopicById(nonExistentTopicId)).thenReturn(Optional.empty());
 
         // then && when
         assertThrows(ResourceNotFoundException.class,
-                () -> topicService.updateTopic(nonExistentTopicId, topicToUpdateDTO),
+                () -> topicService.updateTopic(nonExistentTopicId, topicToUpdateModel),
                 "updateTopic should throw a ResourceNotFoundException for a non-existent topic");
         verify(topicRepository, times(1)).findTopicById(nonExistentTopicId);
     }
 
     @Test
-    @DisplayName("given invalid topicDTO when updateTopic is called then throws ResourceBadValueException")
-    void givenInvalidTopicDTO_whenUpdateTopic_thenThrowsResourceBadValueException() {
+    @DisplayName("given invalid topic when updateTopic is called then throws ResourceBadValueException")
+    void givenInvalidTopic_whenUpdateTopic_thenThrowsResourceBadValueException() {
         // given
         Long topicId = 1L;
-        TopicDTO existingTopicDTO = new TopicDTO(topicId, "Old Name", "Old Label", "Old Description");
-        TopicDTO invalidTopicToUpdateDTO = new TopicDTO(topicId, "Invalid Name", "", "Invalid Description");
+        TopicModel existingTopicModel = new TopicModel(topicId, "Old Name", "Old Label", "Old Description");
+        TopicModel invalidTopicToUpdateModel = new TopicModel(topicId, "Invalid Name", "", "Invalid Description");
 
         // mock
-        when(topicRepository.findTopicById(topicId)).thenReturn(Optional.of(existingTopicDTO));
+        when(topicRepository.findTopicById(topicId)).thenReturn(Optional.of(existingTopicModel));
 
         // when && then
         assertThrows(ResourceBadValueException.class,
                 () -> topicService.updateTopic
-                        (topicId, invalidTopicToUpdateDTO),
+                        (topicId, invalidTopicToUpdateModel),
                 "updateTopic should throw a ResourceBadValueException for an invalid topic");
         verify(topicRepository, times(1)).findTopicById(topicId);
     }
@@ -201,10 +199,10 @@ class TopicApplicationServiceTest {
     void givenExistingTopic_whenDeleteTopicById_thenTopicDeleted() {
         // given
         Long topicId = 1L;
-        TopicDTO existingTopicDTO = new TopicDTO(topicId, "Test Name", "Test Label", "Test Description");
+        TopicModel existingTopicModel = new TopicModel(topicId, "Test Name", "Test Label", "Test Description");
 
         // mock
-        when(topicRepository.findTopicById(topicId)).thenReturn(Optional.of(existingTopicDTO));
+        when(topicRepository.findTopicById(topicId)).thenReturn(Optional.of(existingTopicModel));
 
         // when
         assertDoesNotThrow(() -> topicService.deleteTopicById(topicId),

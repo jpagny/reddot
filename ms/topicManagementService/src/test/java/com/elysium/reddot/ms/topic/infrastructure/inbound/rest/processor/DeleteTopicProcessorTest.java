@@ -3,6 +3,8 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
+import com.elysium.reddot.ms.topic.domain.model.TopicModel;
+import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicProcessorMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -37,26 +39,26 @@ class DeleteTopicProcessorTest {
     @Test
     @DisplayName("given valid topicId when deleteTopic is called then topic deleted Successfully")
     void givenValidTopicId_whenDeleteTopic_thenTopicIsDeletedSuccessfully() {
-        // arrange
+        // given
         Long topicId = 1L;
-        TopicDTO topicDTO = new TopicDTO(topicId, "name", "Name", "Topic description");
+        TopicModel topicToDeleteModel = new TopicModel(topicId, "name", "Name", "Topic description");
+        TopicDTO expectedTopic = TopicProcessorMapper.toDTO(topicToDeleteModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Topic with id " + topicId + " deleted successfully", topicDTO);
+                "Topic with id " + topicId + " deleted successfully", expectedTopic);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("CamelHttpUri", "/topics/" + topicId);
         exchange.getIn().setHeader("id", topicId);
 
         // mock
-        when(topicService.getTopicById(topicId)).thenReturn(topicDTO);
-        doNothing().when(topicService).deleteTopicById(topicId);
+        when(topicService.deleteTopicById(topicId)).thenReturn(topicToDeleteModel);
 
-        // act
+        // when
         deleteTopicProcessor.process(exchange);
         ApiResponseDTO actualApiResponse = exchange.getMessage().getBody(ApiResponseDTO.class);
 
-        // assert
+        // then
         assertEquals(expectedApiResponse.getStatus(), actualApiResponse.getStatus());
         assertEquals(expectedApiResponse.getMessage(), actualApiResponse.getMessage());
         assertEquals(expectedApiResponse.getData(), actualApiResponse.getData());

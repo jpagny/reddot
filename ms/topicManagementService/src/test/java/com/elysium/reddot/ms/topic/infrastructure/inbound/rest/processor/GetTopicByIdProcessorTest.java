@@ -3,6 +3,8 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
+import com.elysium.reddot.ms.topic.domain.model.TopicModel;
+import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicProcessorMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -37,25 +39,26 @@ class GetTopicByIdProcessorTest {
     @Test
     @DisplayName("given topic exists when getTopicById is called then topic retrieved")
     void givenTopicExists_whenGetTopicById_thenTopicIsRetrieved() {
-        // arrange
+        // given
         Long id = 1L;
-        TopicDTO topic = new TopicDTO(id, "name 1", "Name 1", "Topic 1");
+        TopicModel topicModel = new TopicModel(id, "name 1", "Name 1", "Topic 1");
+        TopicDTO expectedTopic = TopicProcessorMapper.toDTO(topicModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Topic with id " + id + " retrieved successfully", topic);
+                "Topic with id " + id + " retrieved successfully", expectedTopic);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("CamelHttpUri", "/topics/" + id);
         exchange.getIn().setHeader("id", id);
 
         // mock
-        when(topicService.getTopicById(id)).thenReturn(topic);
+        when(topicService.getTopicById(id)).thenReturn(topicModel);
 
-        // act
+        // when
         getTopicByIdProcessor.process(exchange);
         ApiResponseDTO actualApiResponse = exchange.getMessage().getBody(ApiResponseDTO.class);
 
-        // assert
+        // then
         assertEquals(expectedApiResponse.getStatus(), actualApiResponse.getStatus());
         assertEquals(expectedApiResponse.getMessage(), actualApiResponse.getMessage());
         assertEquals(expectedApiResponse.getData(), actualApiResponse.getData());

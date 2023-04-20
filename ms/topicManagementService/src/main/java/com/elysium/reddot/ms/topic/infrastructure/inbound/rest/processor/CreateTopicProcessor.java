@@ -19,6 +19,7 @@ public class CreateTopicProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
+
         TopicDTO inputTopicDTO = exchange.getIn().getBody(TopicDTO.class);
         TopicModel topicModel = TopicProcessorMapper.toModel(inputTopicDTO);
 

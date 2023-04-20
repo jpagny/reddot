@@ -3,6 +3,8 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
+import com.elysium.reddot.ms.topic.domain.model.TopicModel;
+import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicProcessorMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -16,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,25 +40,27 @@ class CreateTopicProcessorTest {
     @Test
     @DisplayName("given valid topic when createTopic is called then topic created successfully")
     void givenValidTopic_whenCreateTopic_thenTopicCreatedSuccessfully() {
-        // arrange
-        TopicDTO topicDTO = new TopicDTO(null, "name", "Name", "Topic description");
-        TopicDTO createdTopicDTO = new TopicDTO(1L, "name", "Name", "Topic description");
+        // given
+        TopicDTO topicToCreateDTO = new TopicDTO(null, "name", "Name", "Topic description");
+        TopicModel topicToCreateModel = new TopicModel(null, "name", "Name", "Topic description");
+        TopicModel createdTopicModel = new TopicModel(1L, "name", "Name", "Topic description");
+        TopicDTO expectedTopic = TopicProcessorMapper.toDTO(createdTopicModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),
-                "Topic with name " + createdTopicDTO.getName() + " created successfully", createdTopicDTO);
+                "Topic with name " + createdTopicModel.getName() + " created successfully", expectedTopic);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("CamelHttpUri", "/topics");
-        exchange.getIn().setBody(topicDTO);
+        exchange.getIn().setBody(topicToCreateDTO);
 
         // mock
-        when(topicService.createTopic(topicDTO)).thenReturn(createdTopicDTO);
+        when(topicService.createTopic(topicToCreateModel)).thenReturn(createdTopicModel);
 
-        // act
+        // when
         createTopicProcessor.process(exchange);
         ApiResponseDTO actualApiResponse = exchange.getMessage().getBody(ApiResponseDTO.class);
 
-        // assert
+        // then
         assertEquals(expectedApiResponse.getStatus(), actualApiResponse.getStatus());
         assertEquals(expectedApiResponse.getMessage(), actualApiResponse.getMessage());
         assertEquals(expectedApiResponse.getData(), actualApiResponse.getData());

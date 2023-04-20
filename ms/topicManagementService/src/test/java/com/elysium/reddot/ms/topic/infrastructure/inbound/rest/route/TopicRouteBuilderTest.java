@@ -10,7 +10,9 @@ import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandle
 import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler.ResourceBadValueIExceptionHandler;
 import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler.ResourceNotFoundIExceptionHandler;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
+import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.*;
+import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicProcessorMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -66,18 +68,19 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     @DisplayName("given topics exist when route getAllTopics is called then all topics retrieved")
     void givenTopicsExist_whenRouteGetAllTopics_thenAllTopicsRetrieved() {
         // given
-        TopicDTO topic1 = new TopicDTO(1L, "name 1", "Name 1", "Topic 1");
-        TopicDTO topic2 = new TopicDTO(2L, "name 2", "Name 2", "Topic 2");
-        List<TopicDTO> topicList = Arrays.asList(topic1, topic2);
+        TopicModel topic1Model = new TopicModel(1L, "name 1", "Name 1", "Topic 1");
+        TopicModel topic2Model = new TopicModel(2L, "name 2", "Name 2", "Topic 2");
+        List<TopicModel> topicListModel = Arrays.asList(topic1Model, topic2Model);
+        List<TopicDTO> expectedListTopics = TopicProcessorMapper.toDTOList(topicListModel);
 
         Exchange exchange = new DefaultExchange(context);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "All topics retrieved successfully", topicList);
+                "All topics retrieved successfully", expectedListTopics);
 
         // mock
-        when(topicService.getAllTopics()).thenReturn(topicList);
+        when(topicService.getAllTopics()).thenReturn(topicListModel);
 
         // when
         Exchange responseExchange = template.send("direct:getAllTopics", exchange);
@@ -95,14 +98,15 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     void givenExistingTopic_whenRouteGetTopicByIdWithValidId_thenTopicReturned() {
         // given
         Long topicId = 1L;
-        TopicDTO topic = new TopicDTO(topicId, "name 1", "Name 1", "Topic 1");
+        TopicModel topic = new TopicModel(topicId, "name 1", "Name 1", "Topic 1");
+        TopicDTO expectedTopic =  new TopicDTO(topicId, "name 1", "Name 1", "Topic 1");
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("id", topicId);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Topic with id 1 retrieved successfully", topic);
+                "Topic with id 1 retrieved successfully", expectedTopic);
 
         // mock
         when(topicService.getTopicById(topicId)).thenReturn(topic);
@@ -146,19 +150,21 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     @DisplayName("given valid topic when route createTopic is called then topic created")
     void givenValidTopic_whenRouteCreateTopic_thenTopicCreated() {
         // given
-        TopicDTO inputTopic = new TopicDTO(null, "name", "Name", "Description");
-        TopicDTO createdTopic = new TopicDTO(1L, inputTopic.getName(), inputTopic.getLabel(), inputTopic.getDescription());
+        TopicDTO inputTopicDTO = new TopicDTO(null, "name", "Name", "Description");
+        TopicModel inputTopicModel = new TopicModel(null, "name", "Name", "Description");
+        TopicModel createdTopicModel = new TopicModel(1L, inputTopicModel.getName(), inputTopicModel.getLabel(), inputTopicModel.getDescription());
+        TopicDTO expectedTopic = TopicProcessorMapper.toDTO(createdTopicModel);
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        exchange.getIn().setBody(inputTopic);
+        exchange.getIn().setBody(inputTopicDTO);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),
-                "Topic with name " + createdTopic.getName() + " created successfully", createdTopic);
+                "Topic with name " + expectedTopic.getName() + " created successfully", expectedTopic);
 
         // mock
-        when(topicService.createTopic(inputTopic)).thenReturn(createdTopic);
+        when(topicService.createTopic(inputTopicModel)).thenReturn(createdTopicModel);
 
         // when
         Exchange responseExchange = template.send(TopicRouteConstants.CREATE_TOPIC.getRouteName(), exchange);
@@ -174,10 +180,11 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     @DisplayName("given topic exists when route createTopic is called with creating same topic then throws ResourceAlreadyExistExceptionHandler")
     void givenTopicExists_whenRouteCreateTopicWithCreatingSameTopic_thenThrowsResourceAlreadyExistExceptionHandler() {
         // given
-        TopicDTO existingTopic = new TopicDTO(1L, "name", "Name", "Topic description");
+        TopicDTO existingTopicDTO = new TopicDTO(1L, "name", "Name", "Topic description");
+        TopicModel existingTopicModel = new TopicModel(1L, "name", "Name", "Topic description");
 
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setBody(existingTopic);
+        exchange.getIn().setBody(existingTopicDTO);
         exchange.getIn().setHeader(Exchange.HTTP_METHOD, "POST");
 
         // expected
@@ -185,7 +192,7 @@ class TopicRouteBuilderTest extends CamelTestSupport {
                 "The topic with name 'name' already exists.", null);
 
         // mock
-        when(topicService.createTopic(existingTopic)).thenThrow(new ResourceAlreadyExistException("topic", "name", "name"));
+        when(topicService.createTopic(existingTopicModel)).thenThrow(new ResourceAlreadyExistException("topic", "name", "name"));
 
         // when
         Exchange responseExchange = template.send(TopicRouteConstants.CREATE_TOPIC.getRouteName(), exchange);
@@ -202,19 +209,21 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     void givenValidRequest_whenRouteUpdateTopicIsCalled_thenTopicIsUpdated() {
         // given
         Long topicId = 1L;
-        TopicDTO request = new TopicDTO(topicId, "newName", "newDescription", "newIcon");
-        TopicDTO updatedTopic = new TopicDTO(topicId, "newName", "newDescription", "newIcon");
+        TopicDTO inputTopicDTO = new TopicDTO(topicId, "newName", "newDescription", "newIcon");
+        TopicModel requestModel = new TopicModel(topicId, "newName", "newDescription", "newIcon");
+        TopicModel updatedTopic = new TopicModel(topicId, "newName", "newDescription", "newIcon");
+        TopicDTO expectedTopic = TopicProcessorMapper.toDTO(updatedTopic);
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("id", topicId);
-        exchange.getIn().setBody(request);
+        exchange.getIn().setBody(inputTopicDTO);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Topic with name " + updatedTopic.getName() + " updated successfully", updatedTopic);
+                "Topic with name " + updatedTopic.getName() + " updated successfully", expectedTopic);
 
         // mock
-        when(topicService.updateTopic(topicId, request)).thenReturn(updatedTopic);
+        when(topicService.updateTopic(topicId, requestModel)).thenReturn(updatedTopic);
 
         // when
         Exchange responseExchange = template.send(TopicRouteConstants.UPDATE_TOPIC.getRouteName(), exchange);
@@ -231,11 +240,12 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     void givenInvalidRequest_whenRouteUpdateTopic_thenThrowsResourceNotFoundExceptionHandler() {
         // given
         Long nonExistingId = 99L;
-        TopicDTO request = new TopicDTO(nonExistingId, "newName", "newDescription", "newIcon");
+        TopicDTO inputRequestDTO = new TopicDTO(nonExistingId, "newName", "newDescription", "newIcon");
+        TopicModel request = new TopicModel(nonExistingId, "newName", "newDescription", "newIcon");
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("id", nonExistingId);
-        exchange.getIn().setBody(request);
+        exchange.getIn().setBody(inputRequestDTO);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.NOT_FOUND.value(),
                 "The topic with ID 99 does not exist.", null);
@@ -258,23 +268,24 @@ class TopicRouteBuilderTest extends CamelTestSupport {
     void givenTopicExists_whenRouteDeleteTopic_thenTopicDeleted() {
         // given
         Long topicId = 1L;
-        TopicDTO topicDTO = new TopicDTO(topicId, "test", "Test", "Test topic");
+        TopicModel topicModel = new TopicModel(topicId, "test", "Test", "Test topic");
+        TopicDTO expectedTopic = new TopicDTO(topicId, "test", "Test", "Test topic");
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("id", topicId);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Topic with id " + topicId + " deleted successfully", topicDTO);
+                "Topic with id " + topicId + " deleted successfully", expectedTopic);
 
         // mock
-        when(topicService.getTopicById(1L)).thenReturn(topicDTO);
+        when(topicService.deleteTopicById(1L)).thenReturn(topicModel);
 
         // when
         Exchange result = template.send(TopicRouteConstants.DELETE_TOPIC.getRouteName(), exchange);
         ApiResponseDTO actualResponse = result.getMessage().getBody(ApiResponseDTO.class);
 
-        // assert
+        // then
         assertEquals(expectedApiResponse.getStatus(), actualResponse.getStatus());
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
         assertEquals(expectedApiResponse.getData(), actualResponse.getData());
