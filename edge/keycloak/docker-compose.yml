@@ -1,0 +1,13 @@
+services:
+  auth:
+    image: quay.io/keycloak/keycloak:21.1.0
+    ports:
+      - "11004:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin 
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: 
+      - start-dev 
+      - --import-realm
+    volumes:
+      - H:\developpement\web\reddot\edge\keycloak\reddot-realm-export.json:/opt/keycloak/data/import/realm.json
