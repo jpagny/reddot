@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.elysium.reddot.edge</groupId>
     <artifactId>springEurekaServer</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>springEurekaServer</name>
     <description>springEurekaServer</description>
     <properties>
@@ -22,7 +22,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

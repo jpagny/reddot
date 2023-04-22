@@ -1,0 +1,56 @@
+version: "3.8"
+services:
+
+  ### APP API ###
+
+  #api topic
+  topic_api:
+    image: topic_api
+    build:
+      context: ms/topicManagementService
+      dockerfile: Dockerfile
+    container_name: topic_api
+    ports:
+      - "10001:10001"
+    environment:
+      - spring.application.name=topic_management_service
+      - spring.config.import=configserver:http://spring-config-server:8888/
+      - spring.profiles.active=prod
+    depends_on:
+      - spring-config-server
+    networks:
+      - reddot_network
+
+
+  ### DATABASES ###
+
+  # topic database
+  topic_db:
+    image: mysql:latest
+    container_name: topic_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootroot
+      - MYSQL_DATABASE=topic
+    ports:
+      - 10100:3306
+    networks:
+      - reddot_network
+
+
+  ### EDGES ###
+
+  # spring config
+  spring-config-server:
+    image: docker.io/hyness/spring-cloud-config-server:latest
+    container_name: spring-config
+    volumes:
+      - ./edge/springConfigServer/application.yml:/config/application.yml
+    ports:
+      - 11001:8888
+    networks:
+      - reddot_network
+
+networks:
+  reddot_network:
+    driver: bridge
+

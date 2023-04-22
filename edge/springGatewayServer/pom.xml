@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.elysium.reddot.edge</groupId>
 	<artifactId>springGatewayServer</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>springGatewayServer</name>
 	<description>springGatewayServer</description>
 	<properties>
