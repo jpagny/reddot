@@ -1,10 +1,21 @@
 spring:
   application:
     name: topic_management_service
+
+  datasource:
+    url: jdbc:mysql://localhost:10100/topic?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+
   cloud:
     config:
       uri: http://localhost:11000
       profile: prod
 
-  datasource:
-    url: jdbc:mysql://localhost:10100/topic?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+eureka:
+  client:
+    serviceUrl:
+      defaultZone:http://localhost:11001/eureka
+
+opentracing:
+  jaeger:
+    http-sender:
+      url: http://localhost:11005/api/traces
