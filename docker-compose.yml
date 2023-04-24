@@ -2,20 +2,23 @@ version: "3.8"
 services:
 
   ### APP API ###
-
+  
   #api topic
   topic_api:
-    image: topic_api
+    image: reddot_topic-api
     build:
       context: ms/topicManagementService
       dockerfile: Dockerfile
-    container_name: topic_api
+    container_name: reddot_topic_api
     ports:
       - "10001:10001"
     environment:
       - spring.application.name=topic_management_service
       - spring.config.import=configserver:http://spring-config-server:8888/
+      - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
       - spring.profiles.active=prod
+      - spring.datasource.url=jdbc:mysql://topic_db:10100/topic?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      - opentracing.jaeger.http-sender.url=http://jaeger:11005/api/traces
     depends_on:
       - spring-config-server
     networks:
@@ -27,12 +30,13 @@ services:
   # topic database
   topic_db:
     image: mysql:latest
-    container_name: topic_mysql
+    container_name: topic_db_mysql
     environment:
+      - MYSQL_TCP_PORT=10100
       - MYSQL_ROOT_PASSWORD=rootroot
       - MYSQL_DATABASE=topic
     ports:
-      - 10100:3306
+      - 10100:10100
     networks:
       - reddot_network
 
@@ -46,7 +50,79 @@ services:
     volumes:
       - ./edge/springConfigServer/application.yml:/config/application.yml
     ports:
-      - 11001:8888
+      - 11000:8888
+    networks:
+      - reddot_network
+
+  #spring eureka
+  spring-eureka-server:
+    image: reddot_spring-cloud-eureka
+    build:
+      context: edge/springEurekaServer
+      dockerfile: Dockerfile
+    container_name: reddot_eureka
+    ports:
+      - "11001:11001"
+    networks:
+      - reddot_network
+
+  #spring gateway
+  spring-gateway-server:
+    image: reddot_spring-cloud-gateway
+    build:
+      context: edge/springGatewayServer
+      dockerfile: Dockerfile
+    container_name: reddot_gateway
+    ports:
+      - "11002:11002"
+    environment:
+      - spring.config.import=configserver:http://spring-config-server:8888/
+      - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
+      - opentracing.jaeger.http-sender.url=http://jaeger:11005/api/traces
+    depends_on:
+      - spring-config-server
+    networks:
+      - reddot_network
+
+  #keycloack
+  keycloak_server:
+    image: quay.io/keycloak/keycloak:21.1.0
+    container_name: reddot_keycloak
+    ports:
+      - "11003:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin 
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: 
+      - start-dev 
+      - --import-realm
+    volumes:
+      - .\edge\keycloak\reddot-realm-export.json:/opt/keycloak/data/import/realm.json
+    networks:
+      - reddot_network
+
+  #prometheus
+  prometheus:
+    image: prom/prometheus
+    container_name: reddot_prometheus
+    volumes:
+      - .\edge\prometheus\prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 11004:9090
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
+    networks:
+      - reddot_network
+
+  #jaeger
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: reddot_jaeger
+    ports:
+      - "11005:16686"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - LOG_LEVEL=debug
     networks:
       - reddot_network
 

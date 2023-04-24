@@ -1,9 +1,6 @@
 spring:
   application:
-    name: topic_management_service
-
-  datasource:
-    url: jdbc:mysql://localhost:10100/topic?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+    name: reddot_gateway
 
   cloud:
     config:
