@@ -18,7 +18,7 @@ services:
       - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
       - spring.profiles.active=prod
       - spring.datasource.url=jdbc:mysql://topic_db:10100/topic?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
-      - opentracing.jaeger.http-sender.url=http://jaeger:11005/api/traces
+      - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
     depends_on:
       - spring-config-server
     networks:
@@ -78,7 +78,7 @@ services:
     environment:
       - spring.config.import=configserver:http://spring-config-server:8888/
       - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
-      - opentracing.jaeger.http-sender.url=http://jaeger:11005/api/traces
+      - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
     depends_on:
       - spring-config-server
     networks:
@@ -120,6 +120,9 @@ services:
     container_name: reddot_jaeger
     ports:
       - "11005:16686"
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 14268:14268
     environment:
       - COLLECTOR_OTLP_ENABLED=true
       - LOG_LEVEL=debug
