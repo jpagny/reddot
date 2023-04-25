@@ -3,7 +3,7 @@ services:
 
   ### APP API ###
   
-  #api topic
+  #topic api
   topic_api:
     image: reddot_topic-api
     build:
@@ -132,4 +132,3 @@ services:
 networks:
   reddot_network:
     driver: bridge
-
