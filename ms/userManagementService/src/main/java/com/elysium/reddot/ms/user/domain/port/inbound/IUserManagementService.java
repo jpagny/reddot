@@ -1,10 +1,9 @@
 package com.elysium.reddot.ms.user.domain.port.inbound;
 
-import com.elysium.reddot.ms.user.domain.model.UserModel;
+import org.keycloak.representations.idm.UserRepresentation;
 
 public interface IUserManagementService {
 
-    UserModel getUserById(long id);
-    String createUser(UserModel userToCreate);
+    UserRepresentation createUser(UserRepresentation userToCreate);
 
 }

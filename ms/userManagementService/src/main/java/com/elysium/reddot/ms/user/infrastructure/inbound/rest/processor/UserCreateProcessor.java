@@ -3,31 +3,34 @@ package com.elysium.reddot.ms.user.infrastructure.inbound.rest.processor;
 import com.elysium.reddot.ms.user.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.user.application.data.dto.UserDTO;
 import com.elysium.reddot.ms.user.application.service.UserApplicationService;
-import com.elysium.reddot.ms.user.domain.model.UserModel;
 import com.elysium.reddot.ms.user.infrastructure.mapper.UserProcessorMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.camel.Processor;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class UserCreateProcessor {
+@Slf4j
+public class UserCreateProcessor implements Processor {
 
     private final UserApplicationService userApplicationService;
 
-    public void createUser(Exchange exchange) {
+    @Override
+    public void process(Exchange exchange) {
         UserDTO inputUserDTO = exchange.getIn().getBody(UserDTO.class);
-        UserModel userModel = UserProcessorMapper.toModel(inputUserDTO);
+        UserRepresentation userRepresentation = UserProcessorMapper.toUserRepresentation(inputUserDTO);
 
-        String response = userApplicationService.createUser(userModel);
+        UserRepresentation response = userApplicationService.createUser(userRepresentation);
+        UserDTO userCreated = UserProcessorMapper.toDTO(response);
 
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.CREATED.value(), "User created successfully.", response);
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.CREATED.value(), "User created successfully.", userCreated);
 
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.CREATED.value());
         exchange.getMessage().setBody(apiResponseDTO);
     }
-
 
 }
