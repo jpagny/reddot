@@ -2,11 +2,11 @@ package com.elysium.reddot.ms.user.application.service;
 
 import com.elysium.reddot.ms.user.application.exception.exception.KeycloakApiException;
 import com.elysium.reddot.ms.user.domain.port.inbound.IUserManagementService;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +19,6 @@ import javax.ws.rs.core.Response;
 @Slf4j
 public class UserApplicationService implements IUserManagementService {
 
-    @NonNull
     private final Keycloak keycloak;
 
     @Value("${keycloak.realm}")
@@ -33,17 +32,34 @@ public class UserApplicationService implements IUserManagementService {
     @Override
     public UserRepresentation createUser(UserRepresentation userRepresentation) {
 
+        log.debug("Creating new user with userName '{}', email '{}",
+                userRepresentation.getUsername(),
+                userRepresentation.getEmail()
+        );
+
         try (Response response = getUsersResource().create(userRepresentation)) {
 
             if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
-                String userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
-                return getUsersResource().get(userId).toRepresentation();
+                String userId = extractUserIdFromResponse(response);
+                UserResource userResource = getUsersResource().get(userId);
+                UserRepresentation userRepresentationCreated = userResource.toRepresentation();
+
+                log.info("Successfully created user with userName '{}', email '{}",
+                        userRepresentationCreated.getUsername(),
+                        userRepresentationCreated.getEmail()
+                );
+
+                return userRepresentationCreated;
 
             } else {
                 throw new KeycloakApiException(response);
 
             }
         }
+    }
+
+    private String extractUserIdFromResponse(Response response) {
+        return response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
     }
 
 

@@ -1,9 +1,9 @@
 server:
-  port: 11002
+  port: 10001
 
 spring:
   application:
-    name: reddot_gateway
+    name: user_management_service
 
   cloud:
     config:
@@ -14,6 +14,9 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:11001/eureka
+
+keycloak:
+  auth-server-url: http://localhost:11003/
 
 opentracing:
   jaeger:

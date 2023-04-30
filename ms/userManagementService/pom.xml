@@ -8,19 +8,42 @@
         <version>2.7.11</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>com.elysium.reddot.ms</groupId>
     <artifactId>userManagementService</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>userManagementService</name>
     <description>userManagementService</description>
+
     <properties>
         <java.version>11</java.version>
         <camel.version>3.20.2</camel.version>
         <keycloak.version>21.1.1</keycloak.version>
+        <jacoco.version>0.8.9</jacoco.version>
+        <maven.surefire.version>3.0.0</maven.surefire.version>
+        <spring-cloud-version>2021.0.6</spring-cloud-version>
+        <spring-jaeger-version>3.3.1</spring-jaeger-version>
+        <micrometer-registry-prometheus>1.10.6</micrometer-registry-prometheus>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -82,6 +105,26 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <!-- Edge microservice -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-spring-jaeger-cloud-starter</artifactId>
+            <version>${spring-jaeger-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>${micrometer-registry-prometheus}</version>
         </dependency>
 
     </dependencies>
