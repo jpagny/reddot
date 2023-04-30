@@ -17,6 +17,7 @@ services:
       - spring.config.import=configserver:http://spring-config-server:8888/
       - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
       - spring.profiles.active=prod
+      - keycloak.auth-server-url=http://keycloak_server:8080/
       - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
     depends_on:
       - spring-config-server
