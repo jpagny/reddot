@@ -23,6 +23,8 @@ public class UserCreateProcessor implements Processor {
     public void process(Exchange exchange) {
         UserDTO inputUserDTO = exchange.getIn().getBody(UserDTO.class);
         UserRepresentation userRepresentation = UserProcessorMapper.toUserRepresentation(inputUserDTO);
+        userRepresentation.setEnabled(true);
+        userRepresentation.setEmailVerified(true);
 
         UserRepresentation response = userApplicationService.createUser(userRepresentation);
         UserDTO userCreated = UserProcessorMapper.toDTO(response);

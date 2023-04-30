@@ -1,6 +1,6 @@
 package com.elysium.reddot.ms.user.application.service;
 
-import com.elysium.reddot.ms.user.application.exception.exception.KeycloakException;
+import com.elysium.reddot.ms.user.application.exception.exception.KeycloakApiException;
 import com.elysium.reddot.ms.user.domain.port.inbound.IUserManagementService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,7 @@ public class UserApplicationService implements IUserManagementService {
                 return getUsersResource().get(userId).toRepresentation();
 
             } else {
-                throw new KeycloakException("Error creating user. Status: " + response.getStatus());
+                throw new KeycloakApiException(response);
 
             }
         }
