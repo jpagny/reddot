@@ -1,0 +1,84 @@
+server:
+  port: 11000
+
+spring:
+  application:
+    name: spring-config
+  cloud:
+    config:
+      retry:
+        max-attempts: 60
+      server:
+        git:
+          uri: git@github.com:jpagny/reddot_configs.git
+          clone-on-start: true
+          ignoreLocalSshSettings: true
+          private-key: |
+            -----BEGIN OPENSSH PRIVATE KEY-----
+            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
+            -----END OPENSSH PRIVATE KEY-----
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:11001/eureka
+
+keycloak:
+  auth-server-url: http://localhost:11003/
+
+opentracing:
+  jaeger:
+    http-sender:
+      url: http://localhost:11005/api/traces
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,health,prometheus

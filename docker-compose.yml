@@ -14,13 +14,16 @@ services:
       - "10001:10001"
     environment:
       - spring.application.name=user_management_service
-      - spring.config.import=configserver:http://spring-config-server:8888/
+      - spring.config.import=configserver:http://spring-config-server:11000/
       - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
       - spring.profiles.active=prod
       - keycloak.auth-server-url=http://keycloak_server:8080/
       - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
     depends_on:
-      - spring-config-server
+      spring-config-server:
+        condition: service_healthy
+      spring-gateway-server:
+        condition: service_healthy
     networks:
       - reddot_network
 
@@ -35,13 +38,16 @@ services:
       - "10002:10002"
     environment:
       - spring.application.name=topic_management_service
-      - spring.config.import=configserver:http://spring-config-server:8888/
+      - spring.config.import=configserver:http://spring-config-server:11000/
       - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
       - spring.profiles.active=prod
       - spring.datasource.url=jdbc:mysql://topic_db:10100/topic?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
     depends_on:
-      - spring-config-server
+      spring-config-server:
+        condition: service_healthy
+      spring-gateway-server:
+        condition: service_healthy
     networks:
       - reddot_network
 
@@ -66,14 +72,23 @@ services:
 
   # spring config
   spring-config-server:
-    image: docker.io/hyness/spring-cloud-config-server:latest
-    container_name: spring-config
-    volumes:
-      - ./edge/springConfigServer/application.yml:/config/application.yml
+    image: reddot_spring-cloud-config
+    build:
+      context: edge/springConfigServer
+      dockerfile: Dockerfile
+    container_name: reddot_spring_config
     ports:
-      - 11000:8888
+      - 11000:11000
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
+      - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
     networks:
       - reddot_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://spring-config-server:11000/actuator/health"] 
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   #spring eureka
   spring-eureka-server:
@@ -81,7 +96,7 @@ services:
     build:
       context: edge/springEurekaServer
       dockerfile: Dockerfile
-    container_name: reddot_eureka
+    container_name: reddot_spring_eureka
     ports:
       - "11001:11001"
     networks:
@@ -93,15 +108,21 @@ services:
     build:
       context: edge/springGatewayServer
       dockerfile: Dockerfile
-    container_name: reddot_gateway
+    container_name: reddot_spring_gateway
     ports:
       - "11002:11002"
     environment:
-      - spring.config.import=configserver:http://spring-config-server:8888/
+      - spring.config.import=configserver:http://spring-config-server:11000/
       - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
       - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
     depends_on:
-      - spring-config-server
+      spring-config-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11002/actuator/health"] 
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - reddot_network
 
