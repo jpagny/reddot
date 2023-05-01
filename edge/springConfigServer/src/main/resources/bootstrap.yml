@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: spring-config
+    name: spring-config-server
   cloud:
     config:
       retry:
