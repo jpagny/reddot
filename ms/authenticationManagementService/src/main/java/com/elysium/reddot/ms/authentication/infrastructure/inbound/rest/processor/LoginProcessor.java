@@ -5,14 +5,13 @@ import com.elysium.reddot.ms.authentication.application.data.dto.LoginRequestDTO
 import com.elysium.reddot.ms.authentication.application.service.AuthenticationApplicationService;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.keycloak.Token;
 import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AuthenticationProcessor implements Processor {
+public class LoginProcessor implements Processor {
 
     @Autowired
     AuthenticationApplicationService authenticationApplicationService;
