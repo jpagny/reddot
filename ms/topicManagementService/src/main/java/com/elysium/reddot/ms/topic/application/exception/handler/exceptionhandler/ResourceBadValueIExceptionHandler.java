@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler;
+package com.elysium.reddot.ms.topic.application.exception.handler.exceptionHandler;
 
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceBadValueException;
 import com.elysium.reddot.ms.topic.application.exception.handler.core.AbstractIExceptionHandler;

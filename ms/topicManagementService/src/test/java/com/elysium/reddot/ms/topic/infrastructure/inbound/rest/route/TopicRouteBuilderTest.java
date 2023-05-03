@@ -6,9 +6,9 @@ import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlrea
 import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.topic.application.exception.handler.core.CamelGlobalExceptionHandler;
 import com.elysium.reddot.ms.topic.application.exception.handler.core.IExceptionHandler;
-import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler.ResourceAlreadyExistIExceptionHandler;
-import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler.ResourceBadValueIExceptionHandler;
-import com.elysium.reddot.ms.topic.application.exception.handler.exceptionhandler.ResourceNotFoundIExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.handler.exceptionHandler.ResourceAlreadyExistIExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.handler.exceptionHandler.ResourceBadValueIExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.handler.exceptionHandler.ResourceNotFoundIExceptionHandler;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.*;
