@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Response;
+import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor
@@ -100,8 +101,9 @@ public class AuthenticationApplicationService {
                         .users()
                         .get(userId)
                         .logout();
-
+                log.debug("BEFORE : " + Arrays.toString(request.getSession().getValueNames()));
                 request.getSession().invalidate();
+                log.debug("AFTER : " + Arrays.toString(request.getSession().getValueNames()));
                 log.debug("User {} has been logged out", userId);
 
             } catch (java.lang.IllegalStateException exception) {

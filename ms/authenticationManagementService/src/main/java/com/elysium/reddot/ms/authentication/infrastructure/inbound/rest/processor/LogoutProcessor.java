@@ -22,12 +22,7 @@ public class LogoutProcessor implements Processor {
     @Override
     public void process(Exchange exchange) {
 
-        log.debug("Passe ici");
-
         HttpServletRequest request = exchange.getIn().getBody(HttpServletRequest.class);
-
-        log.debug("Passe ici 2 : " + request.getHeaderNames());
-
         authenticationApplicationService.logout(request);
 
         ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(),

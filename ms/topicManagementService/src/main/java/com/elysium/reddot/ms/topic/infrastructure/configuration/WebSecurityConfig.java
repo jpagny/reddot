@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.authentication.infrastructure.configuration;
+package com.elysium.reddot.ms.topic.infrastructure.configuration;
 
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
@@ -19,8 +19,11 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) {
+        SimpleAuthorityMapper grantedAuthorityMapper = new SimpleAuthorityMapper();
+        grantedAuthorityMapper.setPrefix("ROLE_");
+
         KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
-        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
+        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(grantedAuthorityMapper);
         auth.authenticationProvider(keycloakAuthenticationProvider);
     }
 
@@ -35,8 +38,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         super.configure(http);
         http
                 .authorizeRequests()
-                .antMatchers("/api/auth/login", "/error").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().hasRole("admin")
                 .and()
                 .csrf().disable();
     }
