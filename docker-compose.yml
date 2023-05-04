@@ -3,6 +3,30 @@ services:
 
   ### APP API ###
 
+  #auth_api
+  auth_api:
+    image: reddot_auth-api
+    build:
+      context: ms/authenticationManagementService
+      dockerfile: Dockerfile
+    container_name: reddot_authentication_api
+    ports:
+      - "10000:10000"
+    environment:
+      - spring.application.name=authentication_management_service
+      - spring.config.import=configserver:http://spring-config-server:11000/
+      - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
+      - spring.profiles.active=prod
+      - keycloak.auth-server-url=http://keycloak_server:8080/
+      - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
+    depends_on:
+      spring-config-server:
+        condition: service_healthy
+      spring-gateway-server:
+        condition: service_healthy
+    networks:
+      - reddot_network
+
   #user api
   user_api:
     image: reddot_user-api
@@ -139,7 +163,7 @@ services:
       - start-dev 
       - --import-realm
     volumes:
-      - .\edge\keycloak\reddot-realm-export.json:/opt/keycloak/data/import/realm.json
+      - .\edge\keycloak\realm-reddot-export.json:/opt/keycloak/data/import/realm.json
     networks:
       - reddot_network
 

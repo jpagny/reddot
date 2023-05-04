@@ -15,15 +15,12 @@ public class KeycloakConfig {
     @Value("${keycloak.realm}")
     private String realm;
 
-
-
     @Bean
     public KeycloakBuilder keycloakBuilder() {
         return KeycloakBuilder.builder()
                 .serverUrl(authServerUrl)
                 .realm(realm);
     }
-
 
     @Bean
     public KeycloakSpringBootConfigResolver KeycloakConfigResolver() {

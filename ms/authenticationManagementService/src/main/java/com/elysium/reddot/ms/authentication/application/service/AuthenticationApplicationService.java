@@ -101,9 +101,7 @@ public class AuthenticationApplicationService {
                         .users()
                         .get(userId)
                         .logout();
-                log.debug("BEFORE : " + Arrays.toString(request.getSession().getValueNames()));
                 request.getSession().invalidate();
-                log.debug("AFTER : " + Arrays.toString(request.getSession().getValueNames()));
                 log.debug("User {} has been logged out", userId);
 
             } catch (java.lang.IllegalStateException exception) {
