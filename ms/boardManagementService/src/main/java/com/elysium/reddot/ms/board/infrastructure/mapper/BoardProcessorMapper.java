@@ -17,6 +17,7 @@ public class BoardProcessorMapper {
         boardDTO.setLabel(boardModel.getLabel());
         boardDTO.setName(boardModel.getName());
         boardDTO.setDescription(boardModel.getDescription());
+        boardDTO.setTopicId(boardModel.getTopicId());
         return boardDTO;
     }
 
@@ -31,7 +32,8 @@ public class BoardProcessorMapper {
                 boardDTO.getId(),
                 boardDTO.getName(),
                 boardDTO.getLabel(),
-                boardDTO.getDescription()
+                boardDTO.getDescription(),
+                boardDTO.getTopicId()
         );
     }
 

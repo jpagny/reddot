@@ -14,6 +14,7 @@ public class BoardPersistenceMapper {
         boardJpaEntity.setName(boardModel.getName());
         boardJpaEntity.setLabel(boardModel.getLabel());
         boardJpaEntity.setDescription(boardModel.getDescription());
+        boardJpaEntity.setTopicId(boardModel.getTopicId());
         return boardJpaEntity;
     }
 
@@ -22,7 +23,8 @@ public class BoardPersistenceMapper {
                 boardJpaEntity.getId(),
                 boardJpaEntity.getName(),
                 boardJpaEntity.getLabel(),
-                boardJpaEntity.getDescription()
+                boardJpaEntity.getDescription(),
+                boardJpaEntity.getTopicId()
         );
     }
 

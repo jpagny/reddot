@@ -14,6 +14,7 @@ public class BoardApplicationMapper {
         boardDTO.setLabel(boardModel.getLabel());
         boardDTO.setName(boardModel.getName());
         boardDTO.setDescription(boardModel.getDescription());
+        boardDTO.setTopicId(boardModel.getTopicId());
         return boardDTO;
     }
 
@@ -22,7 +23,8 @@ public class BoardApplicationMapper {
                 boardDTO.getId(),
                 boardDTO.getName(),
                 boardDTO.getLabel(),
-                boardDTO.getDescription()
+                boardDTO.getDescription(),
+                boardDTO.getTopicId()
         );
     }
 

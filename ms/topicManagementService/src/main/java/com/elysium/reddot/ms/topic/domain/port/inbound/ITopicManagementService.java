@@ -17,4 +17,6 @@ public interface ITopicManagementService {
 
     TopicModel deleteTopicById(Long id);
 
+    boolean checkTopicIdExists(Long id);
+
 }

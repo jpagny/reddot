@@ -22,4 +22,6 @@ public class BoardJpaEntity {
 
     private String description;
 
+    private Long topicId;
+
 }

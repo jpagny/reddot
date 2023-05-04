@@ -17,7 +17,7 @@ services:
       - spring.config.import=configserver:http://spring-config-server:11000/
       - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
       - spring.profiles.active=prod
-      - keycloak.auth-server-url=http://keycloak_server:8080/
+      - keycloak.auth-server-url=http://keycloak_server:8080
       - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
     depends_on:
       spring-config-server:
@@ -41,7 +41,7 @@ services:
       - spring.config.import=configserver:http://spring-config-server:11000/
       - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
       - spring.profiles.active=prod
-      - keycloak.auth-server-url=http://keycloak_server:8080/
+      - keycloak.auth-server-url=http://keycloak_server:8080
       - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
     depends_on:
       spring-config-server:
@@ -88,6 +88,18 @@ services:
       - MYSQL_DATABASE=topic
     ports:
       - 10100:10100
+    networks:
+      - reddot_network
+
+  board_db:
+    image: mysql:latest
+    container_name: board_db_mysql
+    environment:
+      - MYSQL_TCP_PORT=10101
+      - MYSQL_ROOT_PASSWORD=rootroot
+      - MYSQL_DATABASE=board
+    ports:
+      - 10101:10101
     networks:
       - reddot_network
 
@@ -150,9 +162,23 @@ services:
     networks:
       - reddot_network
 
+  # rabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - .\edge\rabbitmq\data\:/var/lib/rabbitmq/
+        - .\edge\rabbitmq\log\:/var/log/rabbitmq
+    networks:
+        - reddot_network
+
   #keycloack
   keycloak_server:
-    image: quay.io/keycloak/keycloak:21.1.0
+    image: quay.io/keycloak/keycloak:21.1.1
+    hostname: keycloak_server
     container_name: reddot_keycloak
     ports:
       - "11003:8080"
@@ -160,7 +186,7 @@ services:
       KEYCLOAK_ADMIN: admin 
       KEYCLOAK_ADMIN_PASSWORD: admin
     command: 
-      - start-dev 
+      - start-dev
       - --import-realm
     volumes:
       - .\edge\keycloak\realm-reddot-export.json:/opt/keycloak/data/import/realm.json

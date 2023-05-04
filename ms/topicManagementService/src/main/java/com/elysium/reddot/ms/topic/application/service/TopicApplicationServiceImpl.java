@@ -129,4 +129,10 @@ public class TopicApplicationServiceImpl implements ITopicManagementService {
         return topicToDelete;
     }
 
+    @Override
+    public boolean checkTopicIdExists(Long id) {
+        Optional<TopicModel> topicModel = topicRepository.findTopicById(id);
+        return topicModel.isPresent();
+    }
+
 }
