@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.infrastructure.configuration;
+package com.elysium.reddot.ms.thread.infrastructure.configuration;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -16,20 +16,22 @@ public class RabbitMQConfig {
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
         RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
 
-        // ### TOPIC / BOARD
+        // ### BOARD / THREAD
 
-        // Create topic / board exchange
-        TopicExchange topicBoardExchange = new TopicExchange("topicBoardExchange");
-        rabbitAdmin.declareExchange(topicBoardExchange);
+        // Create topic exchange
+        TopicExchange boardThreadExchange = new TopicExchange("boardThreadExchange");
+        rabbitAdmin.declareExchange(boardThreadExchange);
 
         // Create queue
-        Queue topicExistsQueue = new Queue("topic.exists.queue");
-        rabbitAdmin.declareQueue(topicExistsQueue);
+        Queue boardExistsQueue = new Queue("board.exists.queue");
+        rabbitAdmin.declareQueue(boardExistsQueue);
 
         // Create binding between queue and exchange for requests
-        Binding topicRequestBinding = BindingBuilder.bind(topicExistsQueue).to(topicBoardExchange).with("topic.exists.request");
-        rabbitAdmin.declareBinding(topicRequestBinding);
+        Binding boardRequestBinding = BindingBuilder.bind(boardExistsQueue).to(boardThreadExchange).with("board.exists.request");
+        rabbitAdmin.declareBinding(boardRequestBinding);
+
 
         return rabbitAdmin;
+
     }
 }

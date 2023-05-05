@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.infrastructure.configuration;
+package com.elysium.reddot.ms.board.infrastructure.configuration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;

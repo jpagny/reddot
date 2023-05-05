@@ -2,9 +2,8 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
-import com.elysium.reddot.ms.board.application.exception.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
-import com.elysium.reddot.ms.board.application.service.RabbitMQService;
+import com.elysium.reddot.ms.board.infrastructure.outbound.rabbitMQ.requester.TopicExistRequester;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.mapper.BoardProcessorMapper;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class CreateBoardProcessor implements Processor {
 
     private final BoardApplicationServiceImpl boardApplicationService;
-    private final RabbitMQService rabbitMQService;
+    private final TopicExistRequester topicExistRequester;
 
     @Override
     public void process(Exchange exchange) {
@@ -28,7 +27,7 @@ public class CreateBoardProcessor implements Processor {
         BoardDTO inputBoardDTO = exchange.getIn().getBody(BoardDTO.class);
         BoardModel boardModel = BoardProcessorMapper.toModel(inputBoardDTO);
 
-        rabbitMQService.verifyTopicIdExistsOrThrow(boardModel.getTopicId());
+        topicExistRequester.verifyTopicIdExistsOrThrow(boardModel.getTopicId());
 
         createBoardAndSetResponse(exchange, boardModel);
     }

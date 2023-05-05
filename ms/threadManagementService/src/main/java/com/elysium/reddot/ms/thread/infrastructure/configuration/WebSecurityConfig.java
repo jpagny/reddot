@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.infrastructure.configuration;
+package com.elysium.reddot.ms.thread.infrastructure.configuration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
@@ -40,7 +40,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/error").permitAll()
-                .anyRequest().hasRole("admin")
+                .anyRequest().hasRole("user")
                 .and()
                 .csrf().disable();
     }
