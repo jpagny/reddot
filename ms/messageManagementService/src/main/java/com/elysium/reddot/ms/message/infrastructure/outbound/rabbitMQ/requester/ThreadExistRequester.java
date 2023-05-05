@@ -1,0 +1,50 @@
+package com.elysium.reddot.ms.message.infrastructure.outbound.rabbitMQ.requester;
+
+import com.elysium.reddot.ms.message.application.exception.exception.ResourceNotFoundException;
+import com.elysium.reddot.ms.message.infrastructure.data.ThreadExistsResponseDTO;
+import com.elysium.reddot.ms.message.infrastructure.dto.BoardExistsResponseDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+
+@Service
+@Slf4j
+public class ThreadExistRequester {
+    private final RabbitTemplate rabbitTemplate;
+    private final ObjectMapper objectMapper;
+    public static final String BOARD_EXCHANGE = "boardExchange";
+    public static final String BOARD_EXISTS_REQUEST_ROUTING_KEY = "board.exists.request";
+
+    public ThreadExistRequester(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+        this.objectMapper = new ObjectMapper();
+    }
+
+    public void verifyBoardIdExistsOrThrow(Long messageId) {
+        ThreadExistsResponseDTO response = getMessageExistsResponse(messageId);
+
+        if (response != null && !response.isExists()) {
+            throw new ResourceNotFoundException("Message id", String.valueOf(messageId));
+        }
+    }
+
+    private ThreadExistsResponseDTO getMessageExistsResponse(Long messageId) {
+        byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
+                BOARD_EXCHANGE,
+                BOARD_EXISTS_REQUEST_ROUTING_KEY,
+                messageId
+        );
+
+        try {
+            return objectMapper.readValue(replyBytes, ThreadExistsResponseDTO.class);
+
+        } catch (IOException ex) {
+            log.error("Fail to convert to json : " + ex);
+            throw new RuntimeException("Failed to convert to json", ex);
+
+        }
+    }
+}
