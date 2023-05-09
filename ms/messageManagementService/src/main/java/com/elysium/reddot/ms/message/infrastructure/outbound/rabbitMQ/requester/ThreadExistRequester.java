@@ -2,7 +2,6 @@ package com.elysium.reddot.ms.message.infrastructure.outbound.rabbitMQ.requester
 
 import com.elysium.reddot.ms.message.application.exception.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.message.infrastructure.data.ThreadExistsResponseDTO;
-import com.elysium.reddot.ms.message.infrastructure.dto.BoardExistsResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -15,26 +14,26 @@ import java.io.IOException;
 public class ThreadExistRequester {
     private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper;
-    public static final String BOARD_EXCHANGE = "boardExchange";
-    public static final String BOARD_EXISTS_REQUEST_ROUTING_KEY = "board.exists.request";
+    public static final String THREAD_MESSAGE_EXCHANGE = "threadMessageExchange";
+    public static final String THREAD_EXISTS_REQUEST_ROUTING_KEY = "thread.exists.request";
 
     public ThreadExistRequester(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
         this.objectMapper = new ObjectMapper();
     }
 
-    public void verifyBoardIdExistsOrThrow(Long messageId) {
+    public void verifyThreadIdExistsOrThrow(Long messageId) {
         ThreadExistsResponseDTO response = getMessageExistsResponse(messageId);
 
         if (response != null && !response.isExists()) {
-            throw new ResourceNotFoundException("Message id", String.valueOf(messageId));
+            throw new ResourceNotFoundException("Thread", String.valueOf(messageId));
         }
     }
 
     private ThreadExistsResponseDTO getMessageExistsResponse(Long messageId) {
         byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
-                BOARD_EXCHANGE,
-                BOARD_EXISTS_REQUEST_ROUTING_KEY,
+                THREAD_MESSAGE_EXCHANGE,
+                THREAD_EXISTS_REQUEST_ROUTING_KEY,
                 messageId
         );
 

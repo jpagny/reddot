@@ -25,7 +25,10 @@ public class CreateMessageProcessor implements Processor {
         MessageDTO inputMessageDTO = exchange.getIn().getBody(MessageDTO.class);
         MessageModel messageModel = MessageProcessorMapper.toModel(inputMessageDTO);
 
-        threadExistRequester.verifyBoardIdExistsOrThrow(messageModel.getThreadId());
+        threadExistRequester.verifyThreadIdExistsOrThrow(messageModel.getThreadId());
+
+        // add user id
+        messageModel.setUserId("1");
 
         createMessageAndSetResponse(exchange, messageModel);
     }
