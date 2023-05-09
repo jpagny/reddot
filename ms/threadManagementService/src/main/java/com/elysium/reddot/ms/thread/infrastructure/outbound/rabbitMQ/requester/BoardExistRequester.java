@@ -14,7 +14,7 @@ import java.io.IOException;
 public class BoardExistRequester {
     private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper;
-    public static final String BOARD_EXCHANGE = "boardExchange";
+    public static final String BOARD_EXCHANGE = "boardThreadExchange";
     public static final String BOARD_EXISTS_REQUEST_ROUTING_KEY = "board.exists.request";
 
     public BoardExistRequester(RabbitTemplate rabbitTemplate) {
@@ -23,24 +23,24 @@ public class BoardExistRequester {
     }
 
     public void verifyBoardIdExistsOrThrow(Long threadId) {
-        BoardExistsResponseDTO response = getThreadExistsResponse(threadId);
+        BoardExistsResponseDTO response = getBoardExistsResponse(threadId);
 
         if (response != null && !response.isExists()) {
-            throw new ResourceNotFoundException("Thread id", String.valueOf(threadId));
+            throw new ResourceNotFoundException("Board id", String.valueOf(threadId));
         }
     }
 
-    private BoardExistsResponseDTO getThreadExistsResponse(Long threadId) {
+    private BoardExistsResponseDTO getBoardExistsResponse(Long threadId) {
         byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
                 BOARD_EXCHANGE,
                 BOARD_EXISTS_REQUEST_ROUTING_KEY,
                 threadId
         );
-
         try {
             return objectMapper.readValue(replyBytes, BoardExistsResponseDTO.class);
 
         } catch (IOException ex) {
+            log.debug("ICI 3");
             log.error("Fail to convert to json : " + ex);
             throw new RuntimeException("Failed to convert to json", ex);
 
