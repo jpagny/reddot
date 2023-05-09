@@ -18,7 +18,7 @@ public class MessageJpaEntity {
 
     private String content;
 
-    private Long messageId;
+    private Long parentMessageId;
 
     private Long threadId;
 

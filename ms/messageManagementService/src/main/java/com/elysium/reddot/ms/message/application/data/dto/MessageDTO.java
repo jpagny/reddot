@@ -13,6 +13,6 @@ public class MessageDTO {
     private String content;
     private Long messageId;
     private Long threadId;
-    private String userId;
+    private String parentMessageID;
 
 }

@@ -59,7 +59,7 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
                 messageToCreateModel.getContent());
 
         try {
-            messageDomainService.validateMessageForCreation(messageToCreateModel);
+            // check rules domain
         } catch (Exception exception) {
             throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, exception.getMessage());
         }
@@ -73,8 +73,10 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
         return createdMessageModel;
     }
 
+    /*
     @Override
     public MessageModel updateMessage(Long id, MessageModel messageToUpdateModel) {
+
         log.debug("Updating message with id '{}', content '{}'",
                 id, messageToUpdateModel.getContent());
 
@@ -83,6 +85,7 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
         );
 
         try {
+
             MessageModel messageModelWithUpdates = messageDomainService.updateExistingMessageWithUpdates(existingMessageModel, messageToUpdateModel);
 
             MessageModel updatedMessageModel = messageRepository.updateMessage(messageModelWithUpdates);
@@ -98,6 +101,13 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
 
         }
     }
+
+     */
+
+    private int countRepliesByMessageId(Long messageId) {
+        return messageRepository.countRepliesByMessageId(messageId);
+    }
+
 
 
 }

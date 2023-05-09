@@ -16,4 +16,6 @@ public interface IMessageRepository {
     MessageModel updateMessage(MessageModel messageModel);
 
     void deleteMessage(Long id);
+
+    int countRepliesByMessageId(Long messageId);
 }

@@ -13,6 +13,6 @@ public interface IMessageManagementService {
 
     MessageModel createMessage(MessageModel messageModel) throws FieldEmptyException;
 
-    MessageModel updateMessage(Long id, MessageModel messageModel);
+    //MessageModel updateMessage(Long id, MessageModel messageModel);
 
 }
