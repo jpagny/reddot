@@ -16,7 +16,7 @@ public class RabbitMQConfig {
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
         RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
 
-        // ### ThREAD / MESSAGE
+        // ### THREAD / MESSAGE
 
         // Create thread / message exchange
         TopicExchange threadMessageExchange = new TopicExchange("threadMessageExchange");
@@ -29,6 +29,21 @@ public class RabbitMQConfig {
         // Create binding between queue and exchange for requests
         Binding threadRequestBinding = BindingBuilder.bind(threadExistsQueue).to(threadMessageExchange).with("thread.exists.request");
         rabbitAdmin.declareBinding(threadRequestBinding);
+
+
+        // MESSAGE / REPLY_MESSAGE
+
+        // Create message / reply_message exchange
+        TopicExchange threadMessageMessageReplyExchange = new TopicExchange("messageReplyMessageExchange");
+        rabbitAdmin.declareExchange(threadMessageMessageReplyExchange);
+
+        // Create queue
+        Queue messageExistsQueue = new Queue("message.exists.queue");
+        rabbitAdmin.declareQueue(messageExistsQueue);
+
+        // Create binding between queue and exchange for requests
+        Binding messageRequestBinding = BindingBuilder.bind(messageExistsQueue).to(threadMessageMessageReplyExchange).with("message.exists.request");
+        rabbitAdmin.declareBinding(messageRequestBinding);
 
         return rabbitAdmin;
     }

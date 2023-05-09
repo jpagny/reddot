@@ -11,8 +11,7 @@ public class MessageDTO {
 
     private Long id;
     private String content;
-    private Long messageId;
     private Long threadId;
-    private String parentMessageID;
+    private String userId;
 
 }

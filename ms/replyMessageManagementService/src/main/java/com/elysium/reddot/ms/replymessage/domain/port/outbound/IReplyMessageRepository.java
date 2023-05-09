@@ -15,5 +15,7 @@ public interface IReplyMessageRepository {
 
     ReplyMessageModel updateReplyMessage(ReplyMessageModel replyMessageModel);
 
+    int countRepliesByMessageId(Long messageId);
+
 
 }

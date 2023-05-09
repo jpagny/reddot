@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.replymessage.infrastructure.data;
+package com.elysium.reddot.ms.message.infrastructure.data;
 
 import lombok.Data;
 

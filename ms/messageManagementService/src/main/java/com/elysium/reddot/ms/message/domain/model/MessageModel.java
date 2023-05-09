@@ -6,16 +6,14 @@ public class MessageModel {
 
     private final Long id;
     private String content;
-    private Long parentMessageID ;
     private Long threadId;
     private String userId;
 
-    public MessageModel(Long id, String label, Long threadId, String userId,Long parentMessageID) {
+    public MessageModel(Long id, String content, Long threadId, String userId) {
         this.id = id;
-        this.content = label;
+        this.content = content;
         this.threadId = threadId;
         this.userId = userId;
-        this.parentMessageID = parentMessageID;
     }
 
     public Long getId() {
@@ -37,14 +35,6 @@ public class MessageModel {
 
     public void setThreadId(Long threadId) {
         this.threadId = threadId;
-    }
-
-    public Long getParentMessageID() {
-        return parentMessageID;
-    }
-
-    public void setMessageId(Long parentMessageID) {
-        this.parentMessageID = parentMessageID;
     }
 
     public String getUserId() {
@@ -78,7 +68,6 @@ public class MessageModel {
                 ", content='" + content + '\'' +
                 ", threadId='" + threadId + '\'' +
                 ", userId='" + userId + '\'' +
-                ", parentMessageID='" + parentMessageID + '\'' +
                 '}';
     }
 

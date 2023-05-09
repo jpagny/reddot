@@ -127,6 +127,18 @@ services:
       networks:
         - reddot_network
 
+  reply_message_db:
+      image: mysql:latest
+      container_name: reply_message_db_mysql
+      environment:
+        - MYSQL_TCP_PORT=10104
+        - MYSQL_ROOT_PASSWORD=rootroot
+        - MYSQL_DATABASE=replyMessage
+      ports:
+        - 10104:10104
+      networks:
+        - reddot_network
+
   ### EDGES ###
 
   # spring config

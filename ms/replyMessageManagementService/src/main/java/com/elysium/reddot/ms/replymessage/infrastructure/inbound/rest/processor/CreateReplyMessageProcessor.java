@@ -21,7 +21,6 @@ public class CreateReplyMessageProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-
         ReplyMessageDTO inputReplyMessageDTO = exchange.getIn().getBody(ReplyMessageDTO.class);
         ReplyMessageModel replyMessageModel = ReplyMessageProcessorMapper.toModel(inputReplyMessageDTO);
 

@@ -1,7 +1,7 @@
-package com.elysium.reddot.ms.board.infrastructure.inbound.rest.rabbitMQ.listener;
+package com.elysium.reddot.ms.message.infrastructure.inbound.rabbitMQ.listener;
 
-import com.elysium.reddot.ms.board.application.service.BoardRabbitMQService;
-import com.elysium.reddot.ms.board.infrastructure.data.dto.BoardExistsResponseDTO;
+import com.elysium.reddot.ms.message.application.service.MessageRabbitMQService;
+import com.elysium.reddot.ms.message.infrastructure.data.MessageExistsResponseDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +16,19 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class BoardRabbitMQListener {
+public class MessageRabbitMQListener {
 
     private final RabbitTemplate rabbitTemplate;
-    private final BoardRabbitMQService boardRabbitMQService;
+    private final MessageRabbitMQService messageRabbitMQService;
 
-    @RabbitListener(queues = "board.exists.queue")
-    public void checkTopicExists(Message message) throws JsonProcessingException {
+    @RabbitListener(queues = "message.exists.queue")
+    public void checkMessageExists(Message message) throws JsonProcessingException {
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
-        Long boardId = (Long) messageConverter.fromMessage(message);
+        Long messageId = (Long) messageConverter.fromMessage(message);
 
-        boolean exists = boardRabbitMQService.checkBoardIdExists(boardId);
-        BoardExistsResponseDTO response = new BoardExistsResponseDTO();
-        response.setBoardId(boardId);
+        boolean exists = messageRabbitMQService.checkMessageIdExists(messageId);
+        MessageExistsResponseDTO response = new MessageExistsResponseDTO();
+        response.setParentMessageID(messageId);
         response.setExists(exists);
 
         MessageProperties messageProperties = new MessageProperties();

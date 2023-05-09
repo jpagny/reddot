@@ -2,12 +2,15 @@ package com.elysium.reddot.ms.replymessage.application.service;
 
 import com.elysium.reddot.ms.replymessage.application.exception.exception.ResourceBadValueException;
 import com.elysium.reddot.ms.replymessage.application.exception.exception.ResourceNotFoundException;
+import com.elysium.reddot.ms.replymessage.domain.constant.ApplicationDefaults;
+import com.elysium.reddot.ms.replymessage.domain.exception.LimitExceededException;
 import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import com.elysium.reddot.ms.replymessage.domain.port.inbound.IReplyMessageManagementService;
 import com.elysium.reddot.ms.replymessage.domain.port.outbound.IReplyMessageRepository;
 import com.elysium.reddot.ms.replymessage.domain.service.ReplyMessageDomainServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -18,6 +21,9 @@ import java.util.stream.Collectors;
 @Transactional
 @Slf4j
 public class ReplyMessageApplicationServiceImpl implements IReplyMessageManagementService {
+
+    @Value("${message.max.nested.replies:" + ApplicationDefaults.DEFAULT_MAX_NESTED_REPLIES + "}")
+    private Integer maxNestedReplies;
 
     private static final String RESOURCE_NAME_REPLY_MESSAGE = "replyMessage";
     private final ReplyMessageDomainServiceImpl replyMessageDomainService;
@@ -59,9 +65,15 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
                 replyMessageToCreateModel.getContent());
 
         try {
-            // check rules domain
-        } catch (Exception exception) {
+            int countTotalRepliedForThisMessage = replyMessageRepository.countRepliesByMessageId(replyMessageToCreateModel.getParentMessageID());
+            replyMessageDomainService.verifyNestedRepliesLimit(countTotalRepliedForThisMessage, maxNestedReplies);
+
+            // other check
+
+
+        } catch (LimitExceededException exception) {
             throw new ResourceBadValueException(RESOURCE_NAME_REPLY_MESSAGE, exception.getMessage());
+
         }
 
         ReplyMessageModel createdReplyMessageModel = replyMessageRepository.createReplyMessage(replyMessageToCreateModel);

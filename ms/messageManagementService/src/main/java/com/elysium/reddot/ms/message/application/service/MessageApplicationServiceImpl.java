@@ -104,10 +104,5 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
 
      */
 
-    private int countRepliesByMessageId(Long messageId) {
-        return messageRepository.countRepliesByMessageId(messageId);
-    }
-
-
 
 }

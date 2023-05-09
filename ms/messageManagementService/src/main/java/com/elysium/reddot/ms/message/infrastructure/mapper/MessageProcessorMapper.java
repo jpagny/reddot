@@ -17,7 +17,6 @@ public class MessageProcessorMapper {
         messageDTO.setContent(messageModel.getContent());
         messageDTO.setThreadId(messageModel.getThreadId());
         messageDTO.setUserId(messageModel.getUserId());
-        messageDTO.setMessageId(messageModel.getMessageId());
         return messageDTO;
     }
 
@@ -32,8 +31,7 @@ public class MessageProcessorMapper {
                 messageDTO.getId(),
                 messageDTO.getContent(),
                 messageDTO.getThreadId(),
-                messageDTO.getUserId(),
-                messageDTO.getMessageId()
+                messageDTO.getUserId()
         );
     }
 

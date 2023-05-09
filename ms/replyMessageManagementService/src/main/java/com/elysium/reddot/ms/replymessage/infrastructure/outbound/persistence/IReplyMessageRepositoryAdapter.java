@@ -3,9 +3,9 @@ package com.elysium.reddot.ms.replymessage.infrastructure.outbound.persistence;
 
 import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import com.elysium.reddot.ms.replymessage.domain.port.outbound.IReplyMessageRepository;
+import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessagePersistenceMapper;
 import com.elysium.reddot.ms.replymessage.infrastructure.outbound.persistence.entity.ReplyMessageJpaEntity;
 import com.elysium.reddot.ms.replymessage.infrastructure.outbound.persistence.repository.ReplyMessageJpaRepository;
-import com.elysium.reddot.ms.replyreplyReplyMessage.infrastructure.mapper.ReplyMessagePersistenceMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,9 +23,9 @@ public class IReplyMessageRepositoryAdapter implements IReplyMessageRepository {
 
     @Override
     public ReplyMessageModel createReplyMessage(ReplyMessageModel replyMessageModel) {
-        ReplyMessageJpaEntity replyMessageEntity = com.elysium.reddot.ms.replyreplyReplyMessage.infrastructure.mapper.ReplyMessagePersistenceMapper.toEntity(replyMessageModel);
+        ReplyMessageJpaEntity replyMessageEntity = ReplyMessagePersistenceMapper.toEntity(replyMessageModel);
         ReplyMessageJpaEntity savedReplyMessage = replyMessageJpaRepository.save(replyMessageEntity);
-        return com.elysium.reddot.ms.replyreplyReplyMessage.infrastructure.mapper.ReplyMessagePersistenceMapper.toModel(savedReplyMessage);
+        return ReplyMessagePersistenceMapper.toModel(savedReplyMessage);
     }
 
     @Override
@@ -47,6 +47,11 @@ public class IReplyMessageRepositoryAdapter implements IReplyMessageRepository {
         ReplyMessageJpaEntity replyMessageEntity = ReplyMessagePersistenceMapper.toEntity(replyMessageModel);
         ReplyMessageJpaEntity updatedReplyMessage = replyMessageJpaRepository.save(replyMessageEntity);
         return ReplyMessagePersistenceMapper.toModel(updatedReplyMessage);
+    }
+
+    @Override
+    public int countRepliesByMessageId(Long messageId) {
+        return replyMessageJpaRepository.countRepliesByMessageId(messageId);
     }
 
 }

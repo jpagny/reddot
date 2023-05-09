@@ -13,11 +13,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class IMessageRepositoryAdapter implements IMessageRepository {
+public class MessageRepositoryAdapter implements IMessageRepository {
 
     private final MessageJpaRepository messageJpaRepository;
 
-    public IMessageRepositoryAdapter(MessageJpaRepository messageJpaRepository) {
+    public MessageRepositoryAdapter(MessageJpaRepository messageJpaRepository) {
         this.messageJpaRepository = messageJpaRepository;
     }
 

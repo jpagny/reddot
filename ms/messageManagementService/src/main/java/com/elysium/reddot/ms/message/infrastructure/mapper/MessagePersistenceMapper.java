@@ -14,7 +14,6 @@ public class MessagePersistenceMapper {
         messageJpaEntity.setContent(messageModel.getContent());
         messageJpaEntity.setThreadId(messageModel.getThreadId());
         messageJpaEntity.setUserId(messageModel.getUserId());
-        messageJpaEntity.setMessageId(messageModel.getMessageId());
         return messageJpaEntity;
     }
 
@@ -23,8 +22,7 @@ public class MessagePersistenceMapper {
                 messageJpaEntity.getId(),
                 messageJpaEntity.getContent(),
                 messageJpaEntity.getThreadId(),
-                messageJpaEntity.getUserId(),
-                messageJpaEntity.getMessageId()
+                messageJpaEntity.getUserId()
         );
     }
 

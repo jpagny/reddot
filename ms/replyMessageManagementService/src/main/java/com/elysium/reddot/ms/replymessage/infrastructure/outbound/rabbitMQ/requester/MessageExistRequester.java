@@ -38,6 +38,7 @@ public class MessageExistRequester {
         );
 
         try {
+            log.debug("ICI PASSE !");
             return objectMapper.readValue(replyBytes, MessageExistsResponseDTO.class);
 
         } catch (IOException ex) {
