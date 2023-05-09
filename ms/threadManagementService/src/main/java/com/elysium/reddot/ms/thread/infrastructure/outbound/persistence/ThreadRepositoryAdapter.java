@@ -13,11 +13,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class IThreadRepositoryAdapter implements IThreadRepository {
+public class ThreadRepositoryAdapter implements IThreadRepository {
 
     private final ThreadJpaRepository threadJpaRepository;
 
-    public IThreadRepositoryAdapter(ThreadJpaRepository threadJpaRepository) {
+    public ThreadRepositoryAdapter(ThreadJpaRepository threadJpaRepository) {
         this.threadJpaRepository = threadJpaRepository;
     }
 
