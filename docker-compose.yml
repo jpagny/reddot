@@ -103,6 +103,29 @@ services:
     networks:
       - reddot_network
 
+  thread_db:
+    image: mysql:latest
+    container_name: thread_db_mysql
+    environment:
+      - MYSQL_TCP_PORT=10102
+      - MYSQL_ROOT_PASSWORD=rootroot
+      - MYSQL_DATABASE=thread
+    ports:
+      - 10102:10102
+    networks:
+      - reddot_network
+
+  message_db:
+      image: mysql:latest
+      container_name: message_db_mysql
+      environment:
+        - MYSQL_TCP_PORT=10103
+        - MYSQL_ROOT_PASSWORD=rootroot
+        - MYSQL_DATABASE=message
+      ports:
+        - 10103:10103
+      networks:
+        - reddot_network
 
   ### EDGES ###
 

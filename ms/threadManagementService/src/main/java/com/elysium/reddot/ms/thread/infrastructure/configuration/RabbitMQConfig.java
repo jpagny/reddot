@@ -30,7 +30,6 @@ public class RabbitMQConfig {
         Binding boardRequestBinding = BindingBuilder.bind(boardExistsQueue).to(boardThreadExchange).with("board.exists.request");
         rabbitAdmin.declareBinding(boardRequestBinding);
 
-
         return rabbitAdmin;
 
     }
