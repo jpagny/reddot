@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -57,6 +58,7 @@ public class UserApplicationService implements IUserManagementService {
             }
         }
     }
+
 
     private String extractUserIdFromResponse(Response response) {
         return response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");

@@ -116,28 +116,41 @@ services:
       - reddot_network
 
   message_db:
-      image: mysql:latest
-      container_name: message_db_mysql
-      environment:
-        - MYSQL_TCP_PORT=10103
-        - MYSQL_ROOT_PASSWORD=rootroot
-        - MYSQL_DATABASE=message
-      ports:
-        - 10103:10103
-      networks:
-        - reddot_network
+    image: mysql:latest
+    container_name: message_db_mysql
+    environment:
+      - MYSQL_TCP_PORT=10103
+      - MYSQL_ROOT_PASSWORD=rootroot
+      - MYSQL_DATABASE=message
+    ports:
+      - 10103:10103
+    networks:
+      - reddot_network
 
   reply_message_db:
-      image: mysql:latest
-      container_name: reply_message_db_mysql
-      environment:
-        - MYSQL_TCP_PORT=10104
-        - MYSQL_ROOT_PASSWORD=rootroot
-        - MYSQL_DATABASE=replyMessage
-      ports:
-        - 10104:10104
-      networks:
-        - reddot_network
+    image: mysql:latest
+    container_name: reply_message_db_mysql
+    environment:
+      - MYSQL_TCP_PORT=10104
+      - MYSQL_ROOT_PASSWORD=rootroot
+      - MYSQL_DATABASE=replyMessage
+    ports:
+      - 10104:10104
+    networks:
+      - reddot_network
+
+  stat_db:
+    image: mysql:latest
+    container_name: stat_db_mysql
+    environment:
+      - MYSQL_TCP_PORT=10105
+      - MYSQL_ROOT_PASSWORD=rootroot
+      - MYSQL_DATABASE=stat
+    ports:
+      - 10105:10105
+    networks:
+      - reddot_network
+
 
   ### EDGES ###
 

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 @Slf4j
-public class UserCreateProcessor implements Processor {
+public class CreateUserProcessor implements Processor {
 
     private final UserApplicationService userApplicationService;
 

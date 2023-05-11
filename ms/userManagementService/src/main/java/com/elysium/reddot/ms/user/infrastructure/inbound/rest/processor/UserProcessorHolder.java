@@ -8,5 +8,5 @@ import org.springframework.stereotype.Component;
 @Getter
 @Component
 public class UserProcessorHolder {
-    private UserCreateProcessor userCreateProcessor;
+    private CreateUserProcessor createUserProcessor;
 }

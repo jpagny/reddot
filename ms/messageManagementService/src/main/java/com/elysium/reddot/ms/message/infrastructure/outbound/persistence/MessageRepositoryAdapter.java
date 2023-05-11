@@ -6,13 +6,16 @@ import com.elysium.reddot.ms.message.domain.port.outbound.IMessageRepository;
 import com.elysium.reddot.ms.message.infrastructure.mapper.MessagePersistenceMapper;
 import com.elysium.reddot.ms.message.infrastructure.outbound.persistence.entity.MessageJpaEntity;
 import com.elysium.reddot.ms.message.infrastructure.outbound.persistence.repository.MessageJpaRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class MessageRepositoryAdapter implements IMessageRepository {
 
     private final MessageJpaRepository messageJpaRepository;
@@ -52,5 +55,13 @@ public class MessageRepositoryAdapter implements IMessageRepository {
     @Override
     public void deleteMessage(Long id) {
         messageJpaRepository.deleteById(id);
+    }
+
+    public List<MessageModel> listMessagesByUserAndRangeDate(String userId, LocalDateTime onStart, LocalDateTime onEnd) {
+        log.debug("REPO ICI : " + userId +  " - " + onStart.toString() + " - " + onEnd.toString());
+        return messageJpaRepository.findMessagesByUserIdAndDateRange(userId, onStart, onEnd)
+                .stream()
+                .map(MessagePersistenceMapper::toModel)
+                .collect(Collectors.toList());
     }
 }

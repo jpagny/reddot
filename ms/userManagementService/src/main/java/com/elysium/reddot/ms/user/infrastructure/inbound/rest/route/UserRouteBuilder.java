@@ -2,9 +2,7 @@ package com.elysium.reddot.ms.user.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.user.application.data.dto.UserDTO;
 import com.elysium.reddot.ms.user.application.exception.handler.core.CamelGlobalExceptionHandler;
-import com.elysium.reddot.ms.user.infrastructure.inbound.rest.processor.UserCreateProcessor;
 import com.elysium.reddot.ms.user.infrastructure.inbound.rest.processor.UserProcessorHolder;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
@@ -36,7 +34,7 @@ public class UserRouteBuilder extends RouteBuilder {
         from(UserRouteConstants.CREATE_TOPIC.getRouteName())
                 .routeId("createUser")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Creating a new user")
-                .process(userProcessorHolder.getUserCreateProcessor())
+                .process(userProcessorHolder.getCreateUserProcessor())
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully created topic with name '${body.data.name}'")
                 .end();
     }

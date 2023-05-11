@@ -3,26 +3,36 @@ package com.elysium.reddot.ms.message.infrastructure.inbound.rest.route;
 import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
 import com.elysium.reddot.ms.message.application.exception.handler.core.CamelGlobalExceptionHandler;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.MessageProcessorHolder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jackson.JacksonDataFormat;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MessageRouteBuilder extends RouteBuilder {
 
     private final CamelGlobalExceptionHandler camelGlobalExceptionHandler;
     private final MessageProcessorHolder messageProcessorHolder;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void configure() {
+
+        JacksonDataFormat format = new JacksonDataFormat();
+        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        format.setObjectMapper(objectMapper);
 
         String requestId = "/{id}";
 
         restConfiguration()
                 .component("servlet")
-                .bindingMode(RestBindingMode.json)
                 .dataFormatProperty("prettyPrint", "true");
 
         onException(Exception.class)
@@ -42,6 +52,7 @@ public class MessageRouteBuilder extends RouteBuilder {
                 .routeId("getAllMessages")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Retrieving all messages")
                 .process(messageProcessorHolder.getGetAllMessagesProcessor())
+                .marshal(format)
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully retrieved all messages")
                 .end();
 
@@ -50,6 +61,7 @@ public class MessageRouteBuilder extends RouteBuilder {
                 .routeId("getMessageById")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Getting message with id '${header.id}'")
                 .process(messageProcessorHolder.getGetMessageByIdProcessor())
+                .marshal(format)
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully retrieved message with id '${header.id}'")
                 .end();
 
@@ -58,6 +70,7 @@ public class MessageRouteBuilder extends RouteBuilder {
                 .routeId("createMessage")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Creating a new message")
                 .process(messageProcessorHolder.getCreateMessageProcessor())
+                .marshal(format)
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully created message with name '${body.data.name}'")
                 .end();
 
@@ -66,6 +79,7 @@ public class MessageRouteBuilder extends RouteBuilder {
                 .routeId("updateMessage")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Updating message with id '${header.id}'")
                 .process(messageProcessorHolder.getUpdateMessageProcessor())
+                .marshal(format)
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully updated message with id '${header.id}' and name '${body.data.name}'")
                 .end();
 

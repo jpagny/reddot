@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.message.domain.model;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class MessageModel {
@@ -8,12 +9,16 @@ public class MessageModel {
     private String content;
     private Long threadId;
     private String userId;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public MessageModel(Long id, String content, Long threadId, String userId) {
+    public MessageModel(Long id, String content, Long threadId, String userId, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.content = content;
         this.threadId = threadId;
         this.userId = userId;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -44,6 +49,23 @@ public class MessageModel {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
 
 
     @Override

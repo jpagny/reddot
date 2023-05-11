@@ -4,19 +4,22 @@ import com.elysium.reddot.ms.statistic.application.service.StatisticApplicationS
 import com.elysium.reddot.ms.statistic.infrastructure.outbound.rabbitMQ.requester.AllUsersIdRequester;
 import com.elysium.reddot.ms.statistic.infrastructure.outbound.rabbitMQ.requester.CountMessagesByUserBetweenTwoDatesRequester;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.quartz.JobExecutionContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Slf4j
+@Component
 public class CalculateDailyUserMessagesStatisticJob extends QuartzJobBean {
 
     private final AllUsersIdRequester allUsersIdRequester;
     private final CountMessagesByUserBetweenTwoDatesRequester countMessagesByUserBetweenTwoDatesRequester;
-
     private final StatisticApplicationServiceImpl statisticApplicationService;
 
     @Override
@@ -41,8 +44,8 @@ public class CalculateDailyUserMessagesStatisticJob extends QuartzJobBean {
 
     private LocalDateTime[] getYesterdayPeriod() {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime start = now.minusDays(1).withHour(0).withMinute(0).withSecond(0);
-        LocalDateTime end = now.withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime start = now.minusDays(7).withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime end = now.plusDays(1).withHour(0).withMinute(0).withSecond(0);
         return new LocalDateTime[]{start, end};
     }
 
