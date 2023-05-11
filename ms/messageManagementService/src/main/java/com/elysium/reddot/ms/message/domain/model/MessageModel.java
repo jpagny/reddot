@@ -5,12 +5,14 @@ import java.util.Objects;
 
 public class MessageModel {
 
-    private final Long id;
+    private Long id;
     private String content;
     private Long threadId;
     private String userId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public MessageModel(){}
 
     public MessageModel(Long id, String content, Long threadId, String userId, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;

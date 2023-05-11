@@ -1,8 +1,11 @@
 package com.elysium.reddot.ms.statistic.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.statistic.infrastructure.inbound.rest.processor.StatisticProcessorHolder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.AllArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
 
@@ -11,13 +14,18 @@ import org.springframework.stereotype.Component;
 public class StatisticRouteBuilder extends RouteBuilder {
 
     private final StatisticProcessorHolder statisticProcessorHolder;
+    private final ObjectMapper objectMapper;
+
 
     @Override
     public void configure() {
 
+        JacksonDataFormat format = new JacksonDataFormat();
+        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        format.setObjectMapper(objectMapper);
+
         restConfiguration()
                 .component("servlet")
-                .bindingMode(RestBindingMode.json)
                 .dataFormatProperty("prettyPrint", "true");
 
         // definition routes
@@ -28,6 +36,7 @@ public class StatisticRouteBuilder extends RouteBuilder {
                 .routeId("getMessageCountByUserFromDate")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Retrieving message count by user from date")
                 .process(statisticProcessorHolder.getGetMessageCountByUserFromDateProcessor())
+                .marshal(format)
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully retrieved message count")
                 .end();
 

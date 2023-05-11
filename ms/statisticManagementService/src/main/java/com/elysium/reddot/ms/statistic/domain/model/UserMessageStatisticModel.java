@@ -1,19 +1,20 @@
 package com.elysium.reddot.ms.statistic.domain.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class UserMessageStatisticModel {
 
     private Long id;
-    private LocalDateTime date;
+    private LocalDate date;
     private Integer countMessages;
     private String userId;
     private String typeStatistic;
 
     public UserMessageStatisticModel(){
     }
-    public UserMessageStatisticModel(Long id, LocalDateTime date, Integer countMessages, String userId, String typeStatistic){
+    public UserMessageStatisticModel(Long id, LocalDate date, Integer countMessages, String userId, String typeStatistic){
         this.id = id;
         this.date = date;
         this.countMessages = countMessages;
@@ -29,11 +30,11 @@ public class UserMessageStatisticModel {
         this.id = id;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

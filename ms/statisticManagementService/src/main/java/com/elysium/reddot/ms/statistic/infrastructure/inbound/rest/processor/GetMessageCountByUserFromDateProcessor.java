@@ -20,17 +20,24 @@ public class GetMessageCountByUserFromDateProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
+
         String type = exchange.getIn().getHeader("type", String.class);
         String userId = exchange.getIn().getHeader("userId", String.class);
         String date = exchange.getIn().getHeader("date", String.class);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate theDate = LocalDate.parse(date, formatter);
 
-        UserMessageStatisticModel userMessageStatisticModel = statisticApplicationService.getMessageCountByTypeAndByUserIdFromDate(type, userId, theDate);
+        Integer resultMessageCount = statisticApplicationService.getMessageCountByTypeAndByUserIdFromDate(type, userId, theDate);
+
+        UserMessageStatisticModel result = new UserMessageStatisticModel();
+        result.setDate(theDate);
+        result.setUserId(userId);
+        result.setTypeStatistic(type);
+        result.setCountMessages(resultMessageCount);
 
         ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Message count with  " + type + " retrieved successfully", userMessageStatisticModel);
+                "Message count with  " + type + " retrieved successfully", result);
 
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());
         exchange.getMessage().setBody(apiResponseDTO);

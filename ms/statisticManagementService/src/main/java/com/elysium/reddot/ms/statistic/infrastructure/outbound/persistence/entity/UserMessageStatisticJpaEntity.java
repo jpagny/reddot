@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,7 +18,8 @@ public class UserMessageStatisticJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime date;
+    @Column(columnDefinition = "DATE")
+    private LocalDate date;
     private Integer countMessages;
     private String userId;
     private String typeStatistic;

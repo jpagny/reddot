@@ -93,6 +93,7 @@ public class CalculateDailyUserMessagesStatisticJob extends QuartzJobBean {
     }
 
     private void insertIntoDatabase(String userId, Integer countMessages, Integer countRepliesMessage) {
+        log.debug("CHeck userId : " + userId);
         Integer totalMessages = countMessages + countRepliesMessage;
         statisticApplicationService.insertCountDailyUserMessages(userId, countMessages);
         statisticApplicationService.insertCountDailyUserRepliesMessage(userId, countRepliesMessage);

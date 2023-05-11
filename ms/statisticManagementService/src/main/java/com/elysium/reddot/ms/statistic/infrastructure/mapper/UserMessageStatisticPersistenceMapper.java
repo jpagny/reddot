@@ -12,6 +12,7 @@ public class UserMessageStatisticPersistenceMapper {
         UserMessageStatisticJpaEntity userMessageStatisticJpaEntity = new UserMessageStatisticJpaEntity();
         userMessageStatisticJpaEntity.setId(userMessageStatisticModel.getId());
         userMessageStatisticJpaEntity.setDate(userMessageStatisticModel.getDate());
+        userMessageStatisticJpaEntity.setUserId(userMessageStatisticModel.getUserId());
         userMessageStatisticJpaEntity.setCountMessages(userMessageStatisticModel.getCountMessages());
         userMessageStatisticJpaEntity.setTypeStatistic(userMessageStatisticModel.getTypeStatistic());
         return userMessageStatisticJpaEntity;

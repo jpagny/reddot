@@ -10,10 +10,10 @@ import java.time.LocalDate;
 public interface UserMessageStatisticRepository extends JpaRepository<UserMessageStatisticJpaEntity, Long> {
 
     @Query("SELECT m.countMessages FROM UserMessageStatisticJpaEntity m WHERE m.userId = :userId AND DATE(m.date) = :date AND m.typeStatistic = :type")
-    Long getCountMessagesByTypeAndUserIdAndDate(
+    Integer getCountMessagesByTypeAndUserIdAndDate(
             @Param("type") String type,
             @Param("userId") String userId,
-            @Param("date") LocalDate date
+            @Param("date") java.sql.Date date
     );
 
 

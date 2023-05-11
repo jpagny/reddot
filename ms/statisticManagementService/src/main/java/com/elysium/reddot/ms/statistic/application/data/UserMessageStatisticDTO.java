@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserMessageStatisticDTO {
     private Long id;
-    private LocalDateTime date;
+    private LocalDate date;
     private Long countMessages;
     private String userId;
     private String type;

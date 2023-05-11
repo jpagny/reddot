@@ -24,6 +24,7 @@ public class CountRepliesMessageByUserBetweenTwoDatesRequester {
     public static final String STATISTIC_COUNT_REPLIES_MESSAGE_BY_USER_BETWEEN_TWO_DATES_REQUEST_ROUTING_KEY = "count.replyMessage.user.dates.request";
 
     public Integer fetchCountRepliesMessageByUserBetweenTwoDate(String userId, LocalDateTime onStart, LocalDateTime onEnd) {
+       log.debug("ICII");
         CountMessagesByUserBetweenTwoDatesResponse response = getCountMessages(userId, onStart, onEnd);
         log.debug("FINAL : " + response.getCountMessagesTotal());
         return response.getCountMessagesTotal();
