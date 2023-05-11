@@ -6,6 +6,7 @@ import com.elysium.reddot.ms.statistic.infrastructure.outbound.persistence.UserM
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -41,7 +42,19 @@ public class StatisticApplicationServiceImpl implements StatisticManagementServi
 
     @Override
     public void insertCountDailyUserTotalMessages(String userId, Integer countMessage) {
+        UserMessageStatisticModel userMessageStatisticModel = new UserMessageStatisticModel();
+        userMessageStatisticModel.setCountMessages(countMessage);
+        userMessageStatisticModel.setUserId(userId);
+        userMessageStatisticModel.setDate(LocalDateTime.now().minusDays(1).withHour(0).withMinute(0).withSecond(0));
+        userMessageStatisticModel.setTypeStatistic(TYPE_COUNT_TOTAL_MESSAGES_BY_USER_DAILY);
+        userMessageStatisticRepository.createUserMessageStatistic(userMessageStatisticModel);
+    }
 
+    @Override
+    public UserMessageStatisticModel getMessageCountByTypeAndByUserIdFromDate(String type, String userId, LocalDate date) {
+
+
+        return null;
     }
 
 

@@ -14,4 +14,5 @@ public class UserMessageStatisticDTO {
     private LocalDateTime date;
     private Long countMessages;
     private String userId;
+    private String type;
 }

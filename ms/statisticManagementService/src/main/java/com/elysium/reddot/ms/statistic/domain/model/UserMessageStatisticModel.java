@@ -18,7 +18,7 @@ public class UserMessageStatisticModel {
         this.date = date;
         this.countMessages = countMessages;
         this.userId = userId;
-        this.setTypeStatistic(typeStatistic);
+        this.typeStatistic = typeStatistic;
     }
 
     public Long getId() {
