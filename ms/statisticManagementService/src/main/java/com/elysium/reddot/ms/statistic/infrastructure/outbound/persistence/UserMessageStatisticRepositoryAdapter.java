@@ -1,10 +1,10 @@
-package com.elysium.reddot.ms.statistic.infrastructure.persistence;
+package com.elysium.reddot.ms.statistic.infrastructure.outbound.persistence;
 
 import com.elysium.reddot.ms.statistic.domain.model.UserMessageStatisticModel;
 import com.elysium.reddot.ms.statistic.domain.port.outbound.ITUserMessageStatisticRepository;
 import com.elysium.reddot.ms.statistic.infrastructure.mapper.UserMessageStatisticPersistenceMapper;
-import com.elysium.reddot.ms.statistic.infrastructure.persistence.entity.UserMessageStatisticJpaEntity;
-import com.elysium.reddot.ms.statistic.infrastructure.persistence.repository.UserMessageStatisticRepository;
+import com.elysium.reddot.ms.statistic.infrastructure.outbound.persistence.entity.UserMessageStatisticJpaEntity;
+import com.elysium.reddot.ms.statistic.infrastructure.outbound.persistence.repository.UserMessageStatisticRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -1,7 +1,7 @@
 package com.elysium.reddot.ms.statistic.infrastructure.mapper;
 
 import com.elysium.reddot.ms.statistic.domain.model.UserMessageStatisticModel;
-import com.elysium.reddot.ms.statistic.infrastructure.persistence.entity.UserMessageStatisticJpaEntity;
+import com.elysium.reddot.ms.statistic.infrastructure.outbound.persistence.entity.UserMessageStatisticJpaEntity;
 
 public class UserMessageStatisticPersistenceMapper {
 
@@ -13,6 +13,7 @@ public class UserMessageStatisticPersistenceMapper {
         userMessageStatisticJpaEntity.setId(userMessageStatisticModel.getId());
         userMessageStatisticJpaEntity.setDate(userMessageStatisticModel.getDate());
         userMessageStatisticJpaEntity.setCountMessages(userMessageStatisticModel.getCountMessages());
+        userMessageStatisticJpaEntity.setTypeStatistic(userMessageStatisticModel.getTypeStatistic());
         return userMessageStatisticJpaEntity;
     }
 
@@ -21,7 +22,8 @@ public class UserMessageStatisticPersistenceMapper {
                 userMessageStatisticJpaEntity.getId(),
                 userMessageStatisticJpaEntity.getDate(),
                 userMessageStatisticJpaEntity.getCountMessages(),
-                userMessageStatisticJpaEntity.getUserId()
+                userMessageStatisticJpaEntity.getUserId(),
+                userMessageStatisticJpaEntity.getTypeStatistic()
         );
     }
 

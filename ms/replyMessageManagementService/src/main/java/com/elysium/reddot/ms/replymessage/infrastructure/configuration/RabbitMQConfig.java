@@ -30,6 +30,21 @@ public class RabbitMQConfig {
         Binding messageRequestBinding = BindingBuilder.bind(messageExistsQueue).to(threadMessageExchange).with("message.exists.request");
         rabbitAdmin.declareBinding(messageRequestBinding);
 
+
+        // STATISTIC / REPLY_MESSAGE
+
+        // Create message / reply_message exchange
+        TopicExchange statisticReplyMessageMessageExchange = new TopicExchange("statisticReplyMessageExchange");
+        rabbitAdmin.declareExchange(statisticReplyMessageMessageExchange);
+
+        // Create queue
+        Queue countReplyMessageByUserRangeDate = new Queue("count.replyMessage.user.dates.queue");
+        rabbitAdmin.declareQueue(countReplyMessageByUserRangeDate);
+
+        // Create binding between queue and exchange for requests
+        Binding statisticReplyRequestBinding = BindingBuilder.bind(countReplyMessageByUserRangeDate).to(statisticReplyMessageMessageExchange).with("count.replyMessage.user.dates.request");
+        rabbitAdmin.declareBinding(statisticReplyRequestBinding);
+
         return rabbitAdmin;
     }
 }

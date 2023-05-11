@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "repliesMessage")
@@ -21,4 +22,7 @@ public class ReplyMessageJpaEntity {
     private Long parentMessageId;
 
     private String userId;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

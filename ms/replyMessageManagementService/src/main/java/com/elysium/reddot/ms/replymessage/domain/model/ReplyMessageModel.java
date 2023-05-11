@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.replymessage.domain.model;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class ReplyMessageModel {
@@ -8,12 +9,17 @@ public class ReplyMessageModel {
     private String content;
     private Long parentMessageID;
     private String userId;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public ReplyMessageModel(Long id, String label, Long parentMessageID, String userId) {
+
+    public ReplyMessageModel(Long id, String label, Long parentMessageID, String userId, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.content = label;
         this.parentMessageID = parentMessageID;
         this.userId = userId;
+        this.setCreatedAt(createdAt);
+        this.setUpdatedAt(updatedAt);
     }
 
     public Long getId() {
@@ -45,6 +51,22 @@ public class ReplyMessageModel {
         this.userId = userId;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -63,13 +85,14 @@ public class ReplyMessageModel {
 
     @Override
     public String toString() {
-        return "Message{" +
+        return "ReplyMessage{" +
                 "id=" + id +
                 ", content='" + content + '\'' +
                 ", userId='" + userId + '\'' +
                 ", parentMessageID='" + parentMessageID + '\'' +
                 '}';
     }
+
 
 
 }

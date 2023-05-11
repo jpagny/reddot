@@ -6,8 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Repository
 public interface ReplyMessageJpaRepository extends JpaRepository<ReplyMessageJpaEntity, Long> {
     @Query("SELECT COUNT(m) FROM ReplyMessageJpaEntity m WHERE m.parentMessageId = :messageId")
     int countRepliesByMessageId(@Param("messageId") Long messageId);
+
+    @Query("SELECT m FROM ReplyMessageJpaEntity m WHERE m.userId = :userId AND m.createdAt BETWEEN :startDate AND :endDate")
+    List<ReplyMessageJpaEntity> findRepliesMessageByUserIdAndDateRange(@Param("userId") String userId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
 }

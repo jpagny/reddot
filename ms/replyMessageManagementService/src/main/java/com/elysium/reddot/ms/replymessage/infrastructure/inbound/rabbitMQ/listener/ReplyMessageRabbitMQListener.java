@@ -1,9 +1,8 @@
-package com.elysium.reddot.ms.message.infrastructure.inbound.rabbitMQ.listener;
+package com.elysium.reddot.ms.replymessage.infrastructure.inbound.rabbitMQ.listener;
 
-import com.elysium.reddot.ms.message.application.service.MessageRabbitMQService;
-import com.elysium.reddot.ms.message.infrastructure.data.rabbitMQ.received.request.CountMessageByUserBetweenTwoDatesRequest;
-import com.elysium.reddot.ms.message.infrastructure.data.rabbitMQ.response.CountMessageByUserBetweenTwoDatesResponse;
-import com.elysium.reddot.ms.message.infrastructure.data.rabbitMQ.response.MessageExistsResponseDTO;
+import com.elysium.reddot.ms.replymessage.application.service.ReplyMessageRabbitMQService;
+import com.elysium.reddot.ms.replymessage.infrastructure.data.rabbitMQ.received.request.CountRepliesMessageByUserBetweenTwoDatesRequest;
+import com.elysium.reddot.ms.replymessage.infrastructure.data.rabbitMQ.response.CountRepliesMessageByUserBetweenTwoDatesResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -19,46 +18,34 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class MessageRabbitMQListener {
+public class ReplyMessageRabbitMQListener {
 
     private final RabbitTemplate rabbitTemplate;
-    private final MessageRabbitMQService messageRabbitMQService;
+    private final ReplyMessageRabbitMQService replyMessageRabbitMQService;
 
-    @RabbitListener(queues = "message.exists.queue")
-    public void checkMessageExists(Message message) throws JsonProcessingException {
-        MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
-        Long messageId = (Long) messageConverter.fromMessage(message);
-
-        boolean exists = messageRabbitMQService.checkMessageIdExists(messageId);
-
-        MessageExistsResponseDTO response = new MessageExistsResponseDTO();
-        response.setParentMessageID(messageId);
-        response.setExists(exists);
-
-        MessageProperties messageProperties = buildMessageProperties(message);
-        String jsonResponse = buildJsonResponse(response);
-        Message responseMessage = buildMessageResponse(jsonResponse, messageProperties);
-
-        sendResponseToRabbit(message, responseMessage);
-    }
-
-    @RabbitListener(queues = "count.message.user.dates.queue")
+    @RabbitListener(queues = "count.replyMessage.user.dates.queue")
     public void countMessagesByUserBetweenTwoDates(Message message) throws JsonProcessingException {
+        log.debug("RECU : " + message.getBody());
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
+        log.debug("1");
 
         String jsonMessage = (String) messageConverter.fromMessage(message);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        CountMessageByUserBetweenTwoDatesRequest requestReceived = objectMapper.readValue(jsonMessage, CountMessageByUserBetweenTwoDatesRequest.class);
+        CountRepliesMessageByUserBetweenTwoDatesRequest requestReceived = objectMapper.readValue(jsonMessage, CountRepliesMessageByUserBetweenTwoDatesRequest.class);
 
-        Integer countMessagesTotalOnRangeDate = messageRabbitMQService.countMessageByUserIdBetweenTwoDates(
+        log.debug("2");
+        Integer countMessagesTotalOnRangeDate = replyMessageRabbitMQService.countRepliesMessageByUserIdBetweenTwoDates(
                 requestReceived.getUserId(),
                 requestReceived.getOnStart(),
                 requestReceived.getOnEnd());
-        CountMessageByUserBetweenTwoDatesResponse response = new CountMessageByUserBetweenTwoDatesResponse(countMessagesTotalOnRangeDate);
+        log.debug("3");
+        CountRepliesMessageByUserBetweenTwoDatesResponse response = new CountRepliesMessageByUserBetweenTwoDatesResponse(countMessagesTotalOnRangeDate);
+        log.debug("4 : " + response.toString());
         MessageProperties messageProperties = buildMessageProperties(message);
         String jsonResponse = buildJsonResponse(response);
         Message responseMessage = buildMessageResponse(jsonResponse, messageProperties);
+        log.debug("5 : " + responseMessage.toString());
         sendResponseToRabbit(message, responseMessage);
     }
 

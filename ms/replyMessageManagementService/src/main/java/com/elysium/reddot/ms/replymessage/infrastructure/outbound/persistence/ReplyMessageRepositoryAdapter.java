@@ -8,16 +8,17 @@ import com.elysium.reddot.ms.replymessage.infrastructure.outbound.persistence.en
 import com.elysium.reddot.ms.replymessage.infrastructure.outbound.persistence.repository.ReplyMessageJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class IReplyMessageRepositoryAdapter implements IReplyMessageRepository {
+public class ReplyMessageRepositoryAdapter implements IReplyMessageRepository {
 
     private final ReplyMessageJpaRepository replyMessageJpaRepository;
 
-    public IReplyMessageRepositoryAdapter(ReplyMessageJpaRepository replyMessageJpaRepository) {
+    public ReplyMessageRepositoryAdapter(ReplyMessageJpaRepository replyMessageJpaRepository) {
         this.replyMessageJpaRepository = replyMessageJpaRepository;
     }
 
@@ -52,6 +53,14 @@ public class IReplyMessageRepositoryAdapter implements IReplyMessageRepository {
     @Override
     public int countRepliesByMessageId(Long messageId) {
         return replyMessageJpaRepository.countRepliesByMessageId(messageId);
+    }
+
+    @Override
+    public List<ReplyMessageModel> listMessagesByUserAndRangeDate(String userId, LocalDateTime onStart, LocalDateTime onEnd) {
+        return replyMessageJpaRepository.findRepliesMessageByUserIdAndDateRange(userId, onStart, onEnd)
+                .stream()
+                .map(ReplyMessagePersistenceMapper::toModel)
+                .collect(Collectors.toList());
     }
 
 }

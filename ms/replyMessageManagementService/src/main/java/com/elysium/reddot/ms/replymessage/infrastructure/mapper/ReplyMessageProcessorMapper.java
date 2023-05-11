@@ -18,6 +18,8 @@ public class ReplyMessageProcessorMapper {
         replyMessageDTO.setContent(replyMessageModel.getContent());
         replyMessageDTO.setParentMessageID(replyMessageModel.getParentMessageID());
         replyMessageDTO.setUserId(replyMessageModel.getUserId());
+        replyMessageDTO.setCreatedAt(replyMessageModel.getCreatedAt());
+        replyMessageDTO.setUpdatedAt(replyMessageModel.getUpdatedAt());
         return replyMessageDTO;
     }
 
@@ -32,7 +34,9 @@ public class ReplyMessageProcessorMapper {
                 replyMessageDTO.getId(),
                 replyMessageDTO.getContent(),
                 replyMessageDTO.getParentMessageID(),
-                replyMessageDTO.getUserId()
+                replyMessageDTO.getUserId(),
+                replyMessageDTO.getCreatedAt(),
+                replyMessageDTO.getUpdatedAt()
         );
     }
 

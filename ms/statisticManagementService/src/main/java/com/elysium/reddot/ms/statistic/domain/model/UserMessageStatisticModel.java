@@ -7,16 +7,18 @@ public class UserMessageStatisticModel {
 
     private Long id;
     private LocalDateTime date;
-    private Long countMessages;
+    private Integer countMessages;
     private String userId;
+    private String typeStatistic;
 
     public UserMessageStatisticModel(){
     }
-    public UserMessageStatisticModel(Long id, LocalDateTime date, Long countMessages, String userId){
+    public UserMessageStatisticModel(Long id, LocalDateTime date, Integer countMessages, String userId, String typeStatistic){
         this.id = id;
         this.date = date;
         this.countMessages = countMessages;
         this.userId = userId;
+        this.setTypeStatistic(typeStatistic);
     }
 
     public Long getId() {
@@ -35,11 +37,11 @@ public class UserMessageStatisticModel {
         this.date = date;
     }
 
-    public Long getCountMessages() {
+    public Integer getCountMessages() {
         return countMessages;
     }
 
-    public void setCountMessages(Long countMessages) {
+    public void setCountMessages(Integer countMessages) {
         this.countMessages = countMessages;
     }
 
@@ -50,6 +52,14 @@ public class UserMessageStatisticModel {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+    public String getTypeStatistic() {
+        return typeStatistic;
+    }
+
+    public void setTypeStatistic(String typeStatistic) {
+        this.typeStatistic = typeStatistic;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -72,4 +82,6 @@ public class UserMessageStatisticModel {
                 "id=" + id +
                 '}';
     }
+
+
 }

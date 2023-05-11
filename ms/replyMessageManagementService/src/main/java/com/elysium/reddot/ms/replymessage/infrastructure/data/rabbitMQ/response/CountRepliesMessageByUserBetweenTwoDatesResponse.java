@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.statistic.infrastructure.data.rabbitMQ.received.response;
+package com.elysium.reddot.ms.replymessage.infrastructure.data.rabbitMQ.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CountMessageByUserBetweenTwoDatesResponse {
+public class CountRepliesMessageByUserBetweenTwoDatesResponse {
     private Integer countMessagesTotal;
 }

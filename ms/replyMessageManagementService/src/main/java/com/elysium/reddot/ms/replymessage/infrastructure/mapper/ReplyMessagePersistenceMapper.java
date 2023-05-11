@@ -15,6 +15,8 @@ public class ReplyMessagePersistenceMapper {
         replyReplyMessageJpaEntity.setContent(replyReplyMessageModel.getContent());
         replyReplyMessageJpaEntity.setParentMessageId(replyReplyMessageModel.getParentMessageID());
         replyReplyMessageJpaEntity.setUserId(replyReplyMessageModel.getUserId());
+        replyReplyMessageJpaEntity.setCreatedAt(replyReplyMessageModel.getCreatedAt());
+        replyReplyMessageJpaEntity.setUpdatedAt(replyReplyMessageModel.getUpdatedAt());
         return replyReplyMessageJpaEntity;
     }
 
@@ -23,7 +25,9 @@ public class ReplyMessagePersistenceMapper {
                 replyReplyMessageJpaEntity.getId(),
                 replyReplyMessageJpaEntity.getContent(),
                 replyReplyMessageJpaEntity.getParentMessageId(),
-                replyReplyMessageJpaEntity.getUserId()
+                replyReplyMessageJpaEntity.getUserId(),
+                replyReplyMessageJpaEntity.getCreatedAt(),
+                replyReplyMessageJpaEntity.getUpdatedAt()
         );
     }
 

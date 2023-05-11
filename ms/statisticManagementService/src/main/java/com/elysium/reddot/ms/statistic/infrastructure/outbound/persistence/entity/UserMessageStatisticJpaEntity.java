@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.statistic.infrastructure.persistence.entity;
+package com.elysium.reddot.ms.statistic.infrastructure.outbound.persistence.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +18,8 @@ public class UserMessageStatisticJpaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime date;
-    private Long countMessages;
+    private Integer countMessages;
     private String userId;
+    private String typeStatistic;
 
 }
