@@ -2,12 +2,16 @@ package com.elysium.reddot.ms.user.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.user.application.data.dto.UserDTO;
 import com.elysium.reddot.ms.user.application.exception.handler.core.CamelGlobalExceptionHandler;
+import com.elysium.reddot.ms.user.infrastructure.constant.UserRouteEnum;
 import com.elysium.reddot.ms.user.infrastructure.inbound.rest.processor.UserProcessorHolder;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
 
+/**
+ * Configure the routes for user management.
+ */
 @Component
 @RequiredArgsConstructor
 public class UserRouteBuilder extends RouteBuilder {
@@ -15,27 +19,30 @@ public class UserRouteBuilder extends RouteBuilder {
     private final CamelGlobalExceptionHandler camelGlobalExceptionHandler;
     private final UserProcessorHolder userProcessorHolder;
 
-
     @Override
     public void configure() {
 
+        // rest configuration
         restConfiguration()
                 .component("servlet")
                 .bindingMode(RestBindingMode.json)
                 .dataFormatProperty("prettyPrint", "true");
 
+        // global exception handling
         onException(Exception.class)
                 .handled(true)
                 .process(camelGlobalExceptionHandler);
 
+        // definition route
         rest().
-                post().type(UserDTO.class).to(UserRouteConstants.CREATE_TOPIC.getRouteName());
+                post("/register").type(UserDTO.class).to(UserRouteEnum.USER_REGISTRATION.getRouteName());
 
-        from(UserRouteConstants.CREATE_TOPIC.getRouteName())
-                .routeId("createUser")
-                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Creating a new user")
+        // route : register a new user
+        from(UserRouteEnum.USER_REGISTRATION.getRouteName())
+                .routeId("userRegistration")
+                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Registering a new user")
                 .process(userProcessorHolder.getCreateUserProcessor())
-                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully created topic with name '${body.data.name}'")
+                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully registered user '${body.data.name}'")
                 .end();
     }
 }

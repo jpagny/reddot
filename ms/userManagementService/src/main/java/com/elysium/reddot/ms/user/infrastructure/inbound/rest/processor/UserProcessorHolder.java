@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
+/**
+ * Holder class for the CreateUserProcessor instance.
+ */
 @AllArgsConstructor
 @Getter
 @Component

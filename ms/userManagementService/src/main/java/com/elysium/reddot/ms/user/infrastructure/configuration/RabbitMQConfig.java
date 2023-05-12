@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.user.infrastructure.configuration;
 
+import com.elysium.reddot.ms.user.infrastructure.constant.RabbitMQConstant;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -14,19 +15,25 @@ public class RabbitMQConfig {
 
     @Bean
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+
         RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
 
-        // STATISTIC / USER
 
-        TopicExchange statisticUserExchange = new TopicExchange("statisticUserExchange");
+        // ### build exchange between statisticManagementService module and userManagementService module
+
+        TopicExchange statisticUserExchange = new TopicExchange(RabbitMQConstant.EXCHANGE_STATISTIC_USER);
         rabbitAdmin.declareExchange(statisticUserExchange);
 
-        Queue listAllUsersQueue = new Queue("user.all.queue");
+        Queue listAllUsersQueue = new Queue(RabbitMQConstant.QUEUE_FETCH_ALL_USERS);
         rabbitAdmin.declareQueue(listAllUsersQueue);
 
-        Binding listUserRequestBinding = BindingBuilder.bind(listAllUsersQueue).to(statisticUserExchange).with("user.all.request");
+        Binding listUserRequestBinding = BindingBuilder
+                .bind(listAllUsersQueue)
+                .to(statisticUserExchange)
+                .with(RabbitMQConstant.REQUEST_FETCH_ALL_USERS);
         rabbitAdmin.declareBinding(listUserRequestBinding);
 
         return rabbitAdmin;
     }
+
 }

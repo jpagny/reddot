@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+/**
+ * Service class for managing users with RabbitMQ integration.
+ * This class provides methods to interact with Keycloak and retrieve user information.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -21,11 +25,21 @@ public class UserRabbitMQService {
     @Value("${keycloak.realm}")
     private String keycloakRealm;
 
+    /**
+     * Retrieves the UsersResource for the configured Keycloak realm.
+     *
+     * @return the UsersResource instance
+     */
     private UsersResource getUsersIdResource() {
         RealmResource realmResource = keycloak.realm(keycloakRealm);
         return realmResource.users();
     }
 
+    /**
+     * Retrieves a list of all user IDs from Keycloak.
+     *
+     * @return an ArrayList containing the IDs of all users
+     */
     public ArrayList<String> getAllUsers() {
         log.debug("Fetching list users");
 

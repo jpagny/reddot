@@ -7,6 +7,10 @@ import lombok.Getter;
 
 import javax.ws.rs.core.Response;
 
+/**
+ * Exception thrown when an error occurs while interacting with the Keycloak API.
+ * This exception provides information about the status code and response from the API.
+ */
 @Getter
 public class KeycloakApiException extends RuntimeException {
 
@@ -14,6 +18,11 @@ public class KeycloakApiException extends RuntimeException {
     private final Response response;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Constructs a KeycloakApiException with the specified response.
+     *
+     * @param response the response from the Keycloak API
+     */
     public KeycloakApiException(Response response) {
         super(String.format("Error Keycloak API : %s",
                 getResponseBody(response)));
@@ -21,6 +30,12 @@ public class KeycloakApiException extends RuntimeException {
         this.response = response;
     }
 
+    /**
+     * Retrieves the error message from the response body, if available.
+     *
+     * @param response the response from the Keycloak API
+     * @return the error message extracted from the response body, or a default message if not found
+     */
     private static String getResponseBody(Response response) {
 
         if (response.hasEntity()) {
@@ -48,6 +63,5 @@ public class KeycloakApiException extends RuntimeException {
 
         return "No response body available";
     }
-
 
 }
