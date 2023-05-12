@@ -27,7 +27,7 @@ public class UserRouteBuilder extends RouteBuilder {
         // rest configuration
         restConfiguration()
                 .component("servlet")
-                .bindingMode(RestBindingMode.json)
+                .bindingMode(RestBindingMode.auto)
                 .dataFormatProperty("prettyPrint", "true");
 
         // global exception handling
