@@ -1,7 +1,7 @@
 package com.elysium.reddot.ms.user.application.service;
 
 import com.elysium.reddot.ms.user.application.data.mapper.UserModelUserRepresentationMapper;
-import com.elysium.reddot.ms.user.application.exception.exception.KeycloakApiException;
+import com.elysium.reddot.ms.user.infrastructure.exception.type.KeycloakApiException;
 import com.elysium.reddot.ms.user.domain.model.UserModel;
 import com.elysium.reddot.ms.user.domain.port.inbound.IUserManagementService;
 import com.elysium.reddot.ms.user.domain.service.IUserDomainService;

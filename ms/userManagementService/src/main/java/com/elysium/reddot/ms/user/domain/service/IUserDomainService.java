@@ -1,6 +1,6 @@
 package com.elysium.reddot.ms.user.domain.service;
 
-import com.elysium.reddot.ms.user.domain.exception.BadValueException;
+import com.elysium.reddot.ms.user.domain.exception.type.BadValueException;
 import com.elysium.reddot.ms.user.domain.model.UserModel;
 
 /**

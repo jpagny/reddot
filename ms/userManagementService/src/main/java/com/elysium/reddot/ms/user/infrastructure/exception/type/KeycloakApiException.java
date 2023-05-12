@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.user.application.exception.exception;
+package com.elysium.reddot.ms.user.infrastructure.exception.type;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

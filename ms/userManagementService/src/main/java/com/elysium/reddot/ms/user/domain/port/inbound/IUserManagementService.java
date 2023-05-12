@@ -1,6 +1,6 @@
 package com.elysium.reddot.ms.user.domain.port.inbound;
 
-import com.elysium.reddot.ms.user.application.exception.exception.KeycloakApiException;
+import com.elysium.reddot.ms.user.infrastructure.exception.type.KeycloakApiException;
 import com.elysium.reddot.ms.user.domain.model.UserModel;
 
 /**
