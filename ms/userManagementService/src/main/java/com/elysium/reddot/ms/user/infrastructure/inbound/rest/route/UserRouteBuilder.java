@@ -57,7 +57,7 @@ public class UserRouteBuilder extends RouteBuilder {
                 })
                 .log("A fallback operation for '${routeId}'")
                 .end()
-                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully registered user '${body.data.name}'")
+                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully registered user '${body.data.username}'")
                 .end();
     }
 }

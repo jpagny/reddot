@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import javax.ws.rs.core.Response;
 
+
 /**
  * Exception thrown when an error occurs while interacting with the Keycloak API.
  * This exception provides information about the status code and response from the API.
