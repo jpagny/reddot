@@ -15,4 +15,17 @@
     <name>userManagementService</name>
     <description>userManagementService</description>
 
+    <properties>
+        <keycloak.version>21.1.1</keycloak.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>${keycloak.version}</version>
+        </dependency>
+
+    </dependencies>
+
 </project>
