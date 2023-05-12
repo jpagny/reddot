@@ -25,6 +25,7 @@
         <spring-cloud-version>2021.0.6</spring-cloud-version>
         <spring-jaeger-version>3.3.1</spring-jaeger-version>
         <micrometer-registry-prometheus>1.10.6</micrometer-registry-prometheus>
+        <micrometer-registry-jaeger>1.8.1</micrometer-registry-jaeger>
     </properties>
 
     <dependencyManagement>
@@ -155,13 +156,18 @@
                 <artifactId>micrometer-registry-prometheus</artifactId>
                 <version>${micrometer-registry-prometheus}</version>
             </dependency>
+            <dependency>
+                <groupId>io.jaegertracing</groupId>
+                <artifactId>jaeger-micrometer</artifactId>
+                <version>${micrometer-registry-jaeger}</version>
+            </dependency>
+
         </dependencies>
 
     <build>
         <plugins>
-
-            <!-- Maven Springboot plugin -->
             <plugin>
+                <!-- Maven Springboot plugin -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
@@ -172,6 +178,101 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+
+            <!-- Maven Surefire Plugin for tests unit -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.version}</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <exclude>**/*IT.java</exclude>
+                    </includes>
+                    <argLine>${surefireArgLine}</argLine>
+                </configuration>
+            </plugin>
+
+            <!-- Maven Failsafe Plugin for tests integration -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.22.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>**/*IT.java</include>
+                        <exclude>**/*Test.java</exclude>
+                    </includes>
+                </configuration>
+            </plugin>
+
+
+            <!-- Maven Jacoco Plugin -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <configuration>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pre-unit-test</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <propertyName>surefireArgLine</propertyName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.9</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-unit-test</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>target/jacoco.exec</dataFile>
+                            <outputDirectory>target/jacoco-ut</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+
             </plugin>
 
         </plugins>
