@@ -24,7 +24,7 @@ import java.util.Collections;
 @Slf4j
 public class UserApplicationServiceImpl implements IUserManagementService {
 
-    private final IUserDomainService IUserDomainService;
+    private final IUserDomainService userDomainService;
     private final Keycloak keycloak;
 
     @Value("${spring.profiles.active}")
@@ -49,7 +49,7 @@ public class UserApplicationServiceImpl implements IUserManagementService {
                 userModel.getEmail()
         );
 
-        IUserDomainService.validateUserForCreation(userModel);
+        userDomainService.validateUserForCreation(userModel);
 
         UserRepresentation userRepresentation = UserModelUserRepresentationMapper.toUserRepresentation(userModel);
 

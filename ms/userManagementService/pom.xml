@@ -26,6 +26,7 @@
             <version>${keycloak.version}</version>
         </dependency>
 
+
     </dependencies>
 
 </project>

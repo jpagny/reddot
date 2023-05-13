@@ -76,8 +76,8 @@ public class UserDomainServiceImpl implements IUserDomainService {
      * @throws BadValueException if the email does not contain an '@' sign
      */
     private void hasOneAtSignElseThrow(String email) {
-        if (!email.matches(".*@.*")) {
-            throw new BadValueException("email", "must have a least one digit");
+        if (!email.matches("^[^@]*@[^@]*$")) {
+            throw new BadValueException("email", "must have exactly one '@' sign");
         }
     }
 
