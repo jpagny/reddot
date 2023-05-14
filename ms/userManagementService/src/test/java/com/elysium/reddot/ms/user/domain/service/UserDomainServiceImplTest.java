@@ -6,9 +6,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 
 public class UserDomainServiceImplTest {
@@ -209,6 +208,51 @@ public class UserDomainServiceImplTest {
         // when && then
         assertDoesNotThrow(() -> userDomainService.validateUserForCreation(userModel));
     }
+
+    @Test
+    @DisplayName("test hash code")
+    void testHashCode() {
+        UserModel userModel1 = new UserModel("xxx", "username", "email", true,"password");
+        UserModel userModel2 = new UserModel("xxx", "username", "email", true,"password");
+        UserModel userModel3 = new UserModel("xxx2", "username3", "email3", true,"password3");
+        UserModel userModel4 = new UserModel(null, "username4", "email4", true,"password4");
+
+        assertEquals(userModel1.hashCode(), userModel2.hashCode());
+        assertNotEquals(userModel1.hashCode(), userModel3.hashCode());
+        assertEquals(0, userModel4.hashCode());
+    }
+
+    @Test
+    @DisplayName("test topic equal")
+    void testAreTopicsEqual() {
+        UserModel userModel1 = new UserModel("xxx1", "username1", "email1", true,"password");
+        UserModel userModel2 = new UserModel("xxx1", "username1", "email1", true,"password");
+        UserModel userModel3 = new UserModel("xxx3", "username3", "email3", true,"password");
+        Object otherObject = new Object();
+
+        assertEquals(userModel1, userModel1);
+        assertEquals(userModel1, userModel2);
+        assertNotEquals(userModel1, userModel3);
+        assertNotEquals(userModel1, otherObject);
+        assertNotEquals(null, userModel1);
+    }
+
+    @Test
+    @DisplayName("test to string")
+    void testToString() {
+        UserModel userModel1 = new UserModel("xxx1", "username1", "email1", true,"password");
+
+        String expectedToString = "UserModel{" +
+                "id=xxx1" +
+                ", username='username1'" +
+                ", email='email1'" +
+                ", emailVerified='true'" +
+                ", password='****'" +
+                '}';
+
+        assertEquals(expectedToString, userModel1.toString());
+    }
+
 
 
 }

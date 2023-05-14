@@ -45,6 +45,7 @@ public class StatisticRabbitMQListener {
         MessageProperties messageProperties = buildMessageProperties(message);
         String jsonResponse = buildJsonResponse(response);
         Message responseMessage = buildMessageResponse(jsonResponse, messageProperties);
+        
         sendResponseToRabbit(message, responseMessage);
 
         log.debug("Sent response message: {}", responseMessage);

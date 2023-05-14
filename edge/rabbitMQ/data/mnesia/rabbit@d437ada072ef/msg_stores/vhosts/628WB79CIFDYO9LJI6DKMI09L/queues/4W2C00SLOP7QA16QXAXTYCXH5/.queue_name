@@ -1,0 +1,2 @@
+VHOST: /
+QUEUE: fetch.all_users.queue

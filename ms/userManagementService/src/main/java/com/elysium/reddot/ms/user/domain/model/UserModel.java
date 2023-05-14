@@ -85,7 +85,7 @@ public class UserModel {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", emailVerified='" + emailVerified + '\'' +
-                ", password=****'" + '\'' +
+                ", password='****'" +
                 '}';
     }
 

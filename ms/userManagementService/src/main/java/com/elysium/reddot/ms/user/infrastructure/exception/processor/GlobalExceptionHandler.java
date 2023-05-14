@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.user.infrastructure.exception.processor;
 
+import com.elysium.reddot.ms.user.domain.exception.type.BadValueException;
 import com.elysium.reddot.ms.user.infrastructure.data.exception.GlobalExceptionDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
@@ -23,20 +24,14 @@ public class GlobalExceptionHandler implements Processor {
         Exception causeOfGlobalException = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         log.debug("Cause of global exception : {}", causeOfGlobalException.getClass().getSimpleName());
 
-        if (causeOfGlobalException instanceof NotFoundException) {
-            httpStatusCode = HttpStatus.SC_NOT_FOUND;
-
-        } else if (causeOfGlobalException instanceof BadRequestException) {
+        if (causeOfGlobalException instanceof BadValueException) {
             httpStatusCode = HttpStatus.SC_BAD_REQUEST;
-
-        } else if (causeOfGlobalException instanceof NotAllowedException) {
-            httpStatusCode = HttpStatus.SC_METHOD_NOT_ALLOWED;
 
         }
 
-        GlobalExceptionDTO response = new GlobalExceptionDTO();
-        response.setExceptionClass(causeOfGlobalException.getClass().getSimpleName());
-        response.setMessage(causeOfGlobalException.getMessage());
+        GlobalExceptionDTO response = new GlobalExceptionDTO(
+                causeOfGlobalException.getClass().getSimpleName(),
+                causeOfGlobalException.getMessage());
         log.debug("Created GlobalExceptionDTO: {}", response);
 
         exchange.getIn().setBody(response);
