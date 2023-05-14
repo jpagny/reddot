@@ -17,4 +17,12 @@ public class UserDTO {
     private String password;
     private String email;
     private boolean mailVerified;
+
+    public UserDTO(String username, String email, String password){
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
 }
+
+

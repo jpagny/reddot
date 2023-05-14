@@ -35,7 +35,6 @@ public class UserRouteBuilderTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-
         GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler();
 
         UserProcessorHolder userProcessorHolder = new UserProcessorHolder(
@@ -113,6 +112,7 @@ public class UserRouteBuilderTest extends CamelTestSupport {
         // expected
         GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("NullPointerException", null);
 
+        // when
         Exchange responseExchange = template.send(UserRouteEnum.USER_REGISTRATION.getRouteName(), exchange);
         GlobalExceptionDTO actualResponse = responseExchange.getIn().getBody(GlobalExceptionDTO.class);
 
