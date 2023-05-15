@@ -26,10 +26,8 @@ class CreateUserProcessorTest {
 
     private CreateUserProcessor createUserProcessor;
     private CamelContext camelContext;
-
     @Mock
     private UserApplicationServiceImpl userApplicationService;
-
 
     @BeforeEach
     void setup() {

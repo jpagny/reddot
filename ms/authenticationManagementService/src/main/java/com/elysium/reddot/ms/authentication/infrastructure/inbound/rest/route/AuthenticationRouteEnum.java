@@ -1,13 +1,13 @@
 package com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.route;
 
-public enum AuthenticationRouteConstants {
+public enum AuthenticationRouteEnum {
 
     LOGIN("direct:authenticateUser"),
     LOGOUT("direct:logout");
 
     private final String routeName;
 
-    AuthenticationRouteConstants(String routeName) {
+    AuthenticationRouteEnum(String routeName) {
         this.routeName = routeName;
     }
 

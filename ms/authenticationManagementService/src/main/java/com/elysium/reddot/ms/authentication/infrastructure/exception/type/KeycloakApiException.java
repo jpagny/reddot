@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.authentication.application.exception.exception;
+package com.elysium.reddot.ms.authentication.infrastructure.exception.type;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

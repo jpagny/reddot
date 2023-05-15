@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.authentication.application.exception.exception;
+package com.elysium.reddot.ms.authentication.infrastructure.exception.type;
 
 public class IllegalStateApiException extends RuntimeException {
     public IllegalStateApiException(String message, Exception ex) {

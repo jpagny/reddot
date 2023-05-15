@@ -1,21 +1,24 @@
 package com.elysium.reddot.ms.authentication.application.service;
 
-import com.elysium.reddot.ms.authentication.application.exception.exception.IllegalStateApiException;
-import com.elysium.reddot.ms.authentication.application.exception.exception.KeycloakApiException;
+import com.elysium.reddot.ms.authentication.application.data.factory.KeycloakFactory;
+import com.elysium.reddot.ms.authentication.infrastructure.exception.type.LogoutException;
+import com.elysium.reddot.ms.authentication.infrastructure.exception.type.IllegalStateApiException;
+import com.elysium.reddot.ms.authentication.infrastructure.exception.type.KeycloakApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -23,50 +26,32 @@ import java.util.Arrays;
 public class AuthenticationApplicationService {
 
     @Value("${keycloak.realm}")
-    private String keycloakRealm;
+    private String realm;
+    @Value("${keycloak.auth-server-url}")
+    private String authServerUrl;
 
-    @Value("${keycloak.resource}")
-    private String userClientId;
+    private final KeycloakFactory keycloakFactory;
 
-    @Value("${keycloak.credentials.secret}")
-    private String userClientSecret;
-
-    @Value("${keycloak-admin.client-id}")
-    private String adminClientId;
-
-    @Value("${keycloak-admin.client-secret}")
-    private String adminClientSecret;
-
-    @Value("${keycloak-admin.username}")
-    private String adminUsername;
-
-    private final KeycloakBuilder keycloakBuilder;
-
-    private Keycloak buildKeycloak(String username, String password) {
-        return keycloakBuilder
-                .grantType("password")
-                .clientId(userClientId)
-                .clientSecret(userClientSecret)
-                .username(username)
-                .password(password)
-                .build();
-    }
-
-    private Keycloak buildKeycloakAdmin() {
-        return keycloakBuilder
-                .clientId(adminClientId)
-                .clientSecret(adminClientSecret)
-                .username(adminUsername)
-                .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-                .build();
-    }
-
+    /**
+     * Retrieves an access token for the given username and password.
+     *
+     * <p>This method attempts to build a Keycloak client using the provided username and password.
+     * If successful, it retrieves an access token from the Keycloak token manager. If not authorized,
+     * a KeycloakApiException is thrown. If the Keycloak client cannot be built, an IllegalStateApiException
+     * is thrown.
+     *
+     * @param username the username to be used to retrieve the access token
+     * @param password the password to be used to retrieve the access token
+     * @return the access token response from Keycloak
+     * @throws KeycloakApiException     if a NotAuthorizedException is encountered when trying to get the access token
+     * @throws IllegalStateApiException if an IllegalStateException is encountered when trying to build the Keycloak client
+     */
     public AccessTokenResponse getAccessToken(String username, String password) {
         log.debug("Fetching access token with username {}", username);
 
         AccessTokenResponse accessTokenResponse;
 
-        try (Keycloak keycloak = buildKeycloak(username, password)) {
+        try (Keycloak keycloak = keycloakFactory.buildKeycloak(username, password)) {
             log.debug("Keycloak client built successfully");
 
             accessTokenResponse = keycloak.tokenManager().getAccessToken();
@@ -77,7 +62,7 @@ public class AuthenticationApplicationService {
             Response response = exception.getResponse();
             throw new KeycloakApiException(response);
 
-        } catch (java.lang.IllegalStateException exception) {
+        } catch (IllegalStateException exception) {
             log.error("Error build keycloak client: IllegalStateException: {}", exception.getMessage());
             throw new IllegalStateApiException("failed to build Keycloak client", exception);
 
@@ -86,31 +71,27 @@ public class AuthenticationApplicationService {
         return accessTokenResponse;
     }
 
-    public void logout(HttpServletRequest request) {
 
-        KeycloakSecurityContext keycloakSecurityContext = (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
+    public ResponseEntity<String> logout(String token) {
+        log.debug("ICII 1");
 
-        if (keycloakSecurityContext != null) {
-            String userId = keycloakSecurityContext.getToken().getSubject();
-            log.debug("Trying to logout user with ID {}", userId);
-
-            try (Keycloak keycloak = buildKeycloakAdmin()) {
-                log.debug("User {} is being logged out", userId);
-
-                keycloak.realm(keycloakRealm)
-                        .users()
-                        .get(userId)
-                        .logout();
-                request.getSession().invalidate();
-                log.debug("User {} has been logged out", userId);
-
-            } catch (java.lang.IllegalStateException exception) {
-                log.error("Error build keycloak client: IllegalStateException: {}", exception.getMessage());
-                throw new IllegalStateApiException("failed to build Keycloak client", exception);
-
-            }
-
+        String logoutUrl = authServerUrl + "/realms/" + realm + "/protocol/openid-connect/logout";
+        log.debug("ICII 2");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + token);
+        log.debug("ICII 3");
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        RestTemplate restTemplate = new RestTemplate();
+        log.debug("ICII 4");
+        ResponseEntity<String> response = restTemplate.exchange(logoutUrl, HttpMethod.POST, request, String.class);
+        log.debug("ICII 5");
+        if ( !response.getStatusCode().is2xxSuccessful() ){
+            log.debug("ICII 222");
+            throw new LogoutException(Objects.requireNonNull(response.getBody()));
         }
 
+        return response;
     }
+
+
 }
