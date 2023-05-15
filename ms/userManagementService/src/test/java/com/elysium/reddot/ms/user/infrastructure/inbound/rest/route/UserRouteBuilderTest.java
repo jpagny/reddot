@@ -52,6 +52,7 @@ class UserRouteBuilderTest extends CamelTestSupport {
         UserDTO userDTO = new UserDTO(null, "username", "Pass0rd&", "mail@gmail", true);
         UserModel userModel = UserDTOUserModelMapper.toUserModel(userDTO);
         UserModel userCreatedModel = new UserModel("id", "username", "email@mail", true, "Pass0rd&");
+        UserDTO userCreatedDTO = UserDTOUserModelMapper.toUserDTO(userCreatedModel);
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
@@ -59,7 +60,7 @@ class UserRouteBuilderTest extends CamelTestSupport {
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),
-                "User created successfully.", userCreatedModel);
+                "User created successfully.", userCreatedDTO);
 
         // mock
         when(userApplicationService.createUser(userModel)).thenReturn(userCreatedModel);

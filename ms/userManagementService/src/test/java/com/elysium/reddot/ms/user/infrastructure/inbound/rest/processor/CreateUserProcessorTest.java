@@ -46,12 +46,13 @@ class CreateUserProcessorTest {
         UserModel userCreatedModel = new UserModel("id", "username", "email@mail", true, "Pass0rd&");
         UserDTO expectedUser = UserDTOUserModelMapper.toUserDTO(userCreatedModel);
 
-        ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),
-                "User created successfully.", userCreatedModel);
-
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("CamelHttpUri", "/register");
         exchange.getIn().setBody(userDTO);
+
+        // expected
+        ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),
+                "User created successfully.", expectedUser);
 
         // mock
         when(userApplicationService.createUser(userModel)).thenReturn(userCreatedModel);

@@ -36,9 +36,11 @@ public class CreateUserProcessor implements Processor {
 
         UserModel userModel = UserDTOUserModelMapper.toUserModel(inputUserDTO);
 
-        UserModel userCreated = userApplicationService.createUser(userModel);
+        UserModel userCreatedModel = userApplicationService.createUser(userModel);
 
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.CREATED.value(), "User created successfully.", userCreated);
+        UserDTO userCreatedDTO = UserDTOUserModelMapper.toUserDTO(userCreatedModel);
+
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.CREATED.value(), "User created successfully.", userCreatedDTO);
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.CREATED.value());
         exchange.getMessage().setBody(apiResponseDTO);
     }
