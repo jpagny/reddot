@@ -18,7 +18,6 @@ public class RabbitMQConfig {
 
         RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
 
-
         // ### build exchange between statisticManagementService module and userManagementService module
 
         TopicExchange statisticUserExchange = new TopicExchange(RabbitMQConstant.EXCHANGE_STATISTIC_USER);

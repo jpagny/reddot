@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 
 @Service
@@ -97,7 +99,8 @@ public class UserApplicationServiceImpl implements IUserManagementService {
      * @return the extracted user ID
      */
     private String extractUserIdFromResponse(Response response) {
-        return response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
+        Path path = Paths.get(response.getLocation().getPath());
+        return path.getFileName().toString();
     }
 
 

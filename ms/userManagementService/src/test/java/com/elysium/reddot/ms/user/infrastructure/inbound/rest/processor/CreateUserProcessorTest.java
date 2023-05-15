@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-public class CreateUserProcessorTest {
+class CreateUserProcessorTest {
 
     private CreateUserProcessor createUserProcessor;
     private CamelContext camelContext;
@@ -33,14 +33,14 @@ public class CreateUserProcessorTest {
 
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         camelContext = new DefaultCamelContext();
         createUserProcessor = new CreateUserProcessor(userApplicationService);
     }
 
     @Test
     @DisplayName("Given a valid Exchange, when process is called, then it should set the response correctly")
-    public void givenValidExchange_whenProcessCalled_thenShouldSetResponseCorrectly() {
+    void givenValidExchange_whenProcessCalled_thenShouldSetResponseCorrectly() {
         UserDTO userDTO = new UserDTO(null, "username", "Pass0rd&", "mail@gmail", true);
         UserModel userModel = UserDTOUserModelMapper.toUserModel(userDTO);
         UserModel userCreatedModel = new UserModel("id", "username", "email@mail", true, "Pass0rd&");

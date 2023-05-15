@@ -28,7 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UserRouteBuilderTest extends CamelTestSupport {
+class UserRouteBuilderTest extends CamelTestSupport {
 
     @Mock
     private UserApplicationServiceImpl userApplicationService;
@@ -97,7 +97,7 @@ public class UserRouteBuilderTest extends CamelTestSupport {
         // then
         assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-        assertEquals(responseExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class), 400);
+        assertEquals(400,responseExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class UserRouteBuilderTest extends CamelTestSupport {
         // then
         assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-        assertEquals(responseExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class), 500);
+        assertEquals(500,responseExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
     }
 
 

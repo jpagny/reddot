@@ -21,7 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UserRabbitMQServiceTest {
+class UserRabbitMQServiceTest {
 
     @Mock
     private Keycloak keycloak;
@@ -43,7 +43,7 @@ public class UserRabbitMQServiceTest {
 
     @Test
     @DisplayName("Given users exist in the realm, when getAllUsers is called, then it should return the list of user IDs")
-    public void givenUsersExist_whenGetAllUsersCalled_thenShouldReturnListOfUserIDs() {
+    void givenUsersExist_whenGetAllUsersCalled_thenShouldReturnListOfUserIDs() {
         UserRepresentation user1 = new UserRepresentation();
         user1.setId("1");
         UserRepresentation user2 = new UserRepresentation();
@@ -55,7 +55,7 @@ public class UserRabbitMQServiceTest {
         expectedUserIds.add("1");
         expectedUserIds.add("2");
 
-        ArrayList<String> actualUserIds = userRabbitMQService.getAllUsers();
+        List<String> actualUserIds = userRabbitMQService.getAllUsers();
 
         assertEquals(expectedUserIds, actualUserIds);
     }

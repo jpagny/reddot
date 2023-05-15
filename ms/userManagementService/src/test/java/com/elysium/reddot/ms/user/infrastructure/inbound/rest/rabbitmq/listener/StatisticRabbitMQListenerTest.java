@@ -1,7 +1,7 @@
-package com.elysium.reddot.ms.user.infrastructure.inbound.rest.rabbitMQListener;
+package com.elysium.reddot.ms.user.infrastructure.inbound.rest.rabbitmq.listener;
 
 import com.elysium.reddot.ms.user.application.service.UserRabbitMQService;
-import com.elysium.reddot.ms.user.infrastructure.inbound.rabbitMQ.listener.StatisticRabbitMQListener;
+import com.elysium.reddot.ms.user.infrastructure.inbound.rabbitmq.listener.StatisticRabbitMQListener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class StatisticRabbitMQListenerTest {
+class StatisticRabbitMQListenerTest {
 
     @InjectMocks
     private StatisticRabbitMQListener statisticRabbitMQListener;
@@ -36,13 +36,13 @@ public class StatisticRabbitMQListenerTest {
 
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         logCaptor = LogCaptor.forClass(StatisticRabbitMQListener.class);
     }
 
     @Test
     @DisplayName("Given valid message, when getAllUserIds, then success")
-    public void givenValidMessage_whenGetAllUserIds_thenSuccess() throws JsonProcessingException {
+    void givenValidMessage_whenGetAllUserIds_thenSuccess() throws JsonProcessingException {
         // given
         MessageProperties messageProperties = new MessageProperties();
         messageProperties.setReplyTo("my.reply.queue");

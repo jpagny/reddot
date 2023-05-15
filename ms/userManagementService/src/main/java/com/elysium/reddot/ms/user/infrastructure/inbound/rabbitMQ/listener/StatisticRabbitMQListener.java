@@ -1,8 +1,8 @@
-package com.elysium.reddot.ms.user.infrastructure.inbound.rabbitMQ.listener;
+package com.elysium.reddot.ms.user.infrastructure.inbound.rabbitmq.listener;
 
 import com.elysium.reddot.ms.user.application.service.UserRabbitMQService;
 import com.elysium.reddot.ms.user.infrastructure.constant.RabbitMQConstant;
-import com.elysium.reddot.ms.user.infrastructure.data.rabbitMQ.send.response.ListUserIdsResponse;
+import com.elysium.reddot.ms.user.infrastructure.data.rabbitmq.send.response.ListUserIdsResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Listener for processing statistic messages received from RabbitMQ.
@@ -36,7 +36,7 @@ public class StatisticRabbitMQListener {
     public void getAllUserIds(Message message) throws JsonProcessingException {
         log.debug("Received message: {}", message);
 
-        ArrayList<String> listUserIds = userRabbitMQService.getAllUsers();
+        List<String> listUserIds = userRabbitMQService.getAllUsers();
 
         log.debug("Retrieved user IDs: {}", listUserIds);
 

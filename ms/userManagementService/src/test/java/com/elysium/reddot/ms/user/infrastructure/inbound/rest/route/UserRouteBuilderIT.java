@@ -2,6 +2,7 @@ package com.elysium.reddot.ms.user.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.user.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.user.application.data.dto.UserDTO;
+import com.elysium.reddot.ms.user.container.TestContainerSetup;
 import com.elysium.reddot.ms.user.infrastructure.constant.UserRouteEnum;
 import com.elysium.reddot.ms.user.infrastructure.data.exception.GlobalExceptionDTO;
 import org.apache.camel.CamelContext;
@@ -13,19 +14,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UserRouteBuilderIT extends KeycloakTestContainers {
-
+@TestPropertySource(locations = "classpath:application-test.properties")
+class UserRouteBuilderIT extends TestContainerSetup {
 
     @Autowired
     private CamelContext camelContext;
 
     @Autowired
     private ProducerTemplate template;
-
 
     @Test
     @DisplayName("given valid user when route userRegistration is called then user created")
@@ -54,7 +55,7 @@ public class UserRouteBuilderIT extends KeycloakTestContainers {
     void givenExistingUser_whenUserRegistrationRouteIsCalled_thenThrowKeycloakApiException() {
 
         // given
-        UserDTO userDTO = new UserDTO( "user1", "mail@gmail","Passw0rd&");
+        UserDTO userDTO = new UserDTO("user1", "mail@gmail", "Passw0rd&");
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);

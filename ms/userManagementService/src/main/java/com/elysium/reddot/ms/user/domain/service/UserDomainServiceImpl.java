@@ -3,12 +3,16 @@ package com.elysium.reddot.ms.user.domain.service;
 import com.elysium.reddot.ms.user.domain.exception.type.BadValueException;
 import com.elysium.reddot.ms.user.domain.model.UserModel;
 
+import java.util.regex.Pattern;
+
 /**
  * Implementation of the User Domain Service.
  */
 public class UserDomainServiceImpl implements IUserDomainService {
 
     private static final int PASSWORD_MIN_LENGTH = 8;
+    private static final String EMAIL_LABEL = "email";
+    private static final String PASSWORD_LABEL = "password";
 
     /**
      * {@inheritDoc}
@@ -38,7 +42,7 @@ public class UserDomainServiceImpl implements IUserDomainService {
      * @throws BadValueException if the email is not valid
      */
     private void checkEmail(String email) {
-        isNotEmptyElseThrow("email", email);
+        isNotEmptyElseThrow(EMAIL_LABEL, email);
         hasOneAtSignElseThrow(email);
         // another rule
     }
@@ -76,8 +80,8 @@ public class UserDomainServiceImpl implements IUserDomainService {
      * @throws BadValueException if the email does not contain an '@' sign
      */
     private void hasOneAtSignElseThrow(String email) {
-        if (!email.matches("^[^@]*@[^@]*$")) {
-            throw new BadValueException("email", "must have exactly one '@' sign");
+        if (!Pattern.compile("^[^@]+@[^@]+$").matcher(email).matches()) {
+            throw new BadValueException(EMAIL_LABEL, "must have exactly one '@' sign");
         }
     }
 
@@ -89,7 +93,7 @@ public class UserDomainServiceImpl implements IUserDomainService {
      */
     private void hasMinimumLengthOfElseThrow(String password) {
         if (password.length() < PASSWORD_MIN_LENGTH) {
-            throw new BadValueException("password", "must have a minimum length "
+            throw new BadValueException(PASSWORD_LABEL, "must have a minimum length "
                     + PASSWORD_MIN_LENGTH
                     + ". Password has " + password.length());
         }
@@ -102,8 +106,8 @@ public class UserDomainServiceImpl implements IUserDomainService {
      * @throws BadValueException if the password does not contain an uppercase letter
      */
     private void hasOneUpperCaseElseThrow(String password) {
-        if (!password.matches(".*[A-Z].*")) {
-            throw new BadValueException("password", "must have a least one uppercase letter");
+        if (!Pattern.compile("[A-Z]").matcher(password).find()) {
+            throw new BadValueException(PASSWORD_LABEL, "must have a least one uppercase letter");
         }
     }
 
@@ -114,8 +118,8 @@ public class UserDomainServiceImpl implements IUserDomainService {
      * @throws BadValueException if the password does not contain a digit
      */
     private void hasOneDigitElseThrow(String password) {
-        if (!password.matches(".*[0-9].*")) {
-            throw new BadValueException("password", "must have a least one digit");
+        if (!Pattern.compile("\\d").matcher(password).find()) {
+            throw new BadValueException(PASSWORD_LABEL, "must have a least one digit");
         }
     }
 
@@ -126,8 +130,8 @@ public class UserDomainServiceImpl implements IUserDomainService {
      * @throws BadValueException if the password does not contain a special character
      */
     private void hasOneSpecialCharacterElseThrow(String password) {
-        if (!password.matches(".*[!@#$%^&*()-+=|<>?{}\\[\\]~].*")) {
-            throw new BadValueException("password", "must have a least one special character");
+        if (!Pattern.compile("[!@#$%^&()\\-+=|<>?{}\\[\\]~]").matcher(password).find()) {
+            throw new BadValueException(PASSWORD_LABEL, "must have a least one special character");
         }
     }
 

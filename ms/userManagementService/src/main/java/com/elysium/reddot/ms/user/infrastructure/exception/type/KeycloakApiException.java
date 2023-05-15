@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 public class KeycloakApiException extends RuntimeException {
 
     private final int status;
-    private final Response response;
+    private final transient Response response;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     /**

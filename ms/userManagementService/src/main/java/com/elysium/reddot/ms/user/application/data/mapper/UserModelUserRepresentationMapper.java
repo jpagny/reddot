@@ -8,6 +8,8 @@ import org.keycloak.representations.idm.UserRepresentation;
  */
 public class UserModelUserRepresentationMapper {
 
+    private UserModelUserRepresentationMapper(){}
+
     /**
      * Converts a UserRepresentation to a UserModel.
      *

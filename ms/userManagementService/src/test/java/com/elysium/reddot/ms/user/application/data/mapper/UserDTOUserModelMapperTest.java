@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class UserDTOUserModelMapperTest {
+class UserDTOUserModelMapperTest {
 
     @Test
     @DisplayName("given UserModel, when toUserDTO is called, then return correct UserDTO")

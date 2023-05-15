@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-public class UserApplicationServiceImplTest {
+class UserApplicationServiceImplTest {
 
     private IUserManagementService userApplicationService;
 
@@ -50,7 +50,7 @@ public class UserApplicationServiceImplTest {
 
 
     @BeforeEach
-    public void setup() {
+    void setup() {
 
         IUserDomainService userDomainService = new UserDomainServiceImpl();
         userApplicationService = new UserApplicationServiceImpl(userDomainService, keycloak);

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Service class for managing users with RabbitMQ integration.
@@ -40,7 +41,7 @@ public class UserRabbitMQService {
      *
      * @return an ArrayList containing the IDs of all users
      */
-    public ArrayList<String> getAllUsers() {
+    public List<String> getAllUsers() {
         log.debug("Fetching list users");
 
         ArrayList<String> listUserId = new ArrayList<>();

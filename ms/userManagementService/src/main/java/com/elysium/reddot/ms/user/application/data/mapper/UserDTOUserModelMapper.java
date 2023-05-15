@@ -8,6 +8,8 @@ import com.elysium.reddot.ms.user.domain.model.UserModel;
  */
 public class UserDTOUserModelMapper {
 
+    private UserDTOUserModelMapper(){}
+
     /**
      * Converts a UserModel object to a UserDTO object.
      *
