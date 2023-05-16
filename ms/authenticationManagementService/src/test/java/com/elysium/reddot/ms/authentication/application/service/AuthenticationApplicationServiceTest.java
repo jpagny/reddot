@@ -12,6 +12,11 @@ import org.keycloak.representations.AccessTokenResponse;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import javax.ws.rs.NotAuthorizedException;
 
@@ -27,9 +32,6 @@ class AuthenticationApplicationServiceTest {
 
     @Mock
     KeycloakFactory keycloakFactory;
-
-    @Mock
-    KeycloakAdminFactory keycloakAdminFactory;
 
     @Mock
     Keycloak keycloak;
@@ -90,6 +92,7 @@ class AuthenticationApplicationServiceTest {
                 authenticationApplicationService.getAccessToken(testUsername, testPassword)
         );
     }
+
 
 
 }

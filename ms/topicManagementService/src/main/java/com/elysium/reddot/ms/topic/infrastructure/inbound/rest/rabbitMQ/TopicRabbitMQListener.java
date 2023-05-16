@@ -1,6 +1,7 @@
 package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.rabbitMQ;
 
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
+import com.elysium.reddot.ms.topic.application.service.TopicRabbitMQService;
 import com.elysium.reddot.ms.topic.infrastructure.data.dto.TopicExistsResponseDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,16 +20,18 @@ import org.springframework.stereotype.Component;
 public class TopicRabbitMQListener {
 
     private final RabbitTemplate rabbitTemplate;
-    private final TopicApplicationServiceImpl topicApplicationService;
+    private final TopicRabbitMQService topicRabbitMQService;
 
     @RabbitListener(queues = "topic.exists.queue")
     public void checkTopicExists(Message message) throws JsonProcessingException {
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
         Long topicId = (Long) messageConverter.fromMessage(message);
 
-        boolean exists = topicApplicationService.checkTopicIdExists(topicId);
+        boolean exists = topicRabbitMQService.checkTopicIdExists(topicId);
+
+        log.debug("Check topic exists: {}", exists);
+
         TopicExistsResponseDTO response = new TopicExistsResponseDTO();
-        response.setTopicId(topicId);
         response.setExists(exists);
 
         MessageProperties messageProperties = new MessageProperties();
@@ -46,5 +49,6 @@ public class TopicRabbitMQListener {
                 responseMessage
         );
 
+        log.debug("Sent response message: {}", responseMessage);
     }
 }

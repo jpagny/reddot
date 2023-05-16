@@ -1,8 +1,8 @@
 package com.elysium.reddot.ms.topic.application.service;
 
-import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlreadyExistException;
-import com.elysium.reddot.ms.topic.application.exception.exception.ResourceBadValueException;
-import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
+import com.elysium.reddot.ms.topic.application.exception.type.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.topic.application.exception.type.ResourceBadValueException;
+import com.elysium.reddot.ms.topic.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.ITopicRepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;

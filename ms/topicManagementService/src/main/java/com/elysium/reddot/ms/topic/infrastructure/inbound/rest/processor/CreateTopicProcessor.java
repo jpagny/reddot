@@ -18,7 +18,6 @@ public class CreateTopicProcessor implements Processor {
 
     private final TopicApplicationServiceImpl topicApplicationService;
 
-
     @Override
     public void process(Exchange exchange) {
 

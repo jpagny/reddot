@@ -1,9 +1,9 @@
 package com.elysium.reddot.ms.authentication.application.service;
 
 import com.elysium.reddot.ms.authentication.application.data.factory.KeycloakFactory;
-import com.elysium.reddot.ms.authentication.infrastructure.exception.type.LogoutException;
 import com.elysium.reddot.ms.authentication.infrastructure.exception.type.IllegalStateApiException;
 import com.elysium.reddot.ms.authentication.infrastructure.exception.type.KeycloakApiException;
+import com.elysium.reddot.ms.authentication.infrastructure.exception.type.LogoutException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
@@ -73,20 +73,13 @@ public class AuthenticationApplicationService {
 
 
     public ResponseEntity<String> logout(String token) {
-        log.debug("ICII 1");
-
         String logoutUrl = authServerUrl + "/realms/" + realm + "/protocol/openid-connect/logout";
-        log.debug("ICII 2");
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + token);
-        log.debug("ICII 3");
         HttpEntity<String> request = new HttpEntity<>(headers);
         RestTemplate restTemplate = new RestTemplate();
-        log.debug("ICII 4");
         ResponseEntity<String> response = restTemplate.exchange(logoutUrl, HttpMethod.POST, request, String.class);
-        log.debug("ICII 5");
-        if ( !response.getStatusCode().is2xxSuccessful() ){
-            log.debug("ICII 222");
+        if (!response.getStatusCode().is2xxSuccessful()) {
             throw new LogoutException(Objects.requireNonNull(response.getBody()));
         }
 

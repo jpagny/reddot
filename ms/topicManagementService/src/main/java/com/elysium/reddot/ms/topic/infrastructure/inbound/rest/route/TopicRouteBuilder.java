@@ -1,18 +1,18 @@
 package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
-import com.elysium.reddot.ms.topic.application.exception.handler.core.CamelGlobalExceptionHandler;
+import com.elysium.reddot.ms.topic.infrastructure.exception.processor.GlobalExceptionHandler;
 import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.TopicProcessorHolder;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TopicRouteBuilder extends RouteBuilder {
 
-    private final CamelGlobalExceptionHandler camelGlobalExceptionHandler;
+    private final GlobalExceptionHandler globalExceptionHandler;
     private final TopicProcessorHolder topicProcessorHolder;
 
     @Override
@@ -27,8 +27,7 @@ public class TopicRouteBuilder extends RouteBuilder {
 
         onException(Exception.class)
                 .handled(true)
-                .process(camelGlobalExceptionHandler);
-
+                .process(globalExceptionHandler);
 
         // definition routes
         rest().

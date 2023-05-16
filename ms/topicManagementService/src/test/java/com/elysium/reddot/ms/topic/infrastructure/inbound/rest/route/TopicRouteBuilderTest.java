@@ -2,15 +2,12 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
-import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlreadyExistException;
-import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
-import com.elysium.reddot.ms.topic.application.exception.handler.core.CamelGlobalExceptionHandler;
-import com.elysium.reddot.ms.topic.application.exception.handler.core.IExceptionHandler;
-import com.elysium.reddot.ms.topic.application.exception.handler.exceptionHandler.ResourceAlreadyExistIExceptionHandler;
-import com.elysium.reddot.ms.topic.application.exception.handler.exceptionHandler.ResourceBadValueIExceptionHandler;
-import com.elysium.reddot.ms.topic.application.exception.handler.exceptionHandler.ResourceNotFoundIExceptionHandler;
+import com.elysium.reddot.ms.topic.application.exception.type.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.topic.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
+import com.elysium.reddot.ms.topic.infrastructure.data.exception.GlobalExceptionDTO;
+import com.elysium.reddot.ms.topic.infrastructure.exception.processor.GlobalExceptionHandler;
 import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.*;
 import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicProcessorMapper;
 import org.apache.camel.CamelContext;
@@ -47,11 +44,7 @@ class TopicRouteBuilderTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        List<IExceptionHandler> listIExceptionHandlers = Arrays.asList(
-                new ResourceAlreadyExistIExceptionHandler(),
-                new ResourceBadValueIExceptionHandler(),
-                new ResourceNotFoundIExceptionHandler());
-        CamelGlobalExceptionHandler camelGlobalExceptionHandler = new CamelGlobalExceptionHandler(listIExceptionHandlers);
+        GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler();
 
         TopicProcessorHolder topicProcessorHolder = new TopicProcessorHolder(
                 new GetAllTopicsProcessor(topicService),
@@ -61,7 +54,7 @@ class TopicRouteBuilderTest extends CamelTestSupport {
                 new DeleteTopicProcessor(topicService)
         );
 
-        return new TopicRouteBuilder(camelGlobalExceptionHandler, topicProcessorHolder);
+        return new TopicRouteBuilder(globalExceptionHandler, topicProcessorHolder);
     }
 
     @Test
@@ -130,20 +123,19 @@ class TopicRouteBuilderTest extends CamelTestSupport {
         exchange.getIn().setHeader("id", nonExistingId);
 
         // expected
-        ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.NOT_FOUND.value(),
-                "The topic with ID 99 does not exist.", null);
+        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceNotFoundException",
+                "The topic with ID 99 does not exist.");
 
         // mock
         when(topicService.getTopicById(nonExistingId)).thenThrow(new ResourceNotFoundException("topic", String.valueOf(nonExistingId)));
 
         // when
         Exchange result = template.send(TopicRouteConstants.GET_TOPIC_BY_ID.getRouteName(), exchange);
-        ApiResponseDTO actualResponse = result.getMessage().getBody(ApiResponseDTO.class);
+        GlobalExceptionDTO actualResponse = result.getMessage().getBody(GlobalExceptionDTO.class);
 
         // then
-        assertEquals(expectedApiResponse.getStatus(), actualResponse.getStatus());
+        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-        assertEquals(expectedApiResponse.getData(), actualResponse.getData());
     }
 
     @Test
@@ -188,20 +180,19 @@ class TopicRouteBuilderTest extends CamelTestSupport {
         exchange.getIn().setHeader(Exchange.HTTP_METHOD, "POST");
 
         // expected
-        ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CONFLICT.value(),
-                "The topic with name 'name' already exists.", null);
+        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceAlreadyExistException",
+                "The topic with name 'name' already exists.");
 
         // mock
         when(topicService.createTopic(existingTopicModel)).thenThrow(new ResourceAlreadyExistException("topic", "name", "name"));
 
         // when
         Exchange responseExchange = template.send(TopicRouteConstants.CREATE_TOPIC.getRouteName(), exchange);
-        ApiResponseDTO actualResponse = responseExchange.getMessage().getBody(ApiResponseDTO.class);
+        GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
 
         // then
-        assertEquals(expectedApiResponse.getStatus(), actualResponse.getStatus());
+        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-        assertEquals(expectedApiResponse.getData(), actualResponse.getData());
     }
 
     @Test
@@ -247,20 +238,19 @@ class TopicRouteBuilderTest extends CamelTestSupport {
         exchange.getIn().setHeader("id", nonExistingId);
         exchange.getIn().setBody(inputRequestDTO);
 
-        ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.NOT_FOUND.value(),
-                "The topic with ID 99 does not exist.", null);
+        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceNotFoundException",
+                "The topic with ID 99 does not exist.");
 
         // mock
         when(topicService.updateTopic(nonExistingId, request)).thenThrow(new ResourceNotFoundException("topic", String.valueOf(nonExistingId)));
 
         // when
-        Exchange result = template.send(TopicRouteConstants.UPDATE_TOPIC.getRouteName(), exchange);
-        ApiResponseDTO actualResponse = result.getMessage().getBody(ApiResponseDTO.class);
+        Exchange responseExchange = template.send(TopicRouteConstants.UPDATE_TOPIC.getRouteName(), exchange);
+        GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
 
         // then
-        assertEquals(expectedApiResponse.getStatus(), actualResponse.getStatus());
+        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-        assertEquals(expectedApiResponse.getData(), actualResponse.getData());
     }
 
     @Test
@@ -301,21 +291,20 @@ class TopicRouteBuilderTest extends CamelTestSupport {
         exchange.getIn().setHeader("id", nonExistingId);
 
         // expected
-        ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.NOT_FOUND.value(),
-                "The topic with ID 99 does not exist.", null);
+        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceNotFoundException",
+                "The topic with ID 99 does not exist.");
 
         // mock
         doThrow(new ResourceNotFoundException("topic", String.valueOf(nonExistingId)))
                 .when(topicService).deleteTopicById(nonExistingId);
 
         // when
-        Exchange result = template.send(TopicRouteConstants.DELETE_TOPIC.getRouteName(), exchange);
-        ApiResponseDTO actualResponse = result.getMessage().getBody(ApiResponseDTO.class);
+        Exchange responseExchange = template.send(TopicRouteConstants.DELETE_TOPIC.getRouteName(), exchange);
+        GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
 
         // then
-        assertEquals(expectedApiResponse.getStatus(), actualResponse.getStatus());
+        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-        assertEquals(expectedApiResponse.getData(), actualResponse.getData());
     }
 
 

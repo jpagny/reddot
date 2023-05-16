@@ -225,6 +225,11 @@
                         <configuration>
                             <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
                             <outputDirectory>${project.build.directory}/coverage-reports/jacoco-ut</outputDirectory>
+                            <excludes>
+                                <exclude>**/CustomKeycloakAuthenticationProcessingFilter.class</exclude>
+                                <exclude>**/CustomAuthenticationFailureHandler.class</exclude>
+                                <exclude>**/KeycloakApiException.class</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                     <!-- Préparation pour les tests d'intégration -->
@@ -248,6 +253,11 @@
                         <configuration>
                             <dataFile>${project.build.directory}/coverage-reports/jacoco-it.exec</dataFile>
                             <outputDirectory>${project.build.directory}/coverage-reports/jacoco-it</outputDirectory>
+                              <excludes>
+                                <exclude>**/CustomKeycloakAuthenticationProcessingFilter.class</exclude>
+                                <exclude>**/CustomAuthenticationFailureHandler.class</exclude>
+                                <exclude>**/KeycloakApiException.class</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                     <!-- Fusion des résultats des tests unitaires et d'intégration -->
@@ -279,6 +289,11 @@
                         <configuration>
                             <dataFile>${project.build.directory}/coverage-reports/jacoco-merged.exec</dataFile>
                             <outputDirectory>${project.build.directory}/coverage-reports/jacoco-merged</outputDirectory>
+                            <excludes>
+                                <exclude>**/CustomKeycloakAuthenticationProcessingFilter.class</exclude>
+                                <exclude>**/CustomAuthenticationFailureHandler.class</exclude>
+                                <exclude>**/KeycloakApiException.class</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
 

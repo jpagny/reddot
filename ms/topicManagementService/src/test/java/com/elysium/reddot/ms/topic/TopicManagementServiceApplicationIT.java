@@ -1,15 +1,17 @@
 package com.elysium.reddot.ms.topic;
 
+import com.elysium.reddot.ms.topic.container.TestContainersConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.TestPropertySource;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-class TopicManagementServiceApplicationIT {
+@TestPropertySource(locations = "classpath:application-test.properties")
+class TopicManagementServiceApplicationIT extends TestContainersConfig {
 
     @Autowired
     private ApplicationContext applicationContext;

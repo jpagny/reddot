@@ -1,8 +1,8 @@
 package com.elysium.reddot.ms.topic.application.service;
 
-import com.elysium.reddot.ms.topic.application.exception.exception.ResourceAlreadyExistException;
-import com.elysium.reddot.ms.topic.application.exception.exception.ResourceBadValueException;
-import com.elysium.reddot.ms.topic.application.exception.exception.ResourceNotFoundException;
+import com.elysium.reddot.ms.topic.application.exception.type.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.topic.application.exception.type.ResourceBadValueException;
+import com.elysium.reddot.ms.topic.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import com.elysium.reddot.ms.topic.domain.port.inbound.ITopicManagementService;
 import com.elysium.reddot.ms.topic.domain.port.outbound.ITopicRepository;
@@ -129,10 +129,6 @@ public class TopicApplicationServiceImpl implements ITopicManagementService {
         return topicToDelete;
     }
 
-    @Override
-    public boolean checkTopicIdExists(Long id) {
-        Optional<TopicModel> topicModel = topicRepository.findTopicById(id);
-        return topicModel.isPresent();
-    }
+
 
 }

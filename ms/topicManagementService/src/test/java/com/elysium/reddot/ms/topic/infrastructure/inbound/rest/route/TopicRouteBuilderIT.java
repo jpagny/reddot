@@ -2,6 +2,7 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
+import com.elysium.reddot.ms.topic.container.TestContainersConfig;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class TopicRouteBuilderIT {
+@TestPropertySource(locations = "classpath:application-test.properties")
+class TopicRouteBuilderIT extends TestContainersConfig {
 
     @Autowired
     private CamelContext camelContext;

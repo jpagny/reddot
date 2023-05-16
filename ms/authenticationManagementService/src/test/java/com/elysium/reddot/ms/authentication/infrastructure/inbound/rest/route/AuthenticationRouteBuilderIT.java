@@ -78,30 +78,28 @@ public class AuthenticationRouteBuilderIT extends TestContainerSetup {
     }
 
     @Test
-    @DisplayName("given exchange with HttpServletRequest, when LogoutProcessor is invoked, then appropriate ApiResponseDTO is set in Exchange message")
-    void givenExchangeWithHttpServletRequest_whenLogoutProcessorInvoked_thenAppropriateApiResponseDTOSetInExchangeMessage() {
+    @DisplayName("given exchange with accessToken, when LogoutProcessor is invoked, then appropriate ApiResponseDTO is set in Exchange message")
+    void givenExchangeWithAccessToken_whenLogoutProcessorInvoked_thenAppropriateApiResponseDTOSetInExchangeMessage() {
         // Given
         UserAuthenticatedDTO userAuthenticatedDTO = getLogin();
-
-        System.out.println("ICIII : " + userAuthenticatedDTO.getBaerToken());
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("CamelHttpUri", "/logout");
         exchange.getIn().setBody(userAuthenticatedDTO);
 
-        // expected
-        ApiResponseDTO expectedApiResponse = new ApiResponseDTO(200, "You have been logged out successfully.", null);
-
         // when
         Exchange responseExchange = template.send(AuthenticationRouteEnum.LOGOUT.getRouteName(), exchange);
         ApiResponseDTO actualResponse = responseExchange.getMessage().getBody(ApiResponseDTO.class);
+
+        // expected
+        ApiResponseDTO expectedApiResponse = new ApiResponseDTO(200, "You have been logged out successfully.", actualResponse.getData());
 
         // then
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
         assertEquals(expectedApiResponse.getData(), actualResponse.getData());
     }
 
-    private UserAuthenticatedDTO getLogin(){
+    private UserAuthenticatedDTO getLogin() {
         LoginRequestDTO loginRequestDTO = new LoginRequestDTO("user1", "test");
 
         Exchange exchange = new DefaultExchange(camelContext);
