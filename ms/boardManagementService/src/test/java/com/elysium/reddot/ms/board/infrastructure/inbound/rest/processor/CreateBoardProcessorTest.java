@@ -5,6 +5,7 @@ import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.mapper.BoardProcessorMapper;
+import com.elysium.reddot.ms.board.infrastructure.outbound.rabbitMQ.requester.TopicExistRequester;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -27,22 +28,24 @@ class CreateBoardProcessorTest {
 
     @Mock
     private BoardApplicationServiceImpl boardService;
+    @Mock
+    private TopicExistRequester topicExistRequester;
 
     private CamelContext camelContext;
 
     @BeforeEach
     void setUp() {
         camelContext = new DefaultCamelContext();
-        createBoardProcessor = new CreateBoardProcessor(boardService);
+        createBoardProcessor = new CreateBoardProcessor(boardService,topicExistRequester);
     }
 
     @Test
     @DisplayName("given valid board when createBoard is called then board created successfully")
     void givenValidBoard_whenCreateBoard_thenBoardCreatedSuccessfully() {
         // given
-        BoardDTO boardToCreateDTO = new BoardDTO(null, "name", "Name", "Board description");
-        BoardModel boardToCreateModel = new BoardModel(null, "name", "Name", "Board description");
-        BoardModel createdBoardModel = new BoardModel(1L, "name", "Name", "Board description");
+        BoardDTO boardToCreateDTO = new BoardDTO(null, "name", "Name", "Board description",1L);
+        BoardModel boardToCreateModel = new BoardModel(null, "name", "Name", "Board description",1L);
+        BoardModel createdBoardModel = new BoardModel(1L, "name", "Name", "Board description",1L);
         BoardDTO expectedBoard = BoardProcessorMapper.toDTO(createdBoardModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),

@@ -43,8 +43,8 @@ class GetAllBoardsProcessorTest {
     @DisplayName("given boards exist when get allBoards is called then all boards retrieved")
     void givenBoardsExist_whenGetAllBoards_thenAllBoardsAreRetrieved() {
         // given
-        BoardModel board1Model = new BoardModel(1L, "name 1", "Name 1", "Board 1");
-        BoardModel board2Model = new BoardModel(2L, "name 2", "Name 2", "Board 2");
+        BoardModel board1Model = new BoardModel(1L, "name 1", "Name 1", "Board 1",1L);
+        BoardModel board2Model = new BoardModel(2L, "name 2", "Name 2", "Board 2",1L);
         List<BoardModel> boardListModel = Arrays.asList(board1Model, board2Model);
         List<BoardDTO> expectedListBoards = BoardProcessorMapper.toDTOList(boardListModel);
 

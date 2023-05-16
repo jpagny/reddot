@@ -33,8 +33,8 @@ class BoardRouteBuilderIT {
     @DisplayName("given boards exist when route getAllBoards is called then all boards retrieved")
     void givenBoardsExist_whenRouteGetAllBoards_thenAllBoardsAreRetrieved() {
         // arrange
-        BoardDTO board1 = new BoardDTO(1L, "name_1", "Label 1", "Description 1");
-        BoardDTO board2 = new BoardDTO(2L, "name_2", "Label 2", "Description 2");
+        BoardDTO board1 = new BoardDTO(1L, "name_1", "Label 1", "Description 1",1L);
+        BoardDTO board2 = new BoardDTO(2L, "name_2", "Label 2", "Description 2",1L);
         List<BoardDTO> boardList = Arrays.asList(board1, board2);
 
         Exchange exchange = new DefaultExchange(camelContext);
@@ -58,7 +58,7 @@ class BoardRouteBuilderIT {
     void givenExistingBoard_whenRouteGetBoardByIdWithValidId_thenBoardReturned() {
         // given
         Long boardId = 1L;
-        BoardDTO board = new BoardDTO(boardId, "name_1", "Label 1", "Description 1");
+        BoardDTO board = new BoardDTO(boardId, "name_1", "Label 1", "Description 1",1L);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("id", boardId);
@@ -103,8 +103,8 @@ class BoardRouteBuilderIT {
     @DisplayName("given valid board when route createBoard is called then board created")
     void givenValidBoard_whenRouteCreateBoard_thenBoardCreated() {
         // given
-        BoardDTO inputBoard = new BoardDTO(null, "name_3", "Label 3", "Description 3");
-        BoardDTO createdBoard = new BoardDTO(3L, inputBoard.getName(), inputBoard.getLabel(), inputBoard.getDescription());
+        BoardDTO inputBoard = new BoardDTO(null, "name_3", "Label 3", "Description 3",1L);
+        BoardDTO createdBoard = new BoardDTO(3L, inputBoard.getName(), inputBoard.getLabel(), inputBoard.getDescription(),1L);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
@@ -128,7 +128,7 @@ class BoardRouteBuilderIT {
     @DisplayName("given board exists when route createBoard is called with creating same board then throws resourceAlreadyExistExceptionHandler")
     void givenBoardExists_whenRouteCreateBoardWithCreatingSameBoard_thenThrowsResourceAlreadyExistExceptionHandler() {
         // given
-        BoardDTO existingBoard = new BoardDTO(1L, "name_1", "Label 1", "Description 1");
+        BoardDTO existingBoard = new BoardDTO(1L, "name_1", "Label 1", "Description 1",1L);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setBody(existingBoard);
@@ -153,8 +153,8 @@ class BoardRouteBuilderIT {
     void givenValidRequest_whenRouteUpdateBoard_thenBoardUpdated() {
         // given
         Long boardId = 1L;
-        BoardDTO request = new BoardDTO(boardId, "name_1", "New label", "New description");
-        BoardDTO updatedBoard = new BoardDTO(boardId, "name_1", "New label", "New description");
+        BoardDTO request = new BoardDTO(boardId, "name_1", "New label", "New description",1L);
+        BoardDTO updatedBoard = new BoardDTO(boardId, "name_1", "New label", "New description",1L);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("id", boardId);
@@ -179,7 +179,7 @@ class BoardRouteBuilderIT {
     void givenInvalidRequest_whenRouteUpdateBoard_thenResourceThrowsNotFoundExceptionHandler() {
         // given
         Long nonExistingId = 99L;
-        BoardDTO request = new BoardDTO(nonExistingId, "newName", "New label", "New Description");
+        BoardDTO request = new BoardDTO(nonExistingId, "newName", "New label", "New Description",1L);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("id", nonExistingId);
@@ -203,7 +203,7 @@ class BoardRouteBuilderIT {
     void givenInvalidRequestWithBadValue_whenRouteUpdateBoard_thenThrowsResourceBadValueHandler() {
         // given
         Long nonExistingId = 1L;
-        BoardDTO request = new BoardDTO(nonExistingId, "name_1", null, "New description");
+        BoardDTO request = new BoardDTO(nonExistingId, "name_1", null, "New description",1L);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("id", nonExistingId);
@@ -227,7 +227,7 @@ class BoardRouteBuilderIT {
     void givenBoardExists_whenRouteDeleteBoard_thenBoardDeleted() {
         // given
         Long boardId = 1L;
-        BoardDTO boardDTO = new BoardDTO(boardId, "name_1", "Label 1", "Description 1");
+        BoardDTO boardDTO = new BoardDTO(boardId, "name_1", "Label 1", "Description 1",1L);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("id", boardId);

@@ -41,7 +41,7 @@ class GetBoardByIdProcessorTest {
     void givenBoardExists_whenGetBoardById_thenBoardIsRetrieved() {
         // given
         Long id = 1L;
-        BoardModel boardModel = new BoardModel(id, "name 1", "Name 1", "Board 1");
+        BoardModel boardModel = new BoardModel(id, "name 1", "Name 1", "Board 1",1L);
         BoardDTO expectedBoard = BoardProcessorMapper.toDTO(boardModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),

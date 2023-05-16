@@ -16,7 +16,7 @@ public class BoardProcessorMapperTest {
     @DisplayName("given boardModel when toDTO is called then returns boardDTO")
     void givenBoardModel_whenToDTO_thenBoardDTO() {
         // Given
-        BoardModel boardModel = new BoardModel(1L, "board1", "label1", "description1");
+        BoardModel boardModel = new BoardModel(1L, "board1", "label1", "description1",1L);
 
         // When
         BoardDTO boardDTO = BoardProcessorMapper.toDTO(boardModel);
@@ -32,8 +32,8 @@ public class BoardProcessorMapperTest {
     @DisplayName("given list of boardModels when toDTO is called then returns list of boardDTOs")
     void givenListBoardModels_whenToDTO_thenListBoardDTOs() {
         // Given
-        BoardModel boardModel1 = new BoardModel(1L, "board1", "label1", "description1");
-        BoardModel boardModel2 = new BoardModel(2L, "board2", "label2", "description2");
+        BoardModel boardModel1 = new BoardModel(1L, "board1", "label1", "description1",1L);
+        BoardModel boardModel2 = new BoardModel(2L, "board2", "label2", "description2",1L);
         List<BoardModel> boardModels = Arrays.asList(boardModel1, boardModel2);
 
         // When
@@ -55,7 +55,7 @@ public class BoardProcessorMapperTest {
     @DisplayName("given boardDTO when toModel is called then returns boardModel")
     void givenBoardDTO_whenToModel_thenBoardModel() {
         // Given
-        BoardDTO boardDTO = new BoardDTO(1L, "board1", "label1", "description1");
+        BoardDTO boardDTO = new BoardDTO(1L, "board1", "label1", "description1",1L);
 
         // When
         BoardModel boardModel = BoardProcessorMapper.toModel(boardDTO);

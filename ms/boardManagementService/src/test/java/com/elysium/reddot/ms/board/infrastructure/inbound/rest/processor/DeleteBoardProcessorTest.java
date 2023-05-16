@@ -42,7 +42,7 @@ class DeleteBoardProcessorTest {
     void givenValidBoardId_whenDeleteBoard_thenBoardIsDeletedSuccessfully() {
         // given
         Long boardId = 1L;
-        BoardModel boardToDeleteModel = new BoardModel(boardId, "name", "Name", "Board description");
+        BoardModel boardToDeleteModel = new BoardModel(boardId, "name", "Name", "Board description",1L);
         BoardDTO expectedBoard = BoardProcessorMapper.toDTO(boardToDeleteModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),

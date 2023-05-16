@@ -41,8 +41,8 @@ class UpdateBoardProcessorTest {
     void givenValidBoard_whenUpdateBoard_thenBoardIsUpdatedSuccessfully() {
         // given
         Long boardId = 1L;
-        BoardDTO updatedBoardDTO = new BoardDTO(boardId, "new_name", "New Name", "New Board description");
-        BoardModel updatedBoardModel = new BoardModel(boardId, "new_name", "New Name", "New Board description");
+        BoardDTO updatedBoardDTO = new BoardDTO(boardId, "new_name", "New Name", "New Board description",1L);
+        BoardModel updatedBoardModel = new BoardModel(boardId, "new_name", "New Name", "New Board description",1L);
         BoardDTO expectedBoard = BoardProcessorMapper.toDTO(updatedBoardModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),

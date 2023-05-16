@@ -36,7 +36,7 @@ class BoardApplicationServiceTest {
     void givenValidId_whenGetBoardById_thenReturnsBoard() {
         // given
         Long validId = 1L;
-        BoardModel expectedBoard = new BoardModel(1L, "test", "Test Name", "Test Description");
+        BoardModel expectedBoard = new BoardModel(1L, "test", "Test Name", "Test Description",1L);
 
         // mock
         when(boardRepository.findBoardById(validId)).thenReturn(Optional.of(expectedBoard));
@@ -69,8 +69,8 @@ class BoardApplicationServiceTest {
     @DisplayName("given existing boards, when getAll, then returns List of boards")
     void givenExistingBoards_whenGetAll_thenReturnsListOfBoards() {
         // given
-        BoardModel board1Model = new BoardModel(1L, "test1", "Test Name 1", "Test Description 1");
-        BoardModel board2Model = new BoardModel(2L, "test2", "Test Name 2", "Test Description 2");
+        BoardModel board1Model = new BoardModel(1L, "test1", "Test Name 1", "Test Description 1",1L);
+        BoardModel board2Model = new BoardModel(2L, "test2", "Test Name 2", "Test Description 2",1L);
 
         // mock
         List<BoardModel> expectedListBoards = Arrays.asList(board1Model, board2Model);
@@ -88,8 +88,8 @@ class BoardApplicationServiceTest {
     @DisplayName("given valid board when createBoard is called then board created")
     void givenValidBoard_whenCreateBoard_thenBoardCreated() {
         // given
-        BoardModel boardToCreateLabel = new BoardModel(null, "test", "Test Label", "Test Description");
-        BoardModel expectedBoard = new BoardModel(1L, "test", "Test Label", "Test Description");
+        BoardModel boardToCreateLabel = new BoardModel(null, "test", "Test Label", "Test Description",1L);
+        BoardModel expectedBoard = new BoardModel(1L, "test", "Test Label", "Test Description",1L);
 
         // mock
         when(boardRepository.findBoardByName(boardToCreateLabel.getName())).thenReturn(Optional.empty());
@@ -108,7 +108,7 @@ class BoardApplicationServiceTest {
     @DisplayName("given existing board when createBoard is called then throws ResourceAlreadyExistException")
     void givenExistingBoard_whenCreateBoard_thenThrowsResourceAlreadyExistException() {
         // given
-        BoardModel existingBoardModel = new BoardModel(1L, "Test Name", "Test Label", "Test Description");
+        BoardModel existingBoardModel = new BoardModel(1L, "Test Name", "Test Label", "Test Description",1L);
 
         // mock
         when(boardRepository.findBoardByName(existingBoardModel.getName())).thenReturn(Optional.of(existingBoardModel));
@@ -124,7 +124,7 @@ class BoardApplicationServiceTest {
     @DisplayName("given invalid board when createBoard is called then throws ResourceBadValueException")
     void givenInvalidBoard_whenCreateBoard_thenThrowsResourceBadValueException() {
         // given
-        BoardModel invalidBoardModel = new BoardModel(1L, "", "Invalid Label", "Invalid Description");
+        BoardModel invalidBoardModel = new BoardModel(1L, "", "Invalid Label", "Invalid Description",1L);
 
         // mock
         when(boardRepository.findBoardByName(invalidBoardModel.getName())).thenReturn(Optional.empty());
@@ -141,9 +141,9 @@ class BoardApplicationServiceTest {
     void givenValidBoard_whenUpdateBoard_thenBoardUpdated() {
         // given
         Long boardId = 1L;
-        BoardModel existingBoardModel = new BoardModel(boardId, "Old Name", "OldLabel", "Old Description");
-        BoardModel boardToUpdateModel = new BoardModel(boardId, "Old Name", "NewLabel", "NewDescription");
-        BoardModel expectedBoard = new BoardModel(boardId, "Old Name", "NewLabel", "NewDescription");
+        BoardModel existingBoardModel = new BoardModel(boardId, "Old Name", "OldLabel", "Old Description",1L);
+        BoardModel boardToUpdateModel = new BoardModel(boardId, "Old Name", "NewLabel", "NewDescription",1L);
+        BoardModel expectedBoard = new BoardModel(boardId, "Old Name", "NewLabel", "NewDescription",1L);
 
         // mock
         when(boardRepository.findBoardById(boardId)).thenReturn(Optional.of(existingBoardModel));
@@ -163,7 +163,7 @@ class BoardApplicationServiceTest {
     void givenNonExistentBoard_whenUpdateBoard_thenThrowsResourceNotFoundException() {
         // given
         Long nonExistentBoardId = 99L;
-        BoardModel boardToUpdateModel = new BoardModel(nonExistentBoardId, "New Name", "New Label", "New Description");
+        BoardModel boardToUpdateModel = new BoardModel(nonExistentBoardId, "New Name", "New Label", "New Description",1L);
 
         // mock
         when(boardRepository.findBoardById(nonExistentBoardId)).thenReturn(Optional.empty());
@@ -180,8 +180,8 @@ class BoardApplicationServiceTest {
     void givenInvalidBoard_whenUpdateBoard_thenThrowsResourceBadValueException() {
         // given
         Long boardId = 1L;
-        BoardModel existingBoardModel = new BoardModel(boardId, "Old Name", "Old Label", "Old Description");
-        BoardModel invalidBoardToUpdateModel = new BoardModel(boardId, "Invalid Name", "", "Invalid Description");
+        BoardModel existingBoardModel = new BoardModel(boardId, "Old Name", "Old Label", "Old Description",1L);
+        BoardModel invalidBoardToUpdateModel = new BoardModel(boardId, "Invalid Name", "", "Invalid Description",1L);
 
         // mock
         when(boardRepository.findBoardById(boardId)).thenReturn(Optional.of(existingBoardModel));
@@ -199,7 +199,7 @@ class BoardApplicationServiceTest {
     void givenExistingBoard_whenDeleteBoardById_thenBoardDeleted() {
         // given
         Long boardId = 1L;
-        BoardModel existingBoardModel = new BoardModel(boardId, "Test Name", "Test Label", "Test Description");
+        BoardModel existingBoardModel = new BoardModel(boardId, "Test Name", "Test Label", "Test Description",1L);
 
         // mock
         when(boardRepository.findBoardById(boardId)).thenReturn(Optional.of(existingBoardModel));

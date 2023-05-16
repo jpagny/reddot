@@ -1,7 +1,7 @@
 package com.elysium.reddot.ms.board.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
-import com.elysium.reddot.ms.board.application.exception.handler.core.CamelGlobalExceptionHandler;
+import com.elysium.reddot.ms.board.infrastructure.exception.processor.GlobalExceptionHandler;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.BoardProcessorHolder;
 import lombok.AllArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class BoardRouteBuilder extends RouteBuilder {
 
-    private final CamelGlobalExceptionHandler camelGlobalExceptionHandler;
+    private final GlobalExceptionHandler globalExceptionHandler;
     private final BoardProcessorHolder boardProcessorHolder;
 
     @Override
@@ -27,7 +27,7 @@ public class BoardRouteBuilder extends RouteBuilder {
 
         onException(Exception.class)
                 .handled(true)
-                .process(camelGlobalExceptionHandler);
+                .process(globalExceptionHandler);
 
 
         // definition routes

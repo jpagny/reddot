@@ -13,7 +13,7 @@ class BoardPersistenceMapperTest {
     @DisplayName("given boardModel when toEntity is called then returns boardJpaEntity")
     void givenBoardModel_whenToEntity_thenBoardJpaEntity() {
         // given
-        BoardModel boardModel = new BoardModel(1L, "Test Name", "Test Label", "Test Description");
+        BoardModel boardModel = new BoardModel(1L, "Test Name", "Test Label", "Test Description",1L);
 
         // when
         BoardJpaEntity boardJpaEntity = BoardPersistenceMapper.toEntity(boardModel);

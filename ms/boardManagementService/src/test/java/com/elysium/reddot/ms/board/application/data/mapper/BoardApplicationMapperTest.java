@@ -13,7 +13,7 @@ class BoardApplicationMapperTest {
     @DisplayName("given boardModel when toDTO is called then returns BoardDTO")
     void givenBoardModel_whenToDTO_thenBoardDTO() {
         // given
-        BoardModel boardModel = new BoardModel(1L, "Test Name", "Test Label", "Test Description");
+        BoardModel boardModel = new BoardModel(1L, "Test Name", "Test Label", "Test Description",1L);
 
         // when
         BoardDTO boardDTO = BoardApplicationMapper.toDTO(boardModel);
@@ -23,13 +23,14 @@ class BoardApplicationMapperTest {
         assertEquals(boardModel.getName(), boardDTO.getName(), "The board name should match");
         assertEquals(boardModel.getLabel(), boardDTO.getLabel(), "The board label should match");
         assertEquals(boardModel.getDescription(), boardDTO.getDescription(), "The board description should match");
+        assertEquals(boardModel.getTopicId(),boardDTO.getTopicId(),"The topicId should match");
     }
 
     @Test
     @DisplayName("given boardDTO when toModel is called then returns boardModel")
     void givenBoardDTO_whenToModel_thenBoardModel() {
         // given
-        BoardDTO boardDTO = new BoardDTO(1L, "Test Name", "Test Label", "Test Description");
+        BoardDTO boardDTO = new BoardDTO(1L, "Test Name", "Test Label", "Test Description",1L);
 
         // when
         BoardModel boardModel = BoardApplicationMapper.toModel(boardDTO);
@@ -39,6 +40,7 @@ class BoardApplicationMapperTest {
         assertEquals(boardDTO.getName(), boardModel.getName(), "The board name should match");
         assertEquals(boardDTO.getLabel(), boardModel.getLabel(), "The board label should match");
         assertEquals(boardDTO.getDescription(), boardModel.getDescription(), "The board description should match");
+        assertEquals(boardDTO.getTopicId(),boardModel.getTopicId(),"The topicId should match");
     }
 
 
