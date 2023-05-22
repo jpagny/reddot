@@ -1,7 +1,7 @@
 package com.elysium.reddot.ms.replymessage.application.service;
 
-import com.elysium.reddot.ms.replymessage.application.exception.exception.ResourceBadValueException;
-import com.elysium.reddot.ms.replymessage.application.exception.exception.ResourceNotFoundException;
+import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceBadValueException;
+import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.replymessage.domain.constant.ApplicationDefaults;
 import com.elysium.reddot.ms.replymessage.domain.exception.LimitExceededException;
 import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;

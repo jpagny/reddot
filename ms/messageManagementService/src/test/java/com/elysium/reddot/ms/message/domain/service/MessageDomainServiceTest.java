@@ -1,16 +1,11 @@
 package com.elysium.reddot.ms.message.domain.service;
 
-import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-
 import static io.smallrye.common.constraint.Assert.assertFalse;
 import static io.smallrye.common.constraint.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class MessageDomainServiceTest {
 
@@ -60,5 +55,5 @@ public class MessageDomainServiceTest {
         // then
         assertTrue(result);
     }
-    
+
 }

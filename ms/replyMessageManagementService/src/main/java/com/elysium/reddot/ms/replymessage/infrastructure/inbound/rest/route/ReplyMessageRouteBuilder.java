@@ -1,10 +1,12 @@
 package com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.replymessage.application.data.dto.ReplyMessageDTO;
-import com.elysium.reddot.ms.replymessage.application.exception.handler.core.CamelGlobalExceptionHandler;
+import com.elysium.reddot.ms.replymessage.infrastructure.exception.processor.GlobalExceptionHandler;
 import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.ReplyMessageProcessorHolder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +14,16 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class ReplyMessageRouteBuilder extends RouteBuilder {
 
-    private final CamelGlobalExceptionHandler camelGlobalExceptionHandler;
+    private final GlobalExceptionHandler globalExceptionHandler;
     private final ReplyMessageProcessorHolder replyMessageProcessorHolder;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void configure() {
+
+        JacksonDataFormat format = new JacksonDataFormat();
+        format.setObjectMapper(objectMapper);
+
 
         String requestId = "/{id}";
 
@@ -27,7 +34,7 @@ public class ReplyMessageRouteBuilder extends RouteBuilder {
 
         onException(Exception.class)
                 .handled(true)
-                .process(camelGlobalExceptionHandler);
+                .process(globalExceptionHandler);
 
 
         // definition routes
