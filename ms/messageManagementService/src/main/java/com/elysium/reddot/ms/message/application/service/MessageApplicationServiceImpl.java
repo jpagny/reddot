@@ -1,7 +1,7 @@
 package com.elysium.reddot.ms.message.application.service;
 
-import com.elysium.reddot.ms.message.application.exception.exception.ResourceBadValueException;
-import com.elysium.reddot.ms.message.application.exception.exception.ResourceNotFoundException;
+import com.elysium.reddot.ms.message.application.exception.type.ResourceBadValueException;
+import com.elysium.reddot.ms.message.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import com.elysium.reddot.ms.message.domain.port.inbound.IMessageManagementService;
 import com.elysium.reddot.ms.message.domain.port.outbound.IMessageRepository;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MessageApplicationServiceImpl implements IMessageManagementService {
 
-    private static final String RESOURCE_NAME_TOPIC = "message";
+    private static final String RESOURCE_NAME_MESSAGE = "message";
     private final MessageDomainServiceImpl messageDomainService;
     private final IMessageRepository messageRepository;
 
@@ -35,7 +35,7 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
         log.debug("Fetching message with id {}", id);
 
         MessageModel foundMessageModel = messageRepository.findMessageById(id).orElseThrow(
-                () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
+                () -> new ResourceNotFoundException(RESOURCE_NAME_MESSAGE, String.valueOf(id))
         );
 
         log.info("Successfully retrieved message with id {}, name '{}'",
@@ -65,7 +65,7 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
         try {
             // check rules domain
         } catch (Exception exception) {
-            throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, exception.getMessage());
+            throw new ResourceBadValueException(RESOURCE_NAME_MESSAGE, exception.getMessage());
         }
 
         MessageModel createdMessageModel = messageRepository.createMessage(messageToCreateModel);
@@ -77,7 +77,6 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
         return createdMessageModel;
     }
 
-    /*
     @Override
     public MessageModel updateMessage(Long id, MessageModel messageToUpdateModel) {
 
@@ -85,28 +84,22 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
                 id, messageToUpdateModel.getContent());
 
         MessageModel existingMessageModel = messageRepository.findMessageById(id).orElseThrow(
-                () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
+                () -> new ResourceNotFoundException(RESOURCE_NAME_MESSAGE, String.valueOf(id))
         );
 
         try {
-
-            MessageModel messageModelWithUpdates = messageDomainService.updateExistingMessageWithUpdates(existingMessageModel, messageToUpdateModel);
-
-            MessageModel updatedMessageModel = messageRepository.updateMessage(messageModelWithUpdates);
-
-            log.info("Successfully updated message with id '{}', content'{}",
-                    updatedMessageModel.getId(),
-                    updatedMessageModel.getContent());
-
-            return updatedMessageModel;
-
-        } catch (Exception ex) {
-            throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, ex.getMessage());
-
+            // check rules domain
+        } catch (Exception exception) {
+            throw new ResourceBadValueException(RESOURCE_NAME_MESSAGE, exception.getMessage());
         }
+
+        MessageModel updatedMessageModel = messageRepository.updateMessage(existingMessageModel);
+
+        log.info("Successfully updated message with id '{}', content'{}",
+                updatedMessageModel.getId(),
+                updatedMessageModel.getContent());
+
+        return updatedMessageModel;
     }
-
-     */
-
 
 }

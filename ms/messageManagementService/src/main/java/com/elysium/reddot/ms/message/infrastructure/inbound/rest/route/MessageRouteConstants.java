@@ -2,10 +2,10 @@ package com.elysium.reddot.ms.message.infrastructure.inbound.rest.route;
 
 public enum MessageRouteConstants {
 
-    GET_ALL_TOPICS("direct:getAllMessages"),
-    GET_TOPIC_BY_ID("direct:getMessageById"),
-    CREATE_TOPIC("direct:createMessage"),
-    UPDATE_TOPIC("direct:updateMessage");
+    GET_ALL_MESSAGES("direct:getAllMessages"),
+    GET_MESSAGE_BY_ID("direct:getMessageById"),
+    CREATE_MESSAGE("direct:createMessage"),
+    UPDATE_MESSAGE("direct:updateMessage");
 
     private final String routeName;
 

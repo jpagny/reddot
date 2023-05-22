@@ -77,8 +77,10 @@ public class AuthenticationApplicationService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + token);
         HttpEntity<String> request = new HttpEntity<>(headers);
+
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(logoutUrl, HttpMethod.POST, request, String.class);
+
         if (!response.getStatusCode().is2xxSuccessful()) {
             throw new LogoutException(Objects.requireNonNull(response.getBody()));
         }

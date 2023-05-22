@@ -1,6 +1,5 @@
 package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.rabbitMQ;
 
-import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
 import com.elysium.reddot.ms.topic.application.service.TopicRabbitMQService;
 import com.elysium.reddot.ms.topic.infrastructure.data.dto.TopicExistsResponseDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;

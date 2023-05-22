@@ -6,6 +6,7 @@ import com.elysium.reddot.ms.message.application.service.MessageApplicationServi
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import com.elysium.reddot.ms.message.infrastructure.mapper.MessageProcessorMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class GetAllMessagesProcessor implements Processor {
 
     private final MessageApplicationServiceImpl messageService;
@@ -22,12 +24,13 @@ public class GetAllMessagesProcessor implements Processor {
     @Override
     public void process(Exchange exchange) {
         List<MessageModel> listMessagesModel = messageService.getAllMessages();
-
         List<MessageDTO> listMessagesDTO = MessageProcessorMapper.toDTOList(listMessagesModel);
+
         ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(),
                 "All messages retrieved successfully", listMessagesDTO);
 
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());
         exchange.getMessage().setBody(apiResponseDTO);
+        log.debug("ICI " + exchange.getIn().getBody().toString());
     }
 }

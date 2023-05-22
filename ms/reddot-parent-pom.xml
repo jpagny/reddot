@@ -24,10 +24,10 @@
         <maven.surefire.version>3.0.0</maven.surefire.version>
         <spring-cloud-version>2021.0.6</spring-cloud-version>
         <spring-jaeger-version>3.3.1</spring-jaeger-version>
-        <micrometer-registry-prometheus>1.10.6</micrometer-registry-prometheus>
-        <micrometer-registry-jaeger>1.8.1</micrometer-registry-jaeger>
+        <micrometer-registry-prometheus.version>1.10.6</micrometer-registry-prometheus.version>
+        <micrometer-registry-jaeger.version>1.8.1</micrometer-registry-jaeger.version>
         <log-captor.version>2.9.0</log-captor.version>
-
+        <keycloak.version>21.1.1</keycloak.version>
     </properties>
 
     <dependencyManagement>
@@ -118,6 +118,18 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Database -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -136,6 +148,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Test -->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
@@ -147,14 +160,12 @@
             <version>2.5.0</version>
             <scope>test</scope>
         </dependency>
-     
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>rabbitmq</artifactId>
             <version>1.18.1</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.amqp</groupId>
             <artifactId>spring-rabbit-test</artifactId>
@@ -179,12 +190,26 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>${micrometer-registry-prometheus}</version>
+            <version>${micrometer-registry-prometheus.version}</version>
         </dependency>
         <dependency>
             <groupId>io.jaegertracing</groupId>
             <artifactId>jaeger-micrometer</artifactId>
-            <version>${micrometer-registry-jaeger}</version>
+            <version>${micrometer-registry-jaeger.version}</version>
+        </dependency>
+
+        <!-- Keycloak -->
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-boot-starter</artifactId>
+            <version>${keycloak.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-security-adapter</artifactId>
+            <version>${keycloak.version}</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

@@ -23,8 +23,18 @@ public class MessageModel {
         this.updatedAt = updatedAt;
     }
 
+    public MessageModel(String content, Long threadId, String userId){
+        this.content = content;
+        this.threadId = threadId;
+        this.userId = userId;
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id){
+        this.id = id;
     }
 
 

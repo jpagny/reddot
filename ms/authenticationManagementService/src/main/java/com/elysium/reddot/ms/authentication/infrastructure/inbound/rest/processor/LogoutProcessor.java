@@ -29,7 +29,6 @@ public class LogoutProcessor implements Processor {
      */
     @Override
     public void process(Exchange exchange) {
-        log.debug("EXCHAN : " + exchange.getIn().toString());
         String inputToken = exchange.getIn().getHeader("Authorization", String.class);
         log.debug("Received input token: {}", inputToken);
 

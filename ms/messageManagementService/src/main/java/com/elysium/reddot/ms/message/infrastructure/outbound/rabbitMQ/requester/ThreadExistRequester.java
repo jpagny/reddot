@@ -1,6 +1,6 @@
 package com.elysium.reddot.ms.message.infrastructure.outbound.rabbitMQ.requester;
 
-import com.elysium.reddot.ms.message.application.exception.exception.ResourceNotFoundException;
+import com.elysium.reddot.ms.message.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.message.infrastructure.data.rabbitMQ.received.response.ThreadExistsResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

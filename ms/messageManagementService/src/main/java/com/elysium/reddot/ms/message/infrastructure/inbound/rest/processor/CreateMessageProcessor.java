@@ -6,10 +6,6 @@ import com.elysium.reddot.ms.message.application.service.MessageApplicationServi
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import com.elysium.reddot.ms.message.infrastructure.mapper.MessageProcessorMapper;
 import com.elysium.reddot.ms.message.infrastructure.outbound.rabbitMQ.requester.ThreadExistRequester;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.AllArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -25,14 +21,10 @@ public class CreateMessageProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-
         MessageDTO inputMessageDTO = exchange.getIn().getBody(MessageDTO.class);
         MessageModel messageModel = MessageProcessorMapper.toModel(inputMessageDTO);
 
         threadExistRequester.verifyThreadIdExistsOrThrow(messageModel.getThreadId());
-
-        // add user id
-        messageModel.setUserId("1");
 
         createMessageAndSetResponse(exchange, messageModel);
     }

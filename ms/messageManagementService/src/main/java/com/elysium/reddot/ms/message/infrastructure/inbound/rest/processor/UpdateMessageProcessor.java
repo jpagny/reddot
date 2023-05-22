@@ -19,7 +19,6 @@ public class UpdateMessageProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        /*
         Long inputId = exchange.getIn().getHeader("id", Long.class);
         MessageDTO inputMessageDTO = exchange.getIn().getBody(MessageDTO.class);
         MessageModel messageToUpdateModel = MessageProcessorMapper.toModel(inputMessageDTO);
@@ -31,7 +30,5 @@ public class UpdateMessageProcessor implements Processor {
 
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());
         exchange.getMessage().setBody(apiResponseDTO);
-
-         */
     }
 }
