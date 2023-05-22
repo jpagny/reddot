@@ -1,8 +1,8 @@
 package com.elysium.reddot.ms.thread.application.service;
 
-import com.elysium.reddot.ms.thread.application.exception.exception.ResourceAlreadyExistException;
-import com.elysium.reddot.ms.thread.application.exception.exception.ResourceBadValueException;
-import com.elysium.reddot.ms.thread.application.exception.exception.ResourceNotFoundException;
+import com.elysium.reddot.ms.thread.application.exception.type.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.thread.application.exception.type.ResourceBadValueException;
+import com.elysium.reddot.ms.thread.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import com.elysium.reddot.ms.thread.domain.port.inbound.IThreadManagementService;
 import com.elysium.reddot.ms.thread.domain.port.outbound.IThreadRepository;

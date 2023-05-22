@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.thread.application.exception.exception;
+package com.elysium.reddot.ms.thread.application.exception.type;
 
 public class ResourceBadValueException extends RuntimeException{
     public ResourceBadValueException(String resourceType, String error) {

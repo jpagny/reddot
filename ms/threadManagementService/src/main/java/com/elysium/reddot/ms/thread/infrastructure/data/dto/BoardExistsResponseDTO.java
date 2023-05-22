@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.thread.infrastructure.dto;
+package com.elysium.reddot.ms.thread.infrastructure.data.dto;
 
 import lombok.Data;
 
