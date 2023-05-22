@@ -4,7 +4,6 @@ import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
 import com.elysium.reddot.ms.message.infrastructure.exception.processor.GlobalExceptionHandler;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.MessageProcessorHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonDataFormat;
@@ -66,7 +65,7 @@ public class MessageRouteBuilder extends RouteBuilder {
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Creating a new message")
                 .process(messageProcessorHolder.getCreateMessageProcessor())
                 .marshal(format)
-                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully created message with name '${body.data.name}'")
+                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully created message")
                 .end();
 
         // route : update message
@@ -75,7 +74,7 @@ public class MessageRouteBuilder extends RouteBuilder {
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Updating message with id '${header.id}'")
                 .process(messageProcessorHolder.getUpdateMessageProcessor())
                 .marshal(format)
-                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully updated message with id '${header.id}' and name '${body.data.name}'")
+                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully updated message with id '${header.id}'")
                 .end();
 
     }

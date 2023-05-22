@@ -19,6 +19,7 @@ import java.util.Optional;
 import static io.smallrye.common.constraint.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -102,6 +103,41 @@ public class MessageApplicationServiceTest {
         // when / then
         assertThrows(ResourceBadValueException.class, () -> messageApplicationService.createMessage(messageToCreateModel));
     }
+
+    @Test
+    @DisplayName("given valid id and message model when update message then returns updated message model")
+    public void givenValidIdAndMessageModel_whenUpdateMessage_thenReturnUpdatedMessageModel() {
+        // given
+        Long id = 1L;
+        MessageModel messageModel = new MessageModel();
+        messageModel.setContent("Content");
+        MessageModel updatedMessageModel = new MessageModel();
+        updatedMessageModel.setContent("Updated Content");
+
+        when(messageRepository.findMessageById(id)).thenReturn(Optional.of(messageModel));
+        when(messageRepository.updateMessage(any(MessageModel.class))).thenReturn(updatedMessageModel);
+
+        // when
+        MessageModel result = messageApplicationService.updateMessage(id, messageModel);
+
+        // then
+        assertEquals(updatedMessageModel, result);
+    }
+
+    @Test
+    @DisplayName("given non-existent id and message model when update message then throws ResourceNotFoundException")
+    public void givenNonExistentIdAndMessageModel_whenUpdateMessage_thenThrowsResourceNotFoundException() {
+        // given
+        Long id = 1L;
+        MessageModel messageModel = new MessageModel();
+        messageModel.setContent("Content");
+
+        when(messageRepository.findMessageById(id)).thenReturn(Optional.empty());
+
+        // when & then
+        assertThrows(ResourceNotFoundException.class, () -> messageApplicationService.updateMessage(id, messageModel));
+    }
+
 
 
 }

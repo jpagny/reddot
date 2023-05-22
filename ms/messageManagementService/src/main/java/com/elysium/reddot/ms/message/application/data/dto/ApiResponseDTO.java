@@ -1,20 +1,17 @@
 package com.elysium.reddot.ms.message.application.data.dto;
 
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ApiResponseDTO {
 
-    private final int status;
-    private final String message;
-    private final Object data;
-
-    public ApiResponseDTO(int status, String message, Object data) {
-        this.status = status;
-        this.message = message;
-        this.data = data;
-    }
-
+    private int status;
+    private String message;
+    private Object data;
 
 }
