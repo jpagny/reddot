@@ -21,4 +21,10 @@ public class ReplyMessageDTO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
+    public ReplyMessageDTO(String content, Long parentMessageID, String userId){
+        this.content = content;
+        this.parentMessageID = parentMessageID;
+        this.userId = userId;
+    }
+
 }

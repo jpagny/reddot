@@ -37,7 +37,7 @@ public class CreateReplyMessageProcessor implements Processor {
 
         ReplyMessageDTO createdReplyMessageDTO = ReplyMessageProcessorMapper.toDTO(createdReplyMessageModel);
         ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.CREATED.value(),
-                "ReplyMessage with content " + createdReplyMessageModel.getContent() + " created successfully", createdReplyMessageDTO);
+                "Reply message with content " + createdReplyMessageModel.getContent() + " created successfully", createdReplyMessageDTO);
 
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.CREATED.value());
         exchange.getMessage().setBody(apiResponseDTO);

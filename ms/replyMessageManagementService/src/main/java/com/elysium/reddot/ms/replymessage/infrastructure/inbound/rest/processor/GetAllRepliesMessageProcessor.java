@@ -25,7 +25,7 @@ public class GetAllRepliesMessageProcessor implements Processor {
 
         List<ReplyMessageDTO> listReplyMessagesDTO = ReplyMessageProcessorMapper.toDTOList(listReplyMessagesModel);
         ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(),
-                "All replyReplyMessages retrieved successfully", listReplyMessagesDTO);
+                "All replies message retrieved successfully", listReplyMessagesDTO);
 
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());
         exchange.getMessage().setBody(apiResponseDTO);

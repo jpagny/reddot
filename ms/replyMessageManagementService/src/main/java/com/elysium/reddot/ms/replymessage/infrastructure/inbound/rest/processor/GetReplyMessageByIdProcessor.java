@@ -25,7 +25,7 @@ public class GetReplyMessageByIdProcessor implements Processor {
 
         ReplyMessageDTO replyMessageDTO = ReplyMessageProcessorMapper.toDTO(replyMessageModel);
         ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(),
-                "ReplyMessage with id " + inputId + " retrieved successfully", replyMessageDTO);
+                "Reply message with id " + inputId + " retrieved successfully", replyMessageDTO);
 
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());
         exchange.getMessage().setBody(apiResponseDTO);
