@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class ReplyMessageModel {
 
-    private final Long id;
+    private Long id;
     private String content;
     private Long parentMessageID;
     private String userId;
@@ -13,13 +13,19 @@ public class ReplyMessageModel {
     private LocalDateTime updatedAt;
 
 
-    public ReplyMessageModel(Long id, String label, Long parentMessageID, String userId, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ReplyMessageModel(Long id, String content, Long parentMessageID, String userId, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-        this.content = label;
+        this.content = content;
         this.parentMessageID = parentMessageID;
         this.userId = userId;
         this.setCreatedAt(createdAt);
         this.setUpdatedAt(updatedAt);
+    }
+
+    public ReplyMessageModel(String content, Long parentMessageID, String userId) {
+        this.content = content;
+        this.parentMessageID = parentMessageID;
+        this.userId = userId;
     }
 
     public Long getId() {

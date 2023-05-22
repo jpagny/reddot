@@ -8,8 +8,8 @@ import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import com.elysium.reddot.ms.replymessage.domain.port.inbound.IReplyMessageManagementService;
 import com.elysium.reddot.ms.replymessage.domain.port.outbound.IReplyMessageRepository;
 import com.elysium.reddot.ms.replymessage.domain.service.ReplyMessageDomainServiceImpl;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 @Slf4j
 public class ReplyMessageApplicationServiceImpl implements IReplyMessageManagementService {
 
@@ -29,11 +30,6 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
     private final ReplyMessageDomainServiceImpl replyMessageDomainService;
     private final IReplyMessageRepository replyMessageRepository;
 
-    @Autowired
-    public ReplyMessageApplicationServiceImpl(IReplyMessageRepository replyMessageRepository) {
-        this.replyMessageDomainService = new ReplyMessageDomainServiceImpl();
-        this.replyMessageRepository = replyMessageRepository;
-    }
 
     @Override
     public ReplyMessageModel getReplyMessageById(Long id) {
@@ -67,9 +63,7 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
         try {
             int countTotalRepliedForThisMessage = replyMessageRepository.countRepliesByMessageId(replyMessageToCreateModel.getParentMessageID());
             replyMessageDomainService.verifyNestedRepliesLimit(countTotalRepliedForThisMessage, maxNestedReplies);
-
             // other check
-
 
         } catch (LimitExceededException exception) {
             throw new ResourceBadValueException(RESOURCE_NAME_REPLY_MESSAGE, exception.getMessage());
@@ -85,7 +79,7 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
         return createdReplyMessageModel;
     }
 
-    /*
+
     @Override
     public ReplyMessageModel updateReplyMessage(Long id, ReplyMessageModel replyMessageToUpdateModel) {
 
@@ -93,28 +87,24 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
                 id, replyMessageToUpdateModel.getContent());
 
         ReplyMessageModel existingReplyMessageModel = replyMessageRepository.findReplyMessageById(id).orElseThrow(
-                () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
+                () -> new ResourceNotFoundException("replyMessage", String.valueOf(id))
         );
 
         try {
-
-            ReplyMessageModel replyMessageModelWithUpdates = replyMessageDomainService.updateExistingReplyMessageWithUpdates(existingReplyMessageModel, replyMessageToUpdateModel);
-
-            ReplyMessageModel updatedReplyMessageModel = replyMessageRepository.updateReplyMessage(replyMessageModelWithUpdates);
-
-            log.info("Successfully updated replyMessage with id '{}', content'{}",
-                    updatedReplyMessageModel.getId(),
-                    updatedReplyMessageModel.getContent());
-
-            return updatedReplyMessageModel;
-
+            // rule domain
         } catch (Exception ex) {
-            throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, ex.getReplyMessage());
+            throw new ResourceBadValueException("replyMessage", ex.getMessage());
 
         }
-    }
 
-     */
+        ReplyMessageModel updatedReplyMessageModel = replyMessageRepository.updateReplyMessage(existingReplyMessageModel);
+
+        log.info("Successfully updated replyMessage with id '{}', content'{}",
+                updatedReplyMessageModel.getId(),
+                updatedReplyMessageModel.getContent());
+
+        return updatedReplyMessageModel;
+    }
 
 
 }

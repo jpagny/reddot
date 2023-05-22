@@ -12,7 +12,6 @@ public interface IReplyMessageManagementService {
 
     ReplyMessageModel createReplyMessage(ReplyMessageModel replyMessageModel);
 
-    //MessageModel updateMessage(Long id, MessageModel messageModel);
-
+    ReplyMessageModel updateReplyMessage(Long id, ReplyMessageModel replyMessageModel);
 
 }
