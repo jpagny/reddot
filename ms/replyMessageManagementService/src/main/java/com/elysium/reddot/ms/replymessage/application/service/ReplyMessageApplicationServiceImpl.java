@@ -26,7 +26,7 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
     @Value("${message.max.nested.replies:" + ApplicationDefaults.DEFAULT_MAX_NESTED_REPLIES + "}")
     private Integer maxNestedReplies;
 
-    private static final String RESOURCE_NAME_REPLY_MESSAGE = "replyMessage";
+    private static final String RESOURCE_NAME_REPLY_MESSAGE = "reply message";
     private final ReplyMessageDomainServiceImpl replyMessageDomainService;
     private final IReplyMessageRepository replyMessageRepository;
 
@@ -36,7 +36,7 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
         log.debug("Fetching replyMessage with id {}", id);
 
         ReplyMessageModel foundReplyMessageModel = replyMessageRepository.findReplyMessageById(id).orElseThrow(
-                () -> new ResourceNotFoundException(RESOURCE_NAME_REPLY_MESSAGE, String.valueOf(id))
+                () -> new ResourceNotFoundException("RESOURCE_NAME_REPLY_MESSAGE", String.valueOf(id))
         );
 
         log.info("Successfully retrieved replyMessage with id {}, name '{}'",
@@ -85,15 +85,14 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
 
         log.debug("Updating replyMessage with id '{}', content '{}'",
                 id, replyMessageToUpdateModel.getContent());
-
         ReplyMessageModel existingReplyMessageModel = replyMessageRepository.findReplyMessageById(id).orElseThrow(
-                () -> new ResourceNotFoundException("replyMessage", String.valueOf(id))
+                () -> new ResourceNotFoundException(RESOURCE_NAME_REPLY_MESSAGE, String.valueOf(id))
         );
 
         try {
             // rule domain
         } catch (Exception ex) {
-            throw new ResourceBadValueException("replyMessage", ex.getMessage());
+            throw new ResourceBadValueException(RESOURCE_NAME_REPLY_MESSAGE, ex.getMessage());
 
         }
 

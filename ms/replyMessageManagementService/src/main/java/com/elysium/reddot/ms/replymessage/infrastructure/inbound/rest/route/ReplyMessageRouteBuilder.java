@@ -49,6 +49,7 @@ public class ReplyMessageRouteBuilder extends RouteBuilder {
                 .routeId("getAllReplyMessages")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Retrieving all replyMessages")
                 .process(replyMessageProcessorHolder.getGetAllRepliesMessageProcessor())
+                .marshal(format)
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully retrieved all replyMessages")
                 .end();
 
@@ -57,6 +58,7 @@ public class ReplyMessageRouteBuilder extends RouteBuilder {
                 .routeId("getReplyMessageById")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Getting replyMessage with id '${header.id}'")
                 .process(replyMessageProcessorHolder.getGetReplyMessageByIdProcessor())
+                .marshal(format)
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully retrieved replyMessage with id '${header.id}'")
                 .end();
 
@@ -65,7 +67,8 @@ public class ReplyMessageRouteBuilder extends RouteBuilder {
                 .routeId("createReplyMessage")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Creating a new replyMessage")
                 .process(replyMessageProcessorHolder.getCreateReplyMessageProcessor())
-                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully created replyMessage with name '${body.data.name}'")
+                .marshal(format)
+                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully created replyMessage")
                 .end();
 
         // route : update replyMessage
@@ -73,7 +76,8 @@ public class ReplyMessageRouteBuilder extends RouteBuilder {
                 .routeId("updateReplyMessage")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Updating replyMessage with id '${header.id}'")
                 .process(replyMessageProcessorHolder.getUpdateReplyMessageProcessor())
-                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully updated replyMessage with id '${header.id}' and name '${body.data.name}'")
+                .marshal(format)
+                .log("Route '${routeId}': Path '${header.CamelHttpUri}': Successfully updated replyMessage with id '${header.id}'")
                 .end();
 
     }

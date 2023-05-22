@@ -6,6 +6,7 @@ import com.elysium.reddot.ms.replymessage.application.service.ReplyMessageApplic
 import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageProcessorMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.http.HttpStatus;
@@ -13,9 +14,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class UpdateReplyMessageProcessor implements Processor {
 
-    private final ReplyMessageApplicationServiceImpl replyReplyMessageService;
+    private final ReplyMessageApplicationServiceImpl replyMessageService;
 
     @Override
     public void process(Exchange exchange) {
@@ -23,11 +25,10 @@ public class UpdateReplyMessageProcessor implements Processor {
         ReplyMessageDTO inputReplyMessageDTO = exchange.getIn().getBody(ReplyMessageDTO.class);
         ReplyMessageModel replyReplyMessageToUpdateModel = ReplyMessageProcessorMapper.toModel(inputReplyMessageDTO);
 
-        ReplyMessageModel updatedReplyMessageModel = replyReplyMessageService.updateReplyMessage(inputId, replyReplyMessageToUpdateModel);
+        ReplyMessageModel updatedReplyMessageModel = replyMessageService.updateReplyMessage(inputId, replyReplyMessageToUpdateModel);
 
         ReplyMessageDTO updatedReplyMessageDTO = ReplyMessageProcessorMapper.toDTO(updatedReplyMessageModel);
         ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "Reply message with content " + updatedReplyMessageDTO.getContent() + " updated successfully", updatedReplyMessageDTO);
-
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());
         exchange.getMessage().setBody(apiResponseDTO);
     }
