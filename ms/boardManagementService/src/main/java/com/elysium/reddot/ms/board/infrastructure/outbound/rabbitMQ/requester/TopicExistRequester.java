@@ -1,21 +1,21 @@
 package com.elysium.reddot.ms.board.infrastructure.outbound.rabbitMQ.requester;
 
 import com.elysium.reddot.ms.board.application.exception.exception.ResourceNotFoundException;
+import com.elysium.reddot.ms.board.infrastructure.constant.RabbitMQConstant;
 import com.elysium.reddot.ms.board.infrastructure.data.dto.TopicExistsResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-@Service
+@Component
 @Slf4j
 public class TopicExistRequester {
     private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper;
-    public static final String TOPIC_EXCHANGE = "topicExchange";
-    public static final String TOPIC_EXISTS_REQUEST_ROUTING_KEY = "topic.exists.request";
 
     public TopicExistRequester(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
@@ -26,14 +26,17 @@ public class TopicExistRequester {
         TopicExistsResponseDTO response = getTopicExistsResponse(topicId);
 
         if (response != null && !response.isExists()) {
+            log.error("Topic id {} does not exist", topicId);
             throw new ResourceNotFoundException("Topic id", String.valueOf(topicId));
         }
+
+        log.debug("Topic id {} exists", topicId);
     }
 
     private TopicExistsResponseDTO getTopicExistsResponse(Long topicId) {
         byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
-                TOPIC_EXCHANGE,
-                TOPIC_EXISTS_REQUEST_ROUTING_KEY,
+                RabbitMQConstant.EXCHANGE_TOPIC_BOARD,
+                RabbitMQConstant.REQUEST_TOPIC_EXIST,
                 topicId
         );
 

@@ -1,6 +1,7 @@
 package com.elysium.reddot.ms.board.infrastructure.inbound.rabbitMQ.listener;
 
 import com.elysium.reddot.ms.board.application.service.BoardRabbitMQService;
+import com.elysium.reddot.ms.board.infrastructure.constant.RabbitMQConstant;
 import com.elysium.reddot.ms.board.infrastructure.data.dto.BoardExistsResponseDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +22,7 @@ public class BoardRabbitMQListener {
     private final RabbitTemplate rabbitTemplate;
     private final BoardRabbitMQService boardRabbitMQService;
 
-    @RabbitListener(queues = "board.exists.queue")
+    @RabbitListener(queues = RabbitMQConstant.QUEUE_BOARD_EXIST)
     public void checkTopicExists(Message message) throws JsonProcessingException {
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
         Long boardId = (Long) messageConverter.fromMessage(message);

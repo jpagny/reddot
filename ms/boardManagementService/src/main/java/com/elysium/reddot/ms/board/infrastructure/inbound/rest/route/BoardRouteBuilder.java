@@ -1,6 +1,7 @@
 package com.elysium.reddot.ms.board.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
+import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteEnum;
 import com.elysium.reddot.ms.board.infrastructure.exception.processor.GlobalExceptionHandler;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.BoardProcessorHolder;
 import lombok.AllArgsConstructor;
@@ -32,14 +33,14 @@ public class BoardRouteBuilder extends RouteBuilder {
 
         // definition routes
         rest().
-                get().to(BoardRouteConstants.GET_ALL_BOARDS.getRouteName())
-                .get(requestId).to(BoardRouteConstants.GET_BOARD_BY_ID.getRouteName())
-                .post().type(BoardDTO.class).to(BoardRouteConstants.CREATE_BOARD.getRouteName())
-                .put(requestId).type(BoardDTO.class).to(BoardRouteConstants.UPDATE_BOARD.getRouteName())
-                .delete(requestId).to(BoardRouteConstants.DELETE_BOARD.getRouteName());
+                get().to(BoardRouteEnum.GET_ALL_BOARDS.getRouteName())
+                .get(requestId).to(BoardRouteEnum.GET_BOARD_BY_ID.getRouteName())
+                .post().type(BoardDTO.class).to(BoardRouteEnum.CREATE_BOARD.getRouteName())
+                .put(requestId).type(BoardDTO.class).to(BoardRouteEnum.UPDATE_BOARD.getRouteName())
+                .delete(requestId).to(BoardRouteEnum.DELETE_BOARD.getRouteName());
 
         // route : get all boards
-        from(BoardRouteConstants.GET_ALL_BOARDS.getRouteName())
+        from(BoardRouteEnum.GET_ALL_BOARDS.getRouteName())
                 .routeId("getAllBoards")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Retrieving all boards")
                 .process(boardProcessorHolder.getGetAllBoardsProcessor())
@@ -47,7 +48,7 @@ public class BoardRouteBuilder extends RouteBuilder {
                 .end();
 
         // route : get board by id
-        from(BoardRouteConstants.GET_BOARD_BY_ID.getRouteName())
+        from(BoardRouteEnum.GET_BOARD_BY_ID.getRouteName())
                 .routeId("getBoardById")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Getting board with id '${header.id}'")
                 .process(boardProcessorHolder.getGetBoardByIdProcessor())
@@ -55,7 +56,7 @@ public class BoardRouteBuilder extends RouteBuilder {
                 .end();
 
         // route : create board
-        from(BoardRouteConstants.CREATE_BOARD.getRouteName())
+        from(BoardRouteEnum.CREATE_BOARD.getRouteName())
                 .routeId("createBoard")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Creating a new board")
                 .process(boardProcessorHolder.getCreateBoardProcessor())
@@ -63,7 +64,7 @@ public class BoardRouteBuilder extends RouteBuilder {
                 .end();
 
         // route : update board
-        from(BoardRouteConstants.UPDATE_BOARD.getRouteName())
+        from(BoardRouteEnum.UPDATE_BOARD.getRouteName())
                 .routeId("updateBoard")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Updating board with id '${header.id}'")
                 .process(boardProcessorHolder.getUpdateBoardProcessor())
@@ -71,7 +72,7 @@ public class BoardRouteBuilder extends RouteBuilder {
                 .end();
 
         // route : delete board
-        from(BoardRouteConstants.DELETE_BOARD.getRouteName())
+        from(BoardRouteEnum.DELETE_BOARD.getRouteName())
                 .routeId("deleteBoard")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Deleting board with id '${header.id}'")
                 .process(boardProcessorHolder.getDeleteBoardProcessor())

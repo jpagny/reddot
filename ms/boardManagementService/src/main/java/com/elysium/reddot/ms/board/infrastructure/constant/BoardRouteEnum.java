@@ -1,6 +1,6 @@
-package com.elysium.reddot.ms.board.infrastructure.inbound.rest.route;
+package com.elysium.reddot.ms.board.infrastructure.constant;
 
-public enum BoardRouteConstants {
+public enum BoardRouteEnum {
 
     GET_ALL_BOARDS("direct:getAllBoards"),
     GET_BOARD_BY_ID("direct:getBoardById"),
@@ -10,7 +10,7 @@ public enum BoardRouteConstants {
 
     private final String routeName;
 
-    BoardRouteConstants(String routeName) {
+    BoardRouteEnum(String routeName) {
         this.routeName = routeName;
     }
 

@@ -6,6 +6,7 @@ import com.elysium.reddot.ms.board.application.exception.exception.ResourceAlrea
 import com.elysium.reddot.ms.board.application.exception.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
+import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteEnum;
 import com.elysium.reddot.ms.board.infrastructure.data.exception.GlobalExceptionDTO;
 import com.elysium.reddot.ms.board.infrastructure.exception.processor.GlobalExceptionHandler;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.*;
@@ -109,7 +110,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         when(boardService.getBoardById(boardId)).thenReturn(board);
 
         // when
-        Exchange result = template.send(BoardRouteConstants.GET_BOARD_BY_ID.getRouteName(), exchange);
+        Exchange result = template.send(BoardRouteEnum.GET_BOARD_BY_ID.getRouteName(), exchange);
         ApiResponseDTO actualResponse = result.getMessage().getBody(ApiResponseDTO.class);
 
         // then
@@ -134,7 +135,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         when(boardService.getBoardById(nonExistingId)).thenThrow(new ResourceNotFoundException("board", String.valueOf(nonExistingId)));
 
         // when
-        Exchange result = template.send(BoardRouteConstants.GET_BOARD_BY_ID.getRouteName(), exchange);
+        Exchange result = template.send(BoardRouteEnum.GET_BOARD_BY_ID.getRouteName(), exchange);
         GlobalExceptionDTO actualResponse = result.getMessage().getBody(GlobalExceptionDTO.class);
 
         // then
@@ -163,7 +164,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         when(boardService.createBoard(inputBoardModel)).thenReturn(createdBoardModel);
 
         // when
-        Exchange responseExchange = template.send(BoardRouteConstants.CREATE_BOARD.getRouteName(), exchange);
+        Exchange responseExchange = template.send(BoardRouteEnum.CREATE_BOARD.getRouteName(), exchange);
         ApiResponseDTO actualResponse = responseExchange.getMessage().getBody(ApiResponseDTO.class);
 
         // then
@@ -191,7 +192,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         when(boardService.createBoard(existingBoardModel)).thenThrow(new ResourceAlreadyExistException("board", "name", "name"));
 
         // when
-        Exchange responseExchange = template.send(BoardRouteConstants.CREATE_BOARD.getRouteName(), exchange);
+        Exchange responseExchange = template.send(BoardRouteEnum.CREATE_BOARD.getRouteName(), exchange);
         GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
 
         // then
@@ -221,7 +222,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         when(boardService.updateBoard(boardId, requestModel)).thenReturn(updatedBoard);
 
         // when
-        Exchange responseExchange = template.send(BoardRouteConstants.UPDATE_BOARD.getRouteName(), exchange);
+        Exchange responseExchange = template.send(BoardRouteEnum.UPDATE_BOARD.getRouteName(), exchange);
         ApiResponseDTO actualResponse = responseExchange.getMessage().getBody(ApiResponseDTO.class);
 
         // then
@@ -249,7 +250,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         when(boardService.updateBoard(nonExistingId, request)).thenThrow(new ResourceNotFoundException("board", String.valueOf(nonExistingId)));
 
         // when
-        Exchange result = template.send(BoardRouteConstants.UPDATE_BOARD.getRouteName(), exchange);
+        Exchange result = template.send(BoardRouteEnum.UPDATE_BOARD.getRouteName(), exchange);
         GlobalExceptionDTO actualResponse = result.getMessage().getBody(GlobalExceptionDTO.class);
 
         // then
@@ -276,7 +277,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         when(boardService.deleteBoardById(1L)).thenReturn(boardModel);
 
         // when
-        Exchange result = template.send(BoardRouteConstants.DELETE_BOARD.getRouteName(), exchange);
+        Exchange result = template.send(BoardRouteEnum.DELETE_BOARD.getRouteName(), exchange);
         ApiResponseDTO actualResponse = result.getMessage().getBody(ApiResponseDTO.class);
 
         // then
@@ -303,7 +304,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
                 .when(boardService).deleteBoardById(nonExistingId);
 
         // when
-        Exchange result = template.send(BoardRouteConstants.DELETE_BOARD.getRouteName(), exchange);
+        Exchange result = template.send(BoardRouteEnum.DELETE_BOARD.getRouteName(), exchange);
         GlobalExceptionDTO actualResponse = result.getMessage().getBody(GlobalExceptionDTO.class);
 
         // then
