@@ -1,13 +1,12 @@
 package com.elysium.reddot.ms.board.infrastructure.outbound.rabbitMQ.requester;
 
-import com.elysium.reddot.ms.board.application.exception.exception.ResourceNotFoundException;
+import com.elysium.reddot.ms.board.application.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.board.infrastructure.constant.RabbitMQConstant;
 import com.elysium.reddot.ms.board.infrastructure.data.dto.TopicExistsResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 

@@ -1,8 +1,8 @@
 package com.elysium.reddot.ms.board.application.service;
 
-import com.elysium.reddot.ms.board.application.exception.exception.ResourceAlreadyExistException;
-import com.elysium.reddot.ms.board.application.exception.exception.ResourceBadValueException;
-import com.elysium.reddot.ms.board.application.exception.exception.ResourceNotFoundException;
+import com.elysium.reddot.ms.board.application.exception.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.board.application.exception.ResourceBadValueException;
+import com.elysium.reddot.ms.board.application.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.IBoardRepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;

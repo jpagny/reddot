@@ -4,7 +4,9 @@ import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
 import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteEnum;
 import com.elysium.reddot.ms.board.infrastructure.exception.processor.GlobalExceptionHandler;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.BoardProcessorHolder;
+import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.CheckTokenProcessor;
 import lombok.AllArgsConstructor;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
@@ -32,12 +34,22 @@ public class BoardRouteBuilder extends RouteBuilder {
 
 
         // definition routes
-        rest().
+        rest("/api/boards").
                 get().to(BoardRouteEnum.GET_ALL_BOARDS.getRouteName())
                 .get(requestId).to(BoardRouteEnum.GET_BOARD_BY_ID.getRouteName())
                 .post().type(BoardDTO.class).to(BoardRouteEnum.CREATE_BOARD.getRouteName())
                 .put(requestId).type(BoardDTO.class).to(BoardRouteEnum.UPDATE_BOARD.getRouteName())
                 .delete(requestId).to(BoardRouteEnum.DELETE_BOARD.getRouteName());
+
+        // for all routes, intercept first check token
+        interceptFrom()
+                .log("Check token")
+                .process(new CheckTokenProcessor())
+                .choice()
+                .when(header("active").isNotEqualTo(true))
+                .log("Token is not active")
+                .otherwise()
+                .end();
 
         // route : get all boards
         from(BoardRouteEnum.GET_ALL_BOARDS.getRouteName())
@@ -80,4 +92,7 @@ public class BoardRouteBuilder extends RouteBuilder {
                 .end();
 
     }
+
+
+
 }

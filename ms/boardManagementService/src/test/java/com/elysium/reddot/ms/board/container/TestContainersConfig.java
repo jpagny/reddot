@@ -20,7 +20,7 @@ public abstract class TestContainersConfig {
         keycloakContainer = new KeycloakContainer("quay.io/keycloak/keycloak:21.1.1")
                 .withRealmImportFile("realm-test-reddot-export.json")
                 .withReuse(true);
-        keycloakContainer.setPortBindings(List.of("11145:8080"));
+        keycloakContainer.setPortBindings(List.of("11003:8080"));
     }
 
     public static RabbitMQContainer getRabbitMQContainer() {

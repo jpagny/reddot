@@ -2,8 +2,8 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
-import com.elysium.reddot.ms.board.application.exception.exception.ResourceAlreadyExistException;
-import com.elysium.reddot.ms.board.application.exception.exception.ResourceNotFoundException;
+import com.elysium.reddot.ms.board.application.exception.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.board.application.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteEnum;

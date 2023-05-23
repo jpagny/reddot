@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.board.application.exception.exception;
+package com.elysium.reddot.ms.board.application.exception;
 
 public class ResourceAlreadyExistException extends RuntimeException {
     public ResourceAlreadyExistException(String resourceType, String fieldName, String resourceName) {

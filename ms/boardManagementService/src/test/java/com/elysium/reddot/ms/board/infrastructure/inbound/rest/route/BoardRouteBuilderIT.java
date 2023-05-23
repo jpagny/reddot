@@ -2,7 +2,7 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
-import com.elysium.reddot.ms.board.application.exception.exception.ResourceNotFoundException;
+import com.elysium.reddot.ms.board.application.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.board.container.TestContainerSetup;
 import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteEnum;
 import com.elysium.reddot.ms.board.infrastructure.data.exception.GlobalExceptionDTO;
@@ -11,16 +11,30 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
+
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,7 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
-@SpringBootTest
+@SpringBootTest()
+@AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class BoardRouteBuilderIT extends TestContainerSetup {
 
@@ -307,5 +322,65 @@ class BoardRouteBuilderIT extends TestContainerSetup {
         assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
     }
+
+    @Test
+    @DisplayName("given no auth when get boards then unauthorized")
+    void givenNoAuth_whenGetBoards_thenUnauthorized() {
+        // given
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        // expected
+        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("TokenNullException",
+                "Token is null or empty. Token is required.");
+
+        // when
+        Exchange result = template.send(BoardRouteEnum.GET_ALL_BOARDS.getRouteName(), exchange);
+        GlobalExceptionDTO actualResponse = result.getMessage().getBody(GlobalExceptionDTO.class);
+
+        // then
+        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
+        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
+    }
+
+    @Test
+    @DisplayName("given authenticated user with token when get boards then success")
+    void givenAuthenticatedUserWithToken_whenGetBoards_thenSuccess() throws Exception {
+        String token = obtainAccessToken("user1", "test");
+
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("Authorization",  "Bearer " + token);
+
+        Exchange result = template.send(BoardRouteEnum.GET_ALL_BOARDS.getRouteName(), exchange);
+        ApiResponseDTO actualResponse = result.getMessage().getBody(ApiResponseDTO.class);
+
+        assertEquals(HttpStatus.OK.value(), actualResponse.getStatus());
+    }
+
+    private String obtainAccessToken(String username, String password) throws Exception {
+
+        HttpClient httpClient = HttpClients.createDefault();
+        URIBuilder uriBuilder = new URIBuilder("http://localhost:11003/realms/reddot/protocol/openid-connect/token");
+        String requestBody = "grant_type=password&client_id=reddot-app&client_secret=H80mMKQZYyXf9S7yQ2cEAxRmXud0uCmU"
+                + "&username=" + URLEncoder.encode(username, "UTF-8")
+                + "&password=" + URLEncoder.encode(password, "UTF-8");
+        StringEntity stringEntity = new StringEntity(requestBody, ContentType.APPLICATION_FORM_URLENCODED);
+
+        HttpPost httpPost = new HttpPost(uriBuilder.build());
+        httpPost.setEntity(stringEntity);
+
+        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        HttpResponse response = httpClient.execute(httpPost);
+        HttpEntity entity = response.getEntity();
+
+        if (entity != null) {
+            String responseBody = EntityUtils.toString(entity);
+            JsonNode jsonNode = new ObjectMapper().readTree(responseBody);
+            return jsonNode.get("access_token").asText();
+        } else {
+            throw new RuntimeException("No response body");
+        }
+
+    }
+
 
 }

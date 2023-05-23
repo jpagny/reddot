@@ -23,7 +23,6 @@ public class CreateBoardProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-
         BoardDTO inputBoardDTO = exchange.getIn().getBody(BoardDTO.class);
         BoardModel boardModel = BoardProcessorMapper.toModel(inputBoardDTO);
 
