@@ -10,7 +10,6 @@
         <relativePath>../reddot-parent-pom.xml</relativePath>
     </parent>
 
-    <groupId>com.elysium.reddot.ms</groupId>
     <artifactId>boardManagementService</artifactId>
     <version>1.0.0</version>
     <name>boardManagementService</name>

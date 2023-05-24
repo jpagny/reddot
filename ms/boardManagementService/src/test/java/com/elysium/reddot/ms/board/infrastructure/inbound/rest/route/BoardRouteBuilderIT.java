@@ -6,7 +6,7 @@ import com.elysium.reddot.ms.board.application.exception.ResourceNotFoundExcepti
 import com.elysium.reddot.ms.board.container.TestContainerSetup;
 import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteEnum;
 import com.elysium.reddot.ms.board.infrastructure.data.exception.GlobalExceptionDTO;
-import com.elysium.reddot.ms.board.infrastructure.outbound.rabbitMQ.requester.TopicExistRequester;
+import com.elysium.reddot.ms.board.infrastructure.outbound.rabbitmq.requester.TopicExistRequester;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;

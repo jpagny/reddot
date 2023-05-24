@@ -14,7 +14,7 @@ import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board.*
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.keycloak.CheckTokenProcessor;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.keycloak.KeycloakProcessorHolder;
 import com.elysium.reddot.ms.board.infrastructure.mapper.BoardProcessorMapper;
-import com.elysium.reddot.ms.board.infrastructure.outbound.rabbitMQ.requester.TopicExistRequester;
+import com.elysium.reddot.ms.board.infrastructure.outbound.rabbitmq.requester.TopicExistRequester;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -126,7 +126,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given existing board when route getBoardById is called with valid id then board returned")
-    void givenExistingBoard_whenRouteGetBoardByIdWithValidId_thenBoardReturned() throws URISyntaxException, IOException {
+    void givenExistingBoard_whenRouteGetBoardByIdWithValidId_thenBoardReturned() throws Exception {
         // given
         Long boardId = 1L;
         BoardModel board = new BoardModel(boardId, "name 1", "Name 1", "Board 1", 1L);
@@ -157,7 +157,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given non-existing board id when route getBoardById is called then throw ResourceNotFoundExceptionHandler")
-    void givenNonExistingBoardId_whenRouteGetBoardById_thenThrowResourceNotFoundExceptionHandler() throws URISyntaxException, IOException {
+    void givenNonExistingBoardId_whenRouteGetBoardById_thenThrowResourceNotFoundExceptionHandler() throws Exception {
         // given
         Long nonExistingId = 99L;
         Exchange exchange = new DefaultExchange(context);
@@ -185,7 +185,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given valid board when route createBoard is called then board created")
-    void givenValidBoard_whenRouteCreateBoard_thenBoardCreated() throws URISyntaxException, IOException {
+    void givenValidBoard_whenRouteCreateBoard_thenBoardCreated() throws Exception {
         // given
         BoardDTO inputBoardDTO = new BoardDTO(null, "name", "Name", "Description", 1L);
         BoardModel inputBoardModel = new BoardModel(null, "name", "Name", "Description", 1L);
@@ -218,7 +218,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given board exists when route createBoard is called with creating same board then throws ResourceAlreadyExistExceptionHandler")
-    void givenBoardExists_whenRouteCreateBoardWithCreatingSameBoard_thenThrowsResourceAlreadyExistExceptionHandler() throws URISyntaxException, IOException {
+    void givenBoardExists_whenRouteCreateBoardWithCreatingSameBoard_thenThrowsResourceAlreadyExistExceptionHandler() throws Exception {
         // given
         BoardDTO existingBoardDTO = new BoardDTO(1L, "name", "Name", "Board description", 1L);
         BoardModel existingBoardModel = new BoardModel(1L, "name", "Name", "Board description", 1L);
@@ -248,7 +248,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given valid request when route updateBoard is called then board is updated")
-    void givenValidRequest_whenRouteUpdateBoardIsCalled_thenBoardIsUpdated() throws URISyntaxException, IOException {
+    void givenValidRequest_whenRouteUpdateBoardIsCalled_thenBoardIsUpdated() throws Exception {
         // given
         Long boardId = 1L;
         BoardDTO inputBoardDTO = new BoardDTO(boardId, "newName", "newDescription", "newIcon", 1L);
@@ -282,7 +282,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given invalid request when route updateBoard is called then throws ResourceNotFoundExceptionHandler")
-    void givenInvalidRequest_whenRouteUpdateBoard_thenThrowsResourceNotFoundExceptionHandler() throws URISyntaxException, IOException {
+    void givenInvalidRequest_whenRouteUpdateBoard_thenThrowsResourceNotFoundExceptionHandler() throws Exception {
         // given
         Long nonExistingId = 99L;
         BoardDTO inputRequestDTO = new BoardDTO(nonExistingId, "newName", "newDescription", "newIcon", 1L);
@@ -312,7 +312,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given board exists when route deleteBoard is called then board deleted")
-    void givenBoardExists_whenRouteDeleteBoard_thenBoardDeleted() throws URISyntaxException, IOException {
+    void givenBoardExists_whenRouteDeleteBoard_thenBoardDeleted() throws Exception {
         // given
         Long boardId = 1L;
         BoardModel boardModel = new BoardModel(boardId, "test", "Test", "Test board", 1L);
@@ -343,7 +343,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given invalid request when route deleteBoard is called then throws resourceNotFoundExceptionHandler")
-    void givenInvalidRequest_whenRouteDeleteBoard_thenThrowsResourceNotFoundExceptionHandler() throws URISyntaxException, IOException {
+    void givenInvalidRequest_whenRouteDeleteBoard_thenThrowsResourceNotFoundExceptionHandler() throws Exception {
         // given
         Long nonExistingId = 99L;
         Exchange exchange = new DefaultExchange(context);

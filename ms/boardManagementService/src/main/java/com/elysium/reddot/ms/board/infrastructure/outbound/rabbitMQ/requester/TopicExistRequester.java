@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.board.infrastructure.outbound.rabbitMQ.requester;
+package com.elysium.reddot.ms.board.infrastructure.outbound.rabbitmq.requester;
 
 import com.elysium.reddot.ms.board.application.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.board.infrastructure.constant.RabbitMQConstant;
@@ -21,7 +21,7 @@ public class TopicExistRequester {
         this.objectMapper = new ObjectMapper();
     }
 
-    public void verifyTopicIdExistsOrThrow(Long topicId) {
+    public void verifyTopicIdExistsOrThrow(Long topicId) throws IOException {
         TopicExistsResponseDTO response = getTopicExistsResponse(topicId);
 
         if (response != null && !response.isExists()) {
@@ -32,7 +32,7 @@ public class TopicExistRequester {
         log.debug("Topic id {} exists", topicId);
     }
 
-    private TopicExistsResponseDTO getTopicExistsResponse(Long topicId) {
+    private TopicExistsResponseDTO getTopicExistsResponse(Long topicId) throws IOException {
         byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_TOPIC_BOARD,
                 RabbitMQConstant.REQUEST_TOPIC_EXIST,
@@ -44,7 +44,7 @@ public class TopicExistRequester {
 
         } catch (IOException ex) {
             log.error("Fail to convert to json : " + ex);
-            throw new RuntimeException("Failed to convert to json", ex);
+            throw new IOException("Failed to convert to json", ex);
 
         }
     }

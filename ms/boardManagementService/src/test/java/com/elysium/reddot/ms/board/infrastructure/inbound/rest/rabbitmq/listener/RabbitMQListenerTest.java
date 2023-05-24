@@ -1,7 +1,7 @@
 package com.elysium.reddot.ms.board.infrastructure.inbound.rest.rabbitmq.listener;
 
 import com.elysium.reddot.ms.board.application.service.BoardRabbitMQService;
-import com.elysium.reddot.ms.board.infrastructure.inbound.rabbitMQ.listener.BoardRabbitMQListener;
+import com.elysium.reddot.ms.board.infrastructure.inbound.rabbitmq.listener.BoardRabbitMQListener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +18,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class RabbitMQListenerTest {
+class RabbitMQListenerTest {
 
     @Mock
     private RabbitTemplate rabbitTemplate;
@@ -29,13 +29,13 @@ public class RabbitMQListenerTest {
     private BoardRabbitMQListener rabbitMQListener;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         rabbitMQListener = new BoardRabbitMQListener(rabbitTemplate, boardRabbitMQService);
     }
 
     @Test
     @DisplayName("given a valid message, when checkTopicExists is called, then send a reply message")
-    public void givenValidMessage_whenCheckTopicExists_thenSendReplyMessage() throws JsonProcessingException {
+    void givenValidMessage_whenCheckTopicExists_thenSendReplyMessage() throws JsonProcessingException {
         // given
         Long boardId = 123L;
         boolean exists = true;

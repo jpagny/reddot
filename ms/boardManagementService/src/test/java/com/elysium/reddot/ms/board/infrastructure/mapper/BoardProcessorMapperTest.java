@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BoardProcessorMapperTest {
+class BoardProcessorMapperTest {
 
     @Test
     @DisplayName("given boardModel when toDTO is called then returns boardDTO")

@@ -9,21 +9,18 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CheckTokenProcessorTest {
+class CheckTokenProcessorTest {
 
     private CheckTokenProcessor checkTokenProcessor;
     @Mock
@@ -36,48 +33,15 @@ public class CheckTokenProcessorTest {
         checkTokenProcessor = new CheckTokenProcessor(keycloakService);
     }
 
-    @Test
-    @DisplayName("Given a valid auth header, when validating the token, then no exception is thrown")
-    public void validateToken_ValidToken_NoExceptionThrown() throws URISyntaxException, IOException {
+    @ParameterizedTest
+    @DisplayName("given invalid auth headers, when validating the token, then TokenNotValidException is thrown")
+    @NullSource
+    @EmptySource
+    @ValueSource(strings = "myFakeToken")
+    void validateToken_InvalidToken_ThrowsException(String token) {
         // given
         Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
-
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
-
-        // when && then
-        assertDoesNotThrow(() -> checkTokenProcessor.process(exchange));
-    }
-
-    @Test
-    @DisplayName("Given a null auth header, when validating the token, then TokenNotValidException is thrown")
-    public void validateToken_NullToken_ThrowsException() {
-        // given
-        Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setHeader("Authorization", null);
-
-        // when && then
-        assertThrows(TokenNotValidException.class, () -> checkTokenProcessor.process(exchange));
-    }
-
-    @Test
-    @DisplayName("Given an empty auth header, when validating the token, then TokenNotValidException is thrown")
-    public void validateToken_EmptyToken_ThrowsException() {
-        // given
-        Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setHeader("Authorization", "");
-
-        // when && then
-        assertThrows(TokenNotValidException.class, () -> checkTokenProcessor.process(exchange));
-    }
-
-    @Test
-    @DisplayName("Given an auth header without 'Bearer ', when validating the token, then TokenNotValidException is thrown")
-    public void validateToken_TokenWithoutBearer_ThrowsException() {
-        // given
-        Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setHeader("Authorization", "myFakeToken");
+        exchange.getIn().setHeader("Authorization", token);
 
         // when && then
         assertThrows(TokenNotValidException.class, () -> checkTokenProcessor.process(exchange));

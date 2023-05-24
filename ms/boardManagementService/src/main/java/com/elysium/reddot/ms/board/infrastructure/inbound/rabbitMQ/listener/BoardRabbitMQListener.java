@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.board.infrastructure.inbound.rabbitMQ.listener;
+package com.elysium.reddot.ms.board.infrastructure.inbound.rabbitmq.listener;
 
 import com.elysium.reddot.ms.board.application.service.BoardRabbitMQService;
 import com.elysium.reddot.ms.board.infrastructure.constant.RabbitMQConstant;

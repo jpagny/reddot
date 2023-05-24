@@ -3,9 +3,9 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board;
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
-import com.elysium.reddot.ms.board.infrastructure.outbound.rabbitMQ.requester.TopicExistRequester;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.mapper.BoardProcessorMapper;
+import com.elysium.reddot.ms.board.infrastructure.outbound.rabbitmq.requester.TopicExistRequester;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
@@ -22,7 +22,7 @@ public class CreateBoardProcessor implements Processor {
     private final TopicExistRequester topicExistRequester;
 
     @Override
-    public void process(Exchange exchange) {
+    public void process(Exchange exchange) throws Exception {
         BoardDTO inputBoardDTO = exchange.getIn().getBody(BoardDTO.class);
         BoardModel boardModel = BoardProcessorMapper.toModel(inputBoardDTO);
 

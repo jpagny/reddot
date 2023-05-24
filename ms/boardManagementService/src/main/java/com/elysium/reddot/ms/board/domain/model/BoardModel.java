@@ -7,14 +7,14 @@ public class BoardModel {
     private final String name;
     private String label;
     private String description;
-    private Long topic_id;
+    private Long topicId;
 
     public BoardModel(Long id, String name, String label, String description, Long topicId) {
         this.id = id;
         this.name = name;
         this.label = label;
         this.description = description;
-        this.topic_id = topicId;
+        this.topicId = topicId;
     }
 
     public Long getId() {
@@ -42,11 +42,11 @@ public class BoardModel {
     }
 
     public Long getTopicId(){
-        return topic_id;
+        return topicId;
     }
 
     public void setTopicId(Long topicId){
-        this.topic_id = topicId;
+        this.topicId = topicId;
     }
 
     @Override
