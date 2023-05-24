@@ -1,7 +1,7 @@
 package com.elysium.reddot.ms.board.application.service;
 
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
-import com.elysium.reddot.ms.board.domain.port.outbound.IBoardRepository;
+import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.BoardRepositoryAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BoardRabbitMQService {
 
-    private final IBoardRepository boardRepository;
+    private final BoardRepositoryAdapter boardRepository;
 
     public boolean checkBoardIdExists(Long id) {
         Optional<BoardModel> topicModel = boardRepository.findBoardById(id);

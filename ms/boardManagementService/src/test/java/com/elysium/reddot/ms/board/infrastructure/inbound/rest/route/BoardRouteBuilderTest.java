@@ -31,8 +31,6 @@ import org.springframework.http.MediaType;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -75,38 +73,56 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         return new BoardRouteBuilder(globalExceptionHandler, boardProcessorHolder, keycloakProcessorHolder);
     }
 
+
     @Test
-    @DisplayName("given boards exist when route getAllBoards is called then all boards retrieved")
-    void givenBoardsExist_whenRouteGetAllBoards_thenAllBoardsRetrieved() throws Exception {
+    @DisplayName("given the token is inactive, when getAllBoards route is processed, then TokenNotActiveException is returned")
+    void givenInactiveToken_whenRouteGetAllBoards_thenTokenNotActiveExceptionReturned() throws Exception {
         // given
-        BoardModel board1Model = new BoardModel(1L, "name 1", "Name 1", "Board 1", 1L);
-        BoardModel board2Model = new BoardModel(2L, "name 2", "Name 2", "Board 2", 1L);
-        List<BoardModel> boardListModel = Arrays.asList(board1Model, board2Model);
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
+        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":false}";
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
 
         // expected
-        List<BoardDTO> expectedListBoards = BoardProcessorMapper.toDTOList(boardListModel);
-        ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "All boards retrieved successfully", expectedListBoards);
+        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("TokenNotActiveException",
+                "Your token is inactive.");
 
         // mock
         when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
-        when(boardService.getAllBoards()).thenReturn(boardListModel);
 
         // when
         Exchange responseExchange = template.send("direct:getAllBoards", exchange);
-        ApiResponseDTO actualResponse = responseExchange.getIn().getBody(ApiResponseDTO.class);
-
+        GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
 
         // then
-        assertEquals(expectedApiResponse.getStatus(), actualResponse.getStatus());
+        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-        assertEquals(expectedApiResponse.getData(), actualResponse.getData());
     }
 
+    @Test
+    @DisplayName("Given an active token without user role, when getAllBoards route is processed, then HasNotRoleException is returned")
+    void givenActiveTokenWithoutUserRole_whenRouteGetAllBoards_thenHasNotRoleExceptionReturned() throws Exception {
+        // given
+        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"bidon\"]},\"active\":true}";
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
+
+        // expected
+        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("HasNotRoleException",
+                "Having role user is required.");
+
+        // mock
+        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
+
+        // when
+        Exchange responseExchange = template.send("direct:getAllBoards", exchange);
+        GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
+
+        // then
+        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
+        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
+    }
 
     @Test
     @DisplayName("given existing board when route getBoardById is called with valid id then board returned")

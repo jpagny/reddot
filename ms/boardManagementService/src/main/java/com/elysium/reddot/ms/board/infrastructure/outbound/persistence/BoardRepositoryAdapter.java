@@ -13,11 +13,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class IBoardRepositoryAdapter implements IBoardRepository {
+public class BoardRepositoryAdapter implements IBoardRepository {
 
     private final BoardJpaRepository boardJpaRepository;
 
-    public IBoardRepositoryAdapter(BoardJpaRepository boardJpaRepository) {
+    public BoardRepositoryAdapter(BoardJpaRepository boardJpaRepository) {
         this.boardJpaRepository = boardJpaRepository;
     }
 

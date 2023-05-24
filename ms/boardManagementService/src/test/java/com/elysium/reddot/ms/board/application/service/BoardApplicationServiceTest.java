@@ -4,7 +4,7 @@ import com.elysium.reddot.ms.board.application.exception.ResourceAlreadyExistExc
 import com.elysium.reddot.ms.board.application.exception.ResourceBadValueException;
 import com.elysium.reddot.ms.board.application.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
-import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.IBoardRepositoryAdapter;
+import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.BoardRepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class BoardApplicationServiceTest {
 
     private BoardApplicationServiceImpl boardService;
     @Mock
-    private IBoardRepositoryAdapter boardRepository;
+    private BoardRepositoryAdapter boardRepository;
 
     @BeforeEach
     void setUp() {

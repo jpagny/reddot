@@ -33,24 +33,20 @@ public class KeycloakService {
     private String credentialsSecret;
 
     public String callTokenIntrospectionEndpoint(String authHeader) throws URISyntaxException, IOException {
-        log.debug("ICI 1");
         HttpClient httpClient = HttpClients.createDefault();
-        log.debug("ICI 2");
         String tokenIntrospectUrl = getTokenIntrospectUrl();
-        log.debug("ICI 3");
         URIBuilder uriBuilder = new URIBuilder(tokenIntrospectUrl);
-        log.debug("ICI 4");
+
         String requestBody = "client_id=" + resource + "&client_secret=" + credentialsSecret + "&token=" + authHeader;
-        log.debug("ICI 5");
         StringEntity stringEntity = new StringEntity(requestBody, ContentType.APPLICATION_FORM_URLENCODED);
-        log.debug("ICI 6");
         HttpPost httpPost = new HttpPost(uriBuilder.build());
+
         httpPost.setEntity(stringEntity);
         httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
-        log.debug("ICI 7");
+
         HttpResponse response = httpClient.execute(httpPost);
         HttpEntity entity = response.getEntity();
-        log.debug("ICI 8");
+
         if (entity == null) {
             throw new RuntimeException("No response body");
         }

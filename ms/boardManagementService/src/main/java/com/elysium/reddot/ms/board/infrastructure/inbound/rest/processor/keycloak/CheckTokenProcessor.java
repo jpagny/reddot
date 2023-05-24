@@ -29,12 +29,12 @@ public class CheckTokenProcessor implements Processor {
 
         String authHeader = extractAuthorizationHeader(exchange);
 
-        log.debug("Check validate token");
+        log.debug("Checking token validity");
         validateToken(authHeader);
         log.debug("Token is valid");
 
         authHeader = authHeader.substring("Bearer ".length());
-        log.debug("Token is now : " + authHeader);
+
         String responseBody = keycloakService.callTokenIntrospectionEndpoint(authHeader);
 
         List<String> roles = extractRolesFromResponse(responseBody);
