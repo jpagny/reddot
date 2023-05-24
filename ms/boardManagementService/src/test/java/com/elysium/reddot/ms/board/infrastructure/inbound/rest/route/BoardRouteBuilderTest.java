@@ -8,6 +8,7 @@ import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceIm
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteEnum;
 import com.elysium.reddot.ms.board.infrastructure.data.exception.GlobalExceptionDTO;
+import com.elysium.reddot.ms.board.infrastructure.data.property.KeycloakProperties;
 import com.elysium.reddot.ms.board.infrastructure.exception.processor.GlobalExceptionHandler;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.*;
 import com.elysium.reddot.ms.board.infrastructure.mapper.BoardProcessorMapper;
@@ -30,14 +31,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BoardRouteBuilderTest extends CamelTestSupport {
 
     @Mock
     private BoardApplicationServiceImpl boardService;
+
+    @Mock
+    private CheckTokenProcessor checkTokenProcessor;
 
     @Mock
     private TopicExistRequester topicExistRequester;
@@ -49,35 +52,43 @@ class BoardRouteBuilderTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
+        KeycloakProperties keycloakProperties = new KeycloakProperties();
         GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler();
 
         BoardProcessorHolder boardProcessorHolder = new BoardProcessorHolder(
                 new GetAllBoardsProcessor(boardService),
                 new GetBoardByIdProcessor(boardService),
-                new CreateBoardProcessor(boardService,topicExistRequester),
+                new CreateBoardProcessor(boardService, topicExistRequester),
                 new UpdateBoardProcessor(boardService),
                 new DeleteBoardProcessor(boardService)
         );
 
-        return new BoardRouteBuilder(globalExceptionHandler, boardProcessorHolder);
+        return new BoardRouteBuilder(globalExceptionHandler, boardProcessorHolder, keycloakProperties);
     }
 
     @Test
     @DisplayName("given boards exist when route getAllBoards is called then all boards retrieved")
-    void givenBoardsExist_whenRouteGetAllBoards_thenAllBoardsRetrieved() {
+    void givenBoardsExist_whenRouteGetAllBoards_thenAllBoardsRetrieved() throws Exception {
         // given
-        BoardModel board1Model = new BoardModel(1L, "name 1", "Name 1", "Board 1",1L);
-        BoardModel board2Model = new BoardModel(2L, "name 2", "Name 2", "Board 2",1L);
+        BoardModel board1Model = new BoardModel(1L, "name 1", "Name 1", "Board 1", 1L);
+        BoardModel board2Model = new BoardModel(2L, "name 2", "Name 2", "Board 2", 1L);
         List<BoardModel> boardListModel = Arrays.asList(board1Model, board2Model);
         List<BoardDTO> expectedListBoards = BoardProcessorMapper.toDTOList(boardListModel);
 
         Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "All boards retrieved successfully", expectedListBoards);
 
         // mock
+        doAnswer(invocation -> {
+            Exchange exchangeProcessor = invocation.getArgument(0);
+            exchangeProcessor.getIn().setHeader("active", true);
+            exchangeProcessor.getIn().setHeader("roles", "user");
+            return null;
+        }).when(checkTokenProcessor).process(any(Exchange.class));
         when(boardService.getAllBoards()).thenReturn(boardListModel);
 
         // when
@@ -96,8 +107,8 @@ class BoardRouteBuilderTest extends CamelTestSupport {
     void givenExistingBoard_whenRouteGetBoardByIdWithValidId_thenBoardReturned() {
         // given
         Long boardId = 1L;
-        BoardModel board = new BoardModel(boardId, "name 1", "Name 1", "Board 1",1L);
-        BoardDTO expectedBoard =  new BoardDTO(boardId, "name 1", "Name 1", "Board 1",1L);
+        BoardModel board = new BoardModel(boardId, "name 1", "Name 1", "Board 1", 1L);
+        BoardDTO expectedBoard = new BoardDTO(boardId, "name 1", "Name 1", "Board 1", 1L);
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("id", boardId);
@@ -147,9 +158,9 @@ class BoardRouteBuilderTest extends CamelTestSupport {
     @DisplayName("given valid board when route createBoard is called then board created")
     void givenValidBoard_whenRouteCreateBoard_thenBoardCreated() {
         // given
-        BoardDTO inputBoardDTO = new BoardDTO(null, "name", "Name", "Description",1L);
-        BoardModel inputBoardModel = new BoardModel(null, "name", "Name", "Description",1L);
-        BoardModel createdBoardModel = new BoardModel(1L, inputBoardModel.getName(), inputBoardModel.getLabel(), inputBoardModel.getDescription(),1L);
+        BoardDTO inputBoardDTO = new BoardDTO(null, "name", "Name", "Description", 1L);
+        BoardModel inputBoardModel = new BoardModel(null, "name", "Name", "Description", 1L);
+        BoardModel createdBoardModel = new BoardModel(1L, inputBoardModel.getName(), inputBoardModel.getLabel(), inputBoardModel.getDescription(), 1L);
         BoardDTO expectedBoard = BoardProcessorMapper.toDTO(createdBoardModel);
 
         Exchange exchange = new DefaultExchange(context);
@@ -177,8 +188,8 @@ class BoardRouteBuilderTest extends CamelTestSupport {
     @DisplayName("given board exists when route createBoard is called with creating same board then throws ResourceAlreadyExistExceptionHandler")
     void givenBoardExists_whenRouteCreateBoardWithCreatingSameBoard_thenThrowsResourceAlreadyExistExceptionHandler() {
         // given
-        BoardDTO existingBoardDTO = new BoardDTO(1L, "name", "Name", "Board description",1L);
-        BoardModel existingBoardModel = new BoardModel(1L, "name", "Name", "Board description",1L);
+        BoardDTO existingBoardDTO = new BoardDTO(1L, "name", "Name", "Board description", 1L);
+        BoardModel existingBoardModel = new BoardModel(1L, "name", "Name", "Board description", 1L);
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(existingBoardDTO);
@@ -205,9 +216,9 @@ class BoardRouteBuilderTest extends CamelTestSupport {
     void givenValidRequest_whenRouteUpdateBoardIsCalled_thenBoardIsUpdated() {
         // given
         Long boardId = 1L;
-        BoardDTO inputBoardDTO = new BoardDTO(boardId, "newName", "newDescription", "newIcon",1L);
-        BoardModel requestModel = new BoardModel(boardId, "newName", "newDescription", "newIcon",1L);
-        BoardModel updatedBoard = new BoardModel(boardId, "newName", "newDescription", "newIcon",1L);
+        BoardDTO inputBoardDTO = new BoardDTO(boardId, "newName", "newDescription", "newIcon", 1L);
+        BoardModel requestModel = new BoardModel(boardId, "newName", "newDescription", "newIcon", 1L);
+        BoardModel updatedBoard = new BoardModel(boardId, "newName", "newDescription", "newIcon", 1L);
         BoardDTO expectedBoard = BoardProcessorMapper.toDTO(updatedBoard);
 
         Exchange exchange = new DefaultExchange(context);
@@ -236,8 +247,8 @@ class BoardRouteBuilderTest extends CamelTestSupport {
     void givenInvalidRequest_whenRouteUpdateBoard_thenThrowsResourceNotFoundExceptionHandler() {
         // given
         Long nonExistingId = 99L;
-        BoardDTO inputRequestDTO = new BoardDTO(nonExistingId, "newName", "newDescription", "newIcon",1L);
-        BoardModel request = new BoardModel(nonExistingId, "newName", "newDescription", "newIcon",1L);
+        BoardDTO inputRequestDTO = new BoardDTO(nonExistingId, "newName", "newDescription", "newIcon", 1L);
+        BoardModel request = new BoardModel(nonExistingId, "newName", "newDescription", "newIcon", 1L);
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("id", nonExistingId);
@@ -263,8 +274,8 @@ class BoardRouteBuilderTest extends CamelTestSupport {
     void givenBoardExists_whenRouteDeleteBoard_thenBoardDeleted() {
         // given
         Long boardId = 1L;
-        BoardModel boardModel = new BoardModel(boardId, "test", "Test", "Test board",1L);
-        BoardDTO expectedBoard = new BoardDTO(boardId, "test", "Test", "Test board",1L);
+        BoardModel boardModel = new BoardModel(boardId, "test", "Test", "Test board", 1L);
+        BoardDTO expectedBoard = new BoardDTO(boardId, "test", "Test", "Test board", 1L);
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("id", boardId);

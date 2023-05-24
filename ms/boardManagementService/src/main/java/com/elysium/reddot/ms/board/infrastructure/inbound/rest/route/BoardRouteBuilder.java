@@ -2,14 +2,19 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
 import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteEnum;
+import com.elysium.reddot.ms.board.infrastructure.data.exception.HasNotRoleException;
+import com.elysium.reddot.ms.board.infrastructure.data.exception.TokenNotActiveException;
+import com.elysium.reddot.ms.board.infrastructure.data.property.KeycloakProperties;
 import com.elysium.reddot.ms.board.infrastructure.exception.processor.GlobalExceptionHandler;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.BoardProcessorHolder;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.CheckTokenProcessor;
 import lombok.AllArgsConstructor;
-import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
+
+import static org.apache.camel.support.builder.PredicateBuilder.not;
 
 @Component
 @AllArgsConstructor
@@ -17,6 +22,7 @@ public class BoardRouteBuilder extends RouteBuilder {
 
     private final GlobalExceptionHandler globalExceptionHandler;
     private final BoardProcessorHolder boardProcessorHolder;
+    private final KeycloakProperties keycloakProperties;
 
     @Override
     public void configure() {
@@ -44,11 +50,20 @@ public class BoardRouteBuilder extends RouteBuilder {
         // for all routes, intercept first check token
         interceptFrom()
                 .log("Check token")
-                .process(new CheckTokenProcessor())
+                .process(new CheckTokenProcessor(keycloakProperties))
                 .choice()
                 .when(header("active").isNotEqualTo(true))
-                .log("Token is not active")
+                .log(LoggingLevel.ERROR, "The token is inactive")
+                .process(exchange -> {
+                    throw new TokenNotActiveException();
+                })
+                .when(not(header("roles").contains("user")))
+                .log(LoggingLevel.ERROR, "Having role admin is required")
+                .process(exchange -> {
+                    throw new HasNotRoleException("user");
+                })
                 .otherwise()
+                .log("Token check complete. Processing now underway...")
                 .end();
 
         // route : get all boards
@@ -92,7 +107,6 @@ public class BoardRouteBuilder extends RouteBuilder {
                 .end();
 
     }
-
 
 
 }

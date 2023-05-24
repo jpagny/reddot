@@ -23,18 +23,18 @@ import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,8 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
-@SpringBootTest()
-@AutoConfigureMockMvc
+@SpringBootTest
+@ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class BoardRouteBuilderIT extends TestContainerSetup {
 
@@ -56,15 +56,53 @@ class BoardRouteBuilderIT extends TestContainerSetup {
     @MockBean
     private TopicExistRequester topicExistRequester;
 
+
+    @Test
+    @DisplayName("given no auth when get boards then unauthorized")
+    void givenNoAuth_whenGetBoards_thenUnauthorized() {
+        // given
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        // expected
+        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("TokenNotValidException",
+                "Token is not validate.");
+
+        // when
+        Exchange result = template.send(BoardRouteEnum.GET_ALL_BOARDS.getRouteName(), exchange);
+        GlobalExceptionDTO actualResponse = result.getMessage().getBody(GlobalExceptionDTO.class);
+
+        // then
+        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
+        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
+    }
+
+    @Test
+    @DisplayName("given authenticated user with token when get boards then success")
+    void givenAuthenticatedUserWithToken_whenGetBoards_thenSuccess() throws Exception {
+        // given
+        String token = obtainAccessToken("user1", "test");
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("Authorization", "Bearer " + token);
+
+        // when
+        Exchange result = template.send(BoardRouteEnum.GET_ALL_BOARDS.getRouteName(), exchange);
+        ApiResponseDTO actualResponse = result.getMessage().getBody(ApiResponseDTO.class);
+
+        // then
+        assertEquals(HttpStatus.OK.value(), actualResponse.getStatus());
+    }
+
     @Test
     @DisplayName("given boards exist when route getAllBoards is called then all boards retrieved")
-    void givenBoardsExist_whenRouteGetAllBoards_thenAllBoardsAreRetrieved() {
+    void givenBoardsExist_whenRouteGetAllBoards_thenAllBoardsAreRetrieved() throws Exception {
         // arrange
         BoardDTO board1 = new BoardDTO(1L, "name_1", "Label 1", "Description 1", 1L);
         BoardDTO board2 = new BoardDTO(2L, "name_2", "Label 2", "Description 2", 1L);
         List<BoardDTO> boardList = Arrays.asList(board1, board2);
 
+        String token = obtainAccessToken("user1", "test");
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("Authorization", "Bearer " + token);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
@@ -82,12 +120,14 @@ class BoardRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given existing board when route getBoardById is called with valid id then board returned")
-    void givenExistingBoard_whenRouteGetBoardByIdWithValidId_thenBoardReturned() {
+    void givenExistingBoard_whenRouteGetBoardByIdWithValidId_thenBoardReturned() throws Exception {
         // given
         Long boardId = 1L;
         BoardDTO board = new BoardDTO(boardId, "name_1", "Label 1", "Description 1", 1L);
 
+        String token = obtainAccessToken("user1", "test");
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("Authorization", "Bearer " + token);
         exchange.getIn().setHeader("id", boardId);
 
         // expected
@@ -106,10 +146,12 @@ class BoardRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given non-existing board id when route getBoardById then throw ResourceNotFoundExceptionHandler")
-    void givenNonExistingBoardId_whenRouteGetBoardById_thenThrowResourceNotFoundExceptionHandler() {
+    void givenNonExistingBoardId_whenRouteGetBoardById_thenThrowResourceNotFoundExceptionHandler() throws Exception {
         // given
         Long nonExistingId = 99L;
+        String token = obtainAccessToken("user1", "test");
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("Authorization", "Bearer " + token);
         exchange.getIn().setHeader("id", nonExistingId);
 
         // expected
@@ -127,12 +169,14 @@ class BoardRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given valid board when route createBoard is called then board created")
-    void givenValidBoard_whenRouteCreateBoard_thenBoardCreated() throws JsonProcessingException {
+    void givenValidBoard_whenRouteCreateBoard_thenBoardCreated() throws Exception {
         // given
         BoardDTO inputBoard = new BoardDTO(null, "name_3", "Label 3", "Description 3", 1L);
         BoardDTO createdBoard = new BoardDTO(3L, inputBoard.getName(), inputBoard.getLabel(), inputBoard.getDescription(), 1L);
 
+        String token = obtainAccessToken("user1", "test");
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("Authorization", "Bearer " + token);
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         exchange.getIn().setBody(inputBoard);
 
@@ -155,11 +199,13 @@ class BoardRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given invalid topic when route createBoard is called then throws ResourceNotFoundException")
-    void givenInvalidTopic_whenRouteCreateBoard_thenThrowsResourceNotFoundException() {
+    void givenInvalidTopic_whenRouteCreateBoard_thenThrowsResourceNotFoundException() throws Exception {
         // given
         BoardDTO inputBoard = new BoardDTO(null, "name_3", "Label 3", "Description 3", 1L);
 
+        String token = obtainAccessToken("user1", "test");
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("Authorization", "Bearer " + token);
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         exchange.getIn().setBody(inputBoard);
 
@@ -181,11 +227,13 @@ class BoardRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given board exists when route createBoard is called with creating same board then throws resourceAlreadyExistExceptionHandler")
-    void givenBoardExists_whenRouteCreateBoardWithCreatingSameBoard_thenThrowsResourceAlreadyExistExceptionHandler() {
+    void givenBoardExists_whenRouteCreateBoardWithCreatingSameBoard_thenThrowsResourceAlreadyExistExceptionHandler() throws Exception {
         // given
         BoardDTO existingBoard = new BoardDTO(1L, "name_1", "Label 1", "Description 1", 1L);
 
+        String token = obtainAccessToken("user1", "test");
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("Authorization", "Bearer " + token);
         exchange.getIn().setBody(existingBoard);
         exchange.getIn().setHeader(Exchange.HTTP_METHOD, "POST");
 
@@ -207,13 +255,15 @@ class BoardRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given valid request when route updateBoard is called then board updated")
-    void givenValidRequest_whenRouteUpdateBoard_thenBoardUpdated() {
+    void givenValidRequest_whenRouteUpdateBoard_thenBoardUpdated() throws Exception {
         // given
         Long boardId = 1L;
         BoardDTO request = new BoardDTO(boardId, "name_1", "New label", "New description", 1L);
         BoardDTO updatedBoard = new BoardDTO(boardId, "name_1", "New label", "New description", 1L);
 
+        String token = obtainAccessToken("user1", "test");
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("Authorization", "Bearer " + token);
         exchange.getIn().setHeader("id", boardId);
         exchange.getIn().setBody(request);
 
@@ -233,12 +283,14 @@ class BoardRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given invalid request when route updateBoard is called then throws ResourceNotFoundExceptionHandler")
-    void givenInvalidRequest_whenRouteUpdateBoard_thenResourceThrowsNotFoundExceptionHandler() {
+    void givenInvalidRequest_whenRouteUpdateBoard_thenResourceThrowsNotFoundExceptionHandler() throws Exception {
         // given
         Long nonExistingId = 99L;
         BoardDTO request = new BoardDTO(nonExistingId, "newName", "New label", "New Description", 1L);
 
+        String token = obtainAccessToken("user1", "test");
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("Authorization", "Bearer " + token);
         exchange.getIn().setHeader("id", nonExistingId);
         exchange.getIn().setBody(request);
 
@@ -256,12 +308,14 @@ class BoardRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given invalid request with bad value when route updateBoard is called then throws ResourceBadValueHandler")
-    void givenInvalidRequestWithBadValue_whenRouteUpdateBoard_thenThrowsResourceBadValueHandler() {
+    void givenInvalidRequestWithBadValue_whenRouteUpdateBoard_thenThrowsResourceBadValueHandler() throws Exception {
         // given
         Long nonExistingId = 1L;
         BoardDTO request = new BoardDTO(nonExistingId, "name_1", null, "New description", 1L);
 
+        String token = obtainAccessToken("user1", "test");
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("Authorization", "Bearer " + token);
         exchange.getIn().setHeader("id", nonExistingId);
         exchange.getIn().setBody(request);
 
@@ -279,12 +333,14 @@ class BoardRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given board exists when route deleteBoard is called then board deleted")
-    void givenBoardExists_whenRouteDeleteBoard_thenBoardDeleted() {
+    void givenBoardExists_whenRouteDeleteBoard_thenBoardDeleted() throws Exception {
         // given
         Long boardId = 1L;
         BoardDTO boardDTO = new BoardDTO(boardId, "name_1", "Label 1", "Description 1", 1L);
 
+        String token = obtainAccessToken("user1", "test");
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("Authorization", "Bearer " + token);
         exchange.getIn().setHeader("id", boardId);
 
         // expected
@@ -303,11 +359,13 @@ class BoardRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given invalid request when route deleteBoard is called then throws ResourceNotFoundExceptionHandler")
-    void givenInvalidRequest_whenRouteDeleteBoard_thenResourceNotFoundExceptionHandler() {
+    void givenInvalidRequest_whenRouteDeleteBoard_thenResourceNotFoundExceptionHandler() throws Exception {
         // given
         Long nonExistingId = 99L;
 
+        String token = obtainAccessToken("user1", "test");
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("Authorization", "Bearer " + token);
         exchange.getIn().setHeader("id", nonExistingId);
 
         // expected
@@ -323,46 +381,14 @@ class BoardRouteBuilderIT extends TestContainerSetup {
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
     }
 
-    @Test
-    @DisplayName("given no auth when get boards then unauthorized")
-    void givenNoAuth_whenGetBoards_thenUnauthorized() {
-        // given
-        Exchange exchange = new DefaultExchange(camelContext);
-
-        // expected
-        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("TokenNullException",
-                "Token is null or empty. Token is required.");
-
-        // when
-        Exchange result = template.send(BoardRouteEnum.GET_ALL_BOARDS.getRouteName(), exchange);
-        GlobalExceptionDTO actualResponse = result.getMessage().getBody(GlobalExceptionDTO.class);
-
-        // then
-        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
-        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-    }
-
-    @Test
-    @DisplayName("given authenticated user with token when get boards then success")
-    void givenAuthenticatedUserWithToken_whenGetBoards_thenSuccess() throws Exception {
-        String token = obtainAccessToken("user1", "test");
-
-        Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setHeader("Authorization",  "Bearer " + token);
-
-        Exchange result = template.send(BoardRouteEnum.GET_ALL_BOARDS.getRouteName(), exchange);
-        ApiResponseDTO actualResponse = result.getMessage().getBody(ApiResponseDTO.class);
-
-        assertEquals(HttpStatus.OK.value(), actualResponse.getStatus());
-    }
 
     private String obtainAccessToken(String username, String password) throws Exception {
 
         HttpClient httpClient = HttpClients.createDefault();
         URIBuilder uriBuilder = new URIBuilder("http://localhost:11003/realms/reddot/protocol/openid-connect/token");
         String requestBody = "grant_type=password&client_id=reddot-app&client_secret=H80mMKQZYyXf9S7yQ2cEAxRmXud0uCmU"
-                + "&username=" + URLEncoder.encode(username, "UTF-8")
-                + "&password=" + URLEncoder.encode(password, "UTF-8");
+                + "&username=" + URLEncoder.encode(username, StandardCharsets.UTF_8)
+                + "&password=" + URLEncoder.encode(password, StandardCharsets.UTF_8);
         StringEntity stringEntity = new StringEntity(requestBody, ContentType.APPLICATION_FORM_URLENCODED);
 
         HttpPost httpPost = new HttpPost(uriBuilder.build());
