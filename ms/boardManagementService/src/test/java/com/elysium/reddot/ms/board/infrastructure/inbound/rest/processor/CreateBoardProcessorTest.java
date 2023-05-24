@@ -4,6 +4,7 @@ import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
+import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board.CreateBoardProcessor;
 import com.elysium.reddot.ms.board.infrastructure.mapper.BoardProcessorMapper;
 import com.elysium.reddot.ms.board.infrastructure.outbound.rabbitMQ.requester.TopicExistRequester;
 import org.apache.camel.CamelContext;

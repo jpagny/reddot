@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor;
+package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board;
 
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;

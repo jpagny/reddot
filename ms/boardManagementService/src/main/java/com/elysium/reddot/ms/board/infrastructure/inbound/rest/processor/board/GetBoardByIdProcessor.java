@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor;
+package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board;
 
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
@@ -11,23 +11,24 @@ import org.apache.camel.Processor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 @AllArgsConstructor
-public class GetAllBoardsProcessor implements Processor {
+public class GetBoardByIdProcessor implements Processor {
 
     private final BoardApplicationServiceImpl boardService;
 
     @Override
     public void process(Exchange exchange) {
-        List<BoardModel> listBoardsModel = boardService.getAllBoards();
+        Long inputId = Long.parseLong(exchange.getIn().getHeader("id").toString());
 
-        List<BoardDTO> listBoardsDTO = BoardProcessorMapper.toDTOList(listBoardsModel);
+        BoardModel boardModel = boardService.getBoardById(inputId);
+
+        BoardDTO boardDTO = BoardProcessorMapper.toDTO(boardModel);
         ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(),
-                "All boards retrieved successfully", listBoardsDTO);
+                "Board with id " + inputId + " retrieved successfully", boardDTO);
 
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());
         exchange.getMessage().setBody(apiResponseDTO);
     }
+
 }

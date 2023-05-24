@@ -4,11 +4,10 @@ import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
 import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteEnum;
 import com.elysium.reddot.ms.board.infrastructure.data.exception.HasNotRoleException;
 import com.elysium.reddot.ms.board.infrastructure.data.exception.TokenNotActiveException;
-import com.elysium.reddot.ms.board.infrastructure.data.property.KeycloakProperties;
 import com.elysium.reddot.ms.board.infrastructure.exception.processor.GlobalExceptionHandler;
-import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.BoardProcessorHolder;
-import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.CheckTokenProcessor;
-import lombok.AllArgsConstructor;
+import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board.BoardProcessorHolder;
+import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.keycloak.KeycloakProcessorHolder;
+import lombok.RequiredArgsConstructor;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
@@ -17,12 +16,12 @@ import org.springframework.stereotype.Component;
 import static org.apache.camel.support.builder.PredicateBuilder.not;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BoardRouteBuilder extends RouteBuilder {
 
     private final GlobalExceptionHandler globalExceptionHandler;
     private final BoardProcessorHolder boardProcessorHolder;
-    private final KeycloakProperties keycloakProperties;
+    private final KeycloakProcessorHolder keycloakProcessorHolder;
 
     @Override
     public void configure() {
@@ -50,7 +49,7 @@ public class BoardRouteBuilder extends RouteBuilder {
         // for all routes, intercept first check token
         interceptFrom()
                 .log("Check token")
-                .process(new CheckTokenProcessor(keycloakProperties))
+                .process(keycloakProcessorHolder.getCheckTokenProcessor())
                 .choice()
                 .when(header("active").isNotEqualTo(true))
                 .log(LoggingLevel.ERROR, "The token is inactive")

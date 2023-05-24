@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor;
+package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
