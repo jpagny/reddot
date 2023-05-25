@@ -3,7 +3,7 @@ package com.elysium.reddot.ms.message.infrastructure.inbound.rest.route;
 import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
 import com.elysium.reddot.ms.message.infrastructure.exception.type.HasNotRoleException;
 import com.elysium.reddot.ms.message.infrastructure.exception.type.TokenNotActiveException;
-import com.elysium.reddot.ms.message.infrastructure.inbound.constant.MessageRouteEnum;
+import com.elysium.reddot.ms.message.infrastructure.constant.MessageRouteEnum;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.keycloak.KeycloakProcessorHolder;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.message.MessageProcessorHolder;

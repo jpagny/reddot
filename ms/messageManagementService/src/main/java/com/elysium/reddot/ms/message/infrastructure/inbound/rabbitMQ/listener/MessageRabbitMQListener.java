@@ -1,6 +1,7 @@
 package com.elysium.reddot.ms.message.infrastructure.inbound.rabbitmq.listener;
 
 import com.elysium.reddot.ms.message.application.service.MessageRabbitMQService;
+import com.elysium.reddot.ms.message.infrastructure.constant.RabbitMQConstant;
 import com.elysium.reddot.ms.message.infrastructure.data.rabbitMQ.received.request.CountMessageByUserBetweenTwoDatesRequest;
 import com.elysium.reddot.ms.message.infrastructure.data.rabbitMQ.response.CountMessageByUserBetweenTwoDatesResponse;
 import com.elysium.reddot.ms.message.infrastructure.data.rabbitMQ.response.MessageExistsResponseDTO;
@@ -24,7 +25,7 @@ public class MessageRabbitMQListener {
     private final RabbitTemplate rabbitTemplate;
     private final MessageRabbitMQService messageRabbitMQService;
 
-    @RabbitListener(queues = "message.exists.queue")
+    @RabbitListener(queues = RabbitMQConstant.QUEUE_MESSAGE_EXIST)
     public void checkMessageExists(Message message) throws JsonProcessingException {
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
         Long messageId = (Long) messageConverter.fromMessage(message);
@@ -42,7 +43,7 @@ public class MessageRabbitMQListener {
         sendResponseToRabbit(message, responseMessage);
     }
 
-    @RabbitListener(queues = "count.message.user.dates.queue")
+    @RabbitListener(queues = RabbitMQConstant.QUEUE_COUNT_MESSAGES_BY_USER_IN_RANGE_DATES_QUEUE)
     public void countMessagesByUserBetweenTwoDates(Message message) throws JsonProcessingException {
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
 
@@ -50,7 +51,7 @@ public class MessageRabbitMQListener {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         CountMessageByUserBetweenTwoDatesRequest requestReceived = objectMapper.readValue(jsonMessage, CountMessageByUserBetweenTwoDatesRequest.class);
-
+        log.debug("TESTTT : " + requestReceived.toString());
         Integer countMessagesTotalOnRangeDate = messageRabbitMQService.countMessageByUserIdBetweenTwoDates(
                 requestReceived.getUserId(),
                 requestReceived.getOnStart(),

@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.message.infrastructure.inbound.constant;
+package com.elysium.reddot.ms.message.infrastructure.constant;
 
 public enum MessageRouteEnum {
 

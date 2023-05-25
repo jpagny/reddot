@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class ThreadExistsResponseDTO {
-    private static final long serialVersionUID = 1L;
-    private Long boardId;
+    private Long threadId;
     private boolean exists;
 }

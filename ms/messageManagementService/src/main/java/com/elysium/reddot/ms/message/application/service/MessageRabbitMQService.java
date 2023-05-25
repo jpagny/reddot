@@ -21,6 +21,7 @@ public class MessageRabbitMQService {
     }
 
     public Integer countMessageByUserIdBetweenTwoDates(String userId, LocalDateTime onStart, LocalDateTime onEnd) {
+        System.out.println("ICII : " + onStart + " - " + onEnd);
         List<MessageModel> listMessages = messageRepository.listMessagesByUserAndRangeDate(userId, onStart, onEnd);
         return listMessages.size();
     }

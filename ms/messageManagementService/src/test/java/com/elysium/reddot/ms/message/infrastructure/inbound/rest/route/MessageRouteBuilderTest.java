@@ -9,7 +9,7 @@ import com.elysium.reddot.ms.message.application.service.KeycloakService;
 import com.elysium.reddot.ms.message.application.service.MessageApplicationServiceImpl;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import com.elysium.reddot.ms.message.infrastructure.data.dto.GlobalExceptionDTO;
-import com.elysium.reddot.ms.message.infrastructure.inbound.constant.MessageRouteEnum;
+import com.elysium.reddot.ms.message.infrastructure.constant.MessageRouteEnum;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.keycloak.CheckTokenProcessor;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.keycloak.KeycloakProcessorHolder;
