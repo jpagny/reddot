@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TopicProcessorMapperTest {
+class TopicProcessorMapperTest {
 
     @Test
     @DisplayName("given topicModel when toDTO is called then returns topicDTO")

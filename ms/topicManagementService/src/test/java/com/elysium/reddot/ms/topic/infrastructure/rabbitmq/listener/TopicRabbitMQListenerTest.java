@@ -1,7 +1,7 @@
 package com.elysium.reddot.ms.topic.infrastructure.rabbitmq.listener;
 
 import com.elysium.reddot.ms.topic.application.service.TopicRabbitMQService;
-import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.rabbitMQ.TopicRabbitMQListener;
+import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.rabbitmq.TopicRabbitMQListener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TopicRabbitMQListenerTest {
+class TopicRabbitMQListenerTest {
 
     @InjectMocks
     private TopicRabbitMQListener topicRabbitMQListener;

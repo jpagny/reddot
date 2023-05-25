@@ -4,7 +4,7 @@ import com.elysium.reddot.ms.topic.application.exception.type.ResourceAlreadyExi
 import com.elysium.reddot.ms.topic.application.exception.type.ResourceBadValueException;
 import com.elysium.reddot.ms.topic.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
-import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.ITopicRepositoryAdapter;
+import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.TopicRepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class TopicApplicationServiceTest {
 
     private TopicApplicationServiceImpl topicService;
     @Mock
-    private ITopicRepositoryAdapter topicRepository;
+    private TopicRepositoryAdapter topicRepository;
 
     @BeforeEach
     void setUp() {

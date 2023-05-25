@@ -8,7 +8,6 @@ import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicProcessorMapper;
 import lombok.AllArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 

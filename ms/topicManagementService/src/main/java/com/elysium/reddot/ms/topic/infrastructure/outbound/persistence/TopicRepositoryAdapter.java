@@ -13,11 +13,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class ITopicRepositoryAdapter implements ITopicRepository {
+public class TopicRepositoryAdapter implements ITopicRepository {
 
     private final TopicJpaRepository topicJpaRepository;
 
-    public ITopicRepositoryAdapter(TopicJpaRepository topicJpaRepository) {
+    public TopicRepositoryAdapter(TopicJpaRepository topicJpaRepository) {
         this.topicJpaRepository = topicJpaRepository;
     }
 

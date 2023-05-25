@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.topic.infrastructure.configuration;
 
+import com.elysium.reddot.ms.topic.infrastructure.constant.RabbitMQConstant;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -19,15 +20,15 @@ public class RabbitMQConfig {
         // ### TOPIC / BOARD
 
         // Create topic / board exchange
-        TopicExchange topicBoardExchange = new TopicExchange("topicBoardExchange");
+        TopicExchange topicBoardExchange = new TopicExchange(RabbitMQConstant.EXCHANGE_TOPIC_BOARD);
         rabbitAdmin.declareExchange(topicBoardExchange);
 
         // Create queue
-        Queue topicExistsQueue = new Queue("topic.exists.queue");
+        Queue topicExistsQueue = new Queue(RabbitMQConstant.QUEUE_TOPIC_EXIST);
         rabbitAdmin.declareQueue(topicExistsQueue);
 
         // Create binding between queue and exchange for requests
-        Binding topicRequestBinding = BindingBuilder.bind(topicExistsQueue).to(topicBoardExchange).with("topic.exists.request");
+        Binding topicRequestBinding = BindingBuilder.bind(topicExistsQueue).to(topicBoardExchange).with(RabbitMQConstant.REQUEST_TOPIC_EXIST);
         rabbitAdmin.declareBinding(topicRequestBinding);
 
         return rabbitAdmin;
