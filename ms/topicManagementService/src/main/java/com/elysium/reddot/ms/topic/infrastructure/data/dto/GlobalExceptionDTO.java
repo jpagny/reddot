@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.infrastructure.data.exception;
+package com.elysium.reddot.ms.topic.infrastructure.data.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

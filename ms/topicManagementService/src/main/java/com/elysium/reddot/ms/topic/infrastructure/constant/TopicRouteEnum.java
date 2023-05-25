@@ -1,6 +1,6 @@
-package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.route;
+package com.elysium.reddot.ms.topic.infrastructure.constant;
 
-public enum TopicRouteConstants {
+public enum TopicRouteEnum {
 
     GET_ALL_TOPICS("direct:getAllTopics"),
     GET_TOPIC_BY_ID("direct:getTopicById"),
@@ -10,7 +10,7 @@ public enum TopicRouteConstants {
 
     private final String routeName;
 
-    TopicRouteConstants(String routeName) {
+    TopicRouteEnum(String routeName) {
         this.routeName = routeName;
     }
 

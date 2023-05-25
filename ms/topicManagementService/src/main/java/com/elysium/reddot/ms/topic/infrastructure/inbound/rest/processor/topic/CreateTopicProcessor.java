@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
+package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.topic;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;

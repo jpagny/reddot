@@ -8,8 +8,8 @@ import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceIm
 import com.elysium.reddot.ms.board.application.service.KeycloakService;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteEnum;
-import com.elysium.reddot.ms.board.infrastructure.data.exception.GlobalExceptionDTO;
-import com.elysium.reddot.ms.board.infrastructure.exception.processor.GlobalExceptionHandler;
+import com.elysium.reddot.ms.board.infrastructure.data.dto.GlobalExceptionDTO;
+import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board.*;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.keycloak.CheckTokenProcessor;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.keycloak.KeycloakProcessorHolder;
@@ -28,9 +28,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;

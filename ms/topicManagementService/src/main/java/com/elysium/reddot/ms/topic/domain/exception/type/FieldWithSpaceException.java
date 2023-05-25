@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.domain.exception;
+package com.elysium.reddot.ms.topic.domain.exception.type;
 
 public class FieldWithSpaceException extends RuntimeException {
     public FieldWithSpaceException(String field) {

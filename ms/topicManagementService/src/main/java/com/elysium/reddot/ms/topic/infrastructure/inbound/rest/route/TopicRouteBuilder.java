@@ -1,12 +1,19 @@
 package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
-import com.elysium.reddot.ms.topic.infrastructure.exception.processor.GlobalExceptionHandler;
-import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.TopicProcessorHolder;
+import com.elysium.reddot.ms.topic.infrastructure.constant.TopicRouteEnum;
+import com.elysium.reddot.ms.topic.infrastructure.exception.type.HasNotRoleException;
+import com.elysium.reddot.ms.topic.infrastructure.exception.type.TokenNotActiveException;
+import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
+import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.keycloak.KeycloakProcessorHolder;
+import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.topic.TopicProcessorHolder;
 import lombok.RequiredArgsConstructor;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
+
+import static org.apache.camel.support.builder.PredicateBuilder.not;
 
 @Component
 @RequiredArgsConstructor
@@ -14,6 +21,7 @@ public class TopicRouteBuilder extends RouteBuilder {
 
     private final GlobalExceptionHandler globalExceptionHandler;
     private final TopicProcessorHolder topicProcessorHolder;
+    private final KeycloakProcessorHolder keycloakProcessorHolder;
 
     @Override
     public void configure() {
@@ -31,14 +39,34 @@ public class TopicRouteBuilder extends RouteBuilder {
 
         // definition routes
         rest().
-                get().to(TopicRouteConstants.GET_ALL_TOPICS.getRouteName())
-                .get(requestId).to(TopicRouteConstants.GET_TOPIC_BY_ID.getRouteName())
-                .post().type(TopicDTO.class).to(TopicRouteConstants.CREATE_TOPIC.getRouteName())
-                .put(requestId).type(TopicDTO.class).to(TopicRouteConstants.UPDATE_TOPIC.getRouteName())
-                .delete(requestId).to(TopicRouteConstants.DELETE_TOPIC.getRouteName());
+                get().to(TopicRouteEnum.GET_ALL_TOPICS.getRouteName())
+                .get(requestId).to(TopicRouteEnum.GET_TOPIC_BY_ID.getRouteName())
+                .post().type(TopicDTO.class).to(TopicRouteEnum.CREATE_TOPIC.getRouteName())
+                .put(requestId).type(TopicDTO.class).to(TopicRouteEnum.UPDATE_TOPIC.getRouteName())
+                .delete(requestId).to(TopicRouteEnum.DELETE_TOPIC.getRouteName());
+
+        // for all routes, intercept first check token
+        interceptFrom()
+                .log("Check token")
+                .process(keycloakProcessorHolder.getCheckTokenProcessor())
+                .choice()
+                .when(header("active").isNotEqualTo(true))
+                .log(LoggingLevel.ERROR, "The token is inactive")
+                .process(exchange -> {
+                    throw new TokenNotActiveException();
+                })
+                .when(not(header("roles").contains("user")))
+                .log(LoggingLevel.ERROR, "Having role admin is required")
+                .process(exchange -> {
+                    throw new HasNotRoleException("user");
+                })
+                .otherwise()
+                .log("Token check complete. Processing now underway...")
+                .end();
+
 
         // route : get all topics
-        from(TopicRouteConstants.GET_ALL_TOPICS.getRouteName())
+        from(TopicRouteEnum.GET_ALL_TOPICS.getRouteName())
                 .routeId("getAllTopics")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Retrieving all topics")
                 .process(topicProcessorHolder.getGetAllTopicsProcessor())
@@ -46,7 +74,7 @@ public class TopicRouteBuilder extends RouteBuilder {
                 .end();
 
         // route : get topic by id
-        from(TopicRouteConstants.GET_TOPIC_BY_ID.getRouteName())
+        from(TopicRouteEnum.GET_TOPIC_BY_ID.getRouteName())
                 .routeId("getTopicById")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Getting topic with id '${header.id}'")
                 .process(topicProcessorHolder.getGetTopicByIdProcessor())
@@ -54,7 +82,7 @@ public class TopicRouteBuilder extends RouteBuilder {
                 .end();
 
         // route : create topic
-        from(TopicRouteConstants.CREATE_TOPIC.getRouteName())
+        from(TopicRouteEnum.CREATE_TOPIC.getRouteName())
                 .routeId("createTopic")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Creating a new topic")
                 .process(topicProcessorHolder.getCreateTopicProcessor())
@@ -62,7 +90,7 @@ public class TopicRouteBuilder extends RouteBuilder {
                 .end();
 
         // route : update topic
-        from(TopicRouteConstants.UPDATE_TOPIC.getRouteName())
+        from(TopicRouteEnum.UPDATE_TOPIC.getRouteName())
                 .routeId("updateTopic")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Updating topic with id '${header.id}'")
                 .process(topicProcessorHolder.getUpdateTopicProcessor())
@@ -70,7 +98,7 @@ public class TopicRouteBuilder extends RouteBuilder {
                 .end();
 
         // route : delete topic
-        from(TopicRouteConstants.DELETE_TOPIC.getRouteName())
+        from(TopicRouteEnum.DELETE_TOPIC.getRouteName())
                 .routeId("deleteTopic")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Deleting topic with id '${header.id}'")
                 .process(topicProcessorHolder.getDeleteTopicProcessor())

@@ -1,6 +1,6 @@
 package com.elysium.reddot.ms.topic.domain.port.inbound;
 
-import com.elysium.reddot.ms.topic.domain.exception.FieldEmptyException;
+import com.elysium.reddot.ms.topic.domain.exception.type.FieldEmptyException;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 
 import java.util.List;

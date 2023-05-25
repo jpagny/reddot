@@ -1,7 +1,7 @@
-package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.keycloak;
+package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.keycloak;
 
-import com.elysium.reddot.ms.board.application.service.KeycloakService;
-import com.elysium.reddot.ms.board.infrastructure.exception.type.TokenNotValidException;
+import com.elysium.reddot.ms.topic.application.service.KeycloakService;
+import com.elysium.reddot.ms.topic.infrastructure.exception.type.TokenNotValidException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

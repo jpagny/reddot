@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
+package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.topic;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
@@ -13,18 +13,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class DeleteTopicProcessor implements Processor {
+public class UpdateTopicProcessor implements Processor {
 
-    private final TopicApplicationServiceImpl topicApplicationService;
+    private final TopicApplicationServiceImpl topicService;
 
     @Override
     public void process(Exchange exchange) {
         Long inputId = exchange.getIn().getHeader("id", Long.class);
+        TopicDTO inputTopicDTO = exchange.getIn().getBody(TopicDTO.class);
+        TopicModel topicToUpdateModel = TopicProcessorMapper.toModel(inputTopicDTO);
 
-        TopicModel deletedTopicModel = topicApplicationService.deleteTopicById(inputId);
+        TopicModel updatedTopicModel = topicService.updateTopic(inputId, topicToUpdateModel);
 
-        TopicDTO deletedTopicDTO = TopicProcessorMapper.toDTO(deletedTopicModel);
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "Topic with id " + inputId + " deleted successfully", deletedTopicDTO);
+        TopicDTO updatedTopicDTO = TopicProcessorMapper.toDTO(updatedTopicModel);
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "Topic with name " + updatedTopicDTO.getName() + " updated successfully", updatedTopicDTO);
 
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());
         exchange.getMessage().setBody(apiResponseDTO);

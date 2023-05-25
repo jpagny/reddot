@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.domain.exception;
+package com.elysium.reddot.ms.topic.domain.exception.type;
 
 public class FieldEmptyException extends RuntimeException {
     public FieldEmptyException(String fieldName) {

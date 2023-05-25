@@ -1,9 +1,9 @@
-package com.elysium.reddot.ms.board.infrastructure.exception.processor;
+package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.exception;
 
 import com.elysium.reddot.ms.board.application.exception.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.board.application.exception.ResourceBadValueException;
 import com.elysium.reddot.ms.board.application.exception.ResourceNotFoundException;
-import com.elysium.reddot.ms.board.infrastructure.data.exception.GlobalExceptionDTO;
+import com.elysium.reddot.ms.board.infrastructure.data.dto.GlobalExceptionDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
