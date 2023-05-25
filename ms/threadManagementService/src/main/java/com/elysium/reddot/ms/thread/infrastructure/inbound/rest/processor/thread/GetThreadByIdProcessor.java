@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor;
+package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread;
 
 import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
@@ -13,20 +13,22 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class DeleteThreadProcessor implements Processor {
+public class GetThreadByIdProcessor implements Processor {
 
-    private final ThreadApplicationServiceImpl threadApplicationService;
+    private final ThreadApplicationServiceImpl threadService;
 
     @Override
     public void process(Exchange exchange) {
-        Long inputId = exchange.getIn().getHeader("id", Long.class);
+        Long inputId = Long.parseLong(exchange.getIn().getHeader("id").toString());
 
-        ThreadModel deletedThreadModel = threadApplicationService.deleteThreadById(inputId);
+        ThreadModel threadModel = threadService.getThreadById(inputId);
 
-        ThreadDTO deletedThreadDTO = ThreadProcessorMapper.toDTO(deletedThreadModel);
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "Thread with id " + inputId + " deleted successfully", deletedThreadDTO);
+        ThreadDTO threadDTO = ThreadProcessorMapper.toDTO(threadModel);
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(),
+                "Thread with id " + inputId + " retrieved successfully", threadDTO);
 
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());
         exchange.getMessage().setBody(apiResponseDTO);
     }
+
 }

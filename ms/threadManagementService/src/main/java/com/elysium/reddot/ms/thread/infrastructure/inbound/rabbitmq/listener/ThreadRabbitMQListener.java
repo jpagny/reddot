@@ -1,6 +1,7 @@
-package com.elysium.reddot.ms.thread.infrastructure.inbound.rabbitMQ.listener;
+package com.elysium.reddot.ms.thread.infrastructure.inbound.rabbitmq.listener;
 
-import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
+import com.elysium.reddot.ms.thread.application.service.ThreadRabbitMQService;
+import com.elysium.reddot.ms.thread.infrastructure.constant.RabbitMQConstant;
 import com.elysium.reddot.ms.thread.infrastructure.data.dto.BoardExistsResponseDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,24 +15,24 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class ThreadListener {
+public class ThreadRabbitMQListener {
 
     private final RabbitTemplate rabbitTemplate;
-    private final ThreadApplicationServiceImpl threadApplicationService;
+    private final ThreadRabbitMQService threadRabbitMQService;
     private final ObjectMapper objectMapper;
 
-    public ThreadListener(RabbitTemplate rabbitTemplate, ThreadApplicationServiceImpl threadApplicationService) {
+    public ThreadRabbitMQListener(RabbitTemplate rabbitTemplate, ThreadRabbitMQService threadRabbitMQService) {
         this.rabbitTemplate = rabbitTemplate;
-        this.threadApplicationService = threadApplicationService;
+        this.threadRabbitMQService = threadRabbitMQService;
         this.objectMapper = new ObjectMapper();
     }
 
-    @RabbitListener(queues = "thread.exists.queue")
+    @RabbitListener(queues = RabbitMQConstant.QUEUE_THREAD_EXIST)
     public void checkThreadExists(Message message) throws JsonProcessingException {
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
         Long threadId = (Long) messageConverter.fromMessage(message);
 
-        boolean exists = threadApplicationService.checkThreadIdExists(threadId);
+        boolean exists = threadRabbitMQService.checkThreadIdExists(threadId);
         BoardExistsResponseDTO response = new BoardExistsResponseDTO();
         response.setBoardId(threadId);
         response.setExists(exists);

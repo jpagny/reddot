@@ -1,7 +1,7 @@
-package com.elysium.reddot.ms.board.infrastructure.inbound.rest.rabbitmq.listener;
+package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.rabbitmq.listener;
 
-import com.elysium.reddot.ms.board.application.service.BoardRabbitMQService;
-import com.elysium.reddot.ms.board.infrastructure.inbound.rabbitmq.listener.BoardRabbitMQListener;
+import com.elysium.reddot.ms.thread.application.service.ThreadRabbitMQService;
+import com.elysium.reddot.ms.thread.infrastructure.inbound.rabbitmq.listener.ThreadRabbitMQListener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,38 +24,38 @@ class RabbitMQListenerTest {
     private RabbitTemplate rabbitTemplate;
 
     @Mock
-    private BoardRabbitMQService boardRabbitMQService;
+    private ThreadRabbitMQService threadRabbitMQService;
 
-    private BoardRabbitMQListener rabbitMQListener;
+    private ThreadRabbitMQListener threadRabbitMQListener;
 
     @BeforeEach
     void setUp() {
-        rabbitMQListener = new BoardRabbitMQListener(rabbitTemplate, boardRabbitMQService);
+        threadRabbitMQListener = new ThreadRabbitMQListener(rabbitTemplate, threadRabbitMQService);
     }
 
     @Test
-    @DisplayName("given a valid message, when checkBoardExists is called, then send a reply message")
-    void givenValidMessage_whenCheckBoardExists_thenSendReplyMessage() throws JsonProcessingException {
+    @DisplayName("given a valid message, when checkThreadExists is called, then send a reply message")
+    void givenValidMessage_whenCheckThreadExists_thenSendReplyMessage() throws JsonProcessingException {
         // given
         Long boardId = 123L;
         boolean exists = true;
 
         // mock
         MessageConverter messageConverter = mock(MessageConverter.class);
-        Message message = mock(org.springframework.amqp.core.Message.class);
+        Message message = mock(Message.class);
         MessageProperties messageProperties = mock(MessageProperties.class);
 
         when(rabbitTemplate.getMessageConverter()).thenReturn(messageConverter);
         when(messageConverter.fromMessage(any())).thenReturn(boardId);
-        when(boardRabbitMQService.checkBoardIdExists(boardId)).thenReturn(exists);
+        when(threadRabbitMQService.checkThreadIdExists(boardId)).thenReturn(exists);
         when(message.getMessageProperties()).thenReturn(messageProperties);
         when(messageProperties.getReplyTo()).thenReturn("replyTo");
         when(messageProperties.getCorrelationId()).thenReturn("correlationId");
 
         // when
-        rabbitMQListener.checkTopicExists(message);
+        threadRabbitMQListener.checkThreadExists(message);
 
         // then
-        verify(rabbitTemplate, times(1)).send(eq("replyTo"), any(org.springframework.amqp.core.Message.class));
+        verify(rabbitTemplate, times(1)).send(eq("replyTo"), any(Message.class));
     }
 }

@@ -9,8 +9,8 @@ import com.elysium.reddot.ms.board.application.service.KeycloakService;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteEnum;
 import com.elysium.reddot.ms.board.infrastructure.data.dto.GlobalExceptionDTO;
-import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board.*;
+import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.keycloak.CheckTokenProcessor;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.keycloak.KeycloakProcessorHolder;
 import com.elysium.reddot.ms.board.infrastructure.mapper.BoardProcessorMapper;
@@ -88,7 +88,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
 
         // when
-        Exchange responseExchange = template.send("direct:getAllBoards", exchange);
+        Exchange responseExchange = template.send(BoardRouteEnum.GET_ALL_BOARDS.getRouteName(), exchange);
         GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
 
         // then
@@ -113,7 +113,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
 
         // when
-        Exchange responseExchange = template.send("direct:getAllBoards", exchange);
+        Exchange responseExchange = template.send(BoardRouteEnum.GET_ALL_BOARDS.getRouteName(), exchange);
         GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
 
         // then

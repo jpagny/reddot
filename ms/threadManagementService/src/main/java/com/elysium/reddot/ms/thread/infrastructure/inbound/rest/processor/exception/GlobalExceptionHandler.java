@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.thread.infrastructure.exception.processor;
+package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.exception;
 
 import com.elysium.reddot.ms.thread.application.exception.type.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.thread.application.exception.type.ResourceBadValueException;

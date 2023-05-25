@@ -1,17 +1,19 @@
-package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor;
+package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread;
 
 import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
 import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadProcessorMapper;
-import com.elysium.reddot.ms.thread.infrastructure.outbound.rabbitMQ.requester.BoardExistRequester;
+import com.elysium.reddot.ms.thread.infrastructure.outbound.rabbitmq.requester.BoardExistRequester;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 @Component
 @AllArgsConstructor
@@ -22,14 +24,12 @@ public class CreateThreadProcessor implements Processor {
     private final BoardExistRequester boardExistRequester;
 
     @Override
-    public void process(Exchange exchange) {
+    public void process(Exchange exchange) throws IOException {
 
         ThreadDTO inputThreadDTO = exchange.getIn().getBody(ThreadDTO.class);
         ThreadModel threadModel = ThreadProcessorMapper.toModel(inputThreadDTO);
 
         boardExistRequester.verifyBoardIdExistsOrThrow(threadModel.getBoardId());
-        // add userId
-        threadModel.setUserId("1");
 
         createThreadAndSetResponse(exchange, threadModel);
     }

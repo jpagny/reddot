@@ -57,10 +57,12 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
     @Override
     public ThreadModel createThread(ThreadModel threadToCreateModel) {
 
-        log.debug("Creating new thread with name '{}', label '{}, description '{}'",
+        log.debug("Creating new thread with name '{}', label '{}, description '{}', boardId '{}', userId '{}'",
                 threadToCreateModel.getName(),
                 threadToCreateModel.getLabel(),
-                threadToCreateModel.getDescription());
+                threadToCreateModel.getDescription(),
+                threadToCreateModel.getBoardId(),
+                threadToCreateModel.getUserId());
 
         Optional<ThreadModel> existingThread = threadRepository.findThreadByName(threadToCreateModel.getName());
 
@@ -76,19 +78,25 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
 
         ThreadModel createdThreadModel = threadRepository.createThread(threadToCreateModel);
 
-        log.info("Successfully created thread with id {}, name '{}', label '{}' description '{}'",
-                createdThreadModel.getId(),
+        log.debug("Creating new thread with name '{}', label '{}, description '{}', boardId '{}', userId '{}'",
                 createdThreadModel.getName(),
                 createdThreadModel.getLabel(),
-                createdThreadModel.getDescription());
+                createdThreadModel.getDescription(),
+                createdThreadModel.getBoardId(),
+                createdThreadModel.getUserId());
+
 
         return createdThreadModel;
     }
 
     @Override
     public ThreadModel updateThread(Long id, ThreadModel threadToUpdateModel) {
-        log.debug("Updating thread with id '{}', name '{}', label '{}', description '{}'",
-                id, threadToUpdateModel.getName(), threadToUpdateModel.getLabel(), threadToUpdateModel.getDescription());
+        log.debug("Updating new thread with name '{}', label '{}, description '{}', boardId '{}', userId '{}'",
+                threadToUpdateModel.getName(),
+                threadToUpdateModel.getLabel(),
+                threadToUpdateModel.getDescription(),
+                threadToUpdateModel.getBoardId(),
+                threadToUpdateModel.getUserId());
 
         ThreadModel existingThreadModel = threadRepository.findThreadById(id).orElseThrow(
                 () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
@@ -99,11 +107,12 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
 
             ThreadModel updatedThreadModel = threadRepository.updateThread(threadModelWithUpdates);
 
-            log.info("Successfully updated thread with id '{}', name '{}', label'{}, description '{}'",
-                    updatedThreadModel.getId(),
+            log.info("Successfully updated thread with name '{}', label'{}, description '{}', boardId '{}', userId '{}'",
                     updatedThreadModel.getName(),
                     updatedThreadModel.getLabel(),
-                    updatedThreadModel.getDescription());
+                    updatedThreadModel.getDescription(),
+                    updatedThreadModel.getBoardId(),
+                    updatedThreadModel.getUserId());
 
             return updatedThreadModel;
 
@@ -127,12 +136,6 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
                 threadToDelete.getId(), threadToDelete.getName(), threadToDelete.getDescription());
 
         return threadToDelete;
-    }
-
-    @Override
-    public boolean checkThreadIdExists(Long id) {
-        Optional<ThreadModel> threadModel = threadRepository.findThreadById(id);
-        return threadModel.isPresent();
     }
 
 }

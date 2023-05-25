@@ -16,7 +16,5 @@ public interface IThreadManagementService {
     ThreadModel updateThread(Long id, ThreadModel threadModel);
 
     ThreadModel deleteThreadById(Long id);
-
-    boolean checkThreadIdExists(Long id);
-
+    
 }

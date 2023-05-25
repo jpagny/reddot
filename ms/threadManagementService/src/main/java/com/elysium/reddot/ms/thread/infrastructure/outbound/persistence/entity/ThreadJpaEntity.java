@@ -22,7 +22,9 @@ public class ThreadJpaEntity {
 
     private String description;
 
+    @Column(name = "board_id")
     private Long boardId;
 
+    @Column(name = "user_id")
     private String userId;
 }

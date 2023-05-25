@@ -1,10 +1,10 @@
-package com.elysium.reddot.ms.thread.infrastructure.rest.processor;
+package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
 import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
-import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.DeleteThreadProcessor;
+import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread.DeleteThreadProcessor;
 import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadProcessorMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;

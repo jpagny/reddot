@@ -1,13 +1,9 @@
 package com.elysium.reddot.ms.board.infrastructure.data.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class TopicExistsResponseDTO  {
+public class TopicExistsResponseDTO {
     private Long topicId;
     private boolean exists;
 }

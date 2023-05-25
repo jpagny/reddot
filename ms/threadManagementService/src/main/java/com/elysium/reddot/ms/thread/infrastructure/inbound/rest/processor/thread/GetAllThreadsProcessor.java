@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor;
+package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread;
 
 import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
@@ -11,24 +11,23 @@ import org.apache.camel.Processor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @AllArgsConstructor
-public class GetThreadByIdProcessor implements Processor {
+public class GetAllThreadsProcessor implements Processor {
 
     private final ThreadApplicationServiceImpl threadService;
 
     @Override
     public void process(Exchange exchange) {
-        Long inputId = Long.parseLong(exchange.getIn().getHeader("id").toString());
+        List<ThreadModel> listThreadsModel = threadService.getAllThreads();
 
-        ThreadModel threadModel = threadService.getThreadById(inputId);
-
-        ThreadDTO threadDTO = ThreadProcessorMapper.toDTO(threadModel);
+        List<ThreadDTO> listThreadsDTO = ThreadProcessorMapper.toDTOList(listThreadsModel);
         ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Thread with id " + inputId + " retrieved successfully", threadDTO);
+                "All threads retrieved successfully", listThreadsDTO);
 
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());
         exchange.getMessage().setBody(apiResponseDTO);
     }
-
 }

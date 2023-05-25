@@ -1,12 +1,12 @@
-package com.elysium.reddot.ms.thread.infrastructure.rest.processor;
+package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
 import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
-import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.CreateThreadProcessor;
+import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread.CreateThreadProcessor;
 import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadProcessorMapper;
-import com.elysium.reddot.ms.thread.infrastructure.outbound.rabbitMQ.requester.BoardExistRequester;
+import com.elysium.reddot.ms.thread.infrastructure.outbound.rabbitmq.requester.BoardExistRequester;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -18,6 +18,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -43,7 +45,7 @@ class CreateThreadProcessorTest {
 
     @Test
     @DisplayName("given valid thread when createThread is called then thread created successfully")
-    void givenValidThread_whenCreateThread_thenThreadCreatedSuccessfully() {
+    void givenValidThread_whenCreateThread_thenThreadCreatedSuccessfully() throws IOException {
         // given
         ThreadDTO threadToCreateDTO = new ThreadDTO(null, "name", "Name", "Thread description",1L,"userId");
         ThreadModel threadToCreateModel = new ThreadModel(null, "name", "Name", "Thread description",1L,"userId");
