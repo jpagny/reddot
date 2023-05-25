@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.message.infrastructure.inbound.rabbitMQ.listener;
+package com.elysium.reddot.ms.message.infrastructure.inbound.rabbitmq.listener;
 
 import com.elysium.reddot.ms.message.application.service.MessageRabbitMQService;
 import com.elysium.reddot.ms.message.infrastructure.data.rabbitMQ.received.request.CountMessageByUserBetweenTwoDatesRequest;

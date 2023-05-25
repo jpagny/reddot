@@ -38,6 +38,12 @@ public class MessageRepositoryAdapter implements IMessageRepository {
     }
 
     @Override
+    public Optional<MessageModel> findByContent(String content) {
+        return messageJpaRepository.findByContent(content)
+                .map(MessagePersistenceMapper::toModel);
+    }
+
+    @Override
     public List<MessageModel> findAllMessages() {
         return messageJpaRepository.findAll()
                 .stream()
@@ -52,13 +58,7 @@ public class MessageRepositoryAdapter implements IMessageRepository {
         return MessagePersistenceMapper.toModel(updatedMessage);
     }
 
-    @Override
-    public void deleteMessage(Long id) {
-        messageJpaRepository.deleteById(id);
-    }
-
     public List<MessageModel> listMessagesByUserAndRangeDate(String userId, LocalDateTime onStart, LocalDateTime onEnd) {
-        log.debug("REPO ICI : " + userId +  " - " + onStart.toString() + " - " + onEnd.toString());
         return messageJpaRepository.findMessagesByUserIdAndDateRange(userId, onStart, onEnd)
                 .stream()
                 .map(MessagePersistenceMapper::toModel)

@@ -21,6 +21,13 @@ public class MessageDTO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
+    public MessageDTO(Long id, String content, Long threadId, String userId){
+        this.id = id;
+        this.content = content;
+        this.threadId = threadId;
+        this.userId = userId;
+    }
+
     public MessageDTO(String content, Long threadId, String userId){
         this.content = content;
         this.threadId = threadId;

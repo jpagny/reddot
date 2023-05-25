@@ -8,9 +8,12 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MessageJpaRepository extends JpaRepository<MessageJpaEntity, Long> {
+
+    Optional<MessageJpaEntity> findByContent(String content);
     @Query("SELECT m FROM MessageJpaEntity m WHERE m.userId = :userId AND m.createdAt BETWEEN :startDate AND :endDate")
     List<MessageJpaEntity> findMessagesByUserIdAndDateRange(@Param("userId") String userId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 }

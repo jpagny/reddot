@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.message.infrastructure.outbound.rabbitMQ.requester;
+package com.elysium.reddot.ms.message.infrastructure.outbound.rabbitmq.requester;
 
 import com.elysium.reddot.ms.message.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.message.infrastructure.data.rabbitMQ.received.response.ThreadExistsResponseDTO;

@@ -79,8 +79,8 @@ public class MessageApplicationServiceTest {
     @DisplayName("given a valid message model when creating a message, then return the created message model")
     public void givenValidMessageModel_whenCreateMessage_thenReturnCreatedMessageModel() {
         // given
-        MessageModel messageToCreateModel = new MessageModel();
-        MessageModel expectedMessageModel = new MessageModel();
+        MessageModel messageToCreateModel = new MessageModel("content",1L,"userId");
+        MessageModel expectedMessageModel = new MessageModel("content",1L,"userId");
         expectedMessageModel.setCreatedAt(LocalDateTime.now());
         expectedMessageModel.setUpdatedAt(expectedMessageModel.getCreatedAt());
         when(messageRepository.createMessage(messageToCreateModel)).thenReturn(expectedMessageModel);
@@ -98,7 +98,6 @@ public class MessageApplicationServiceTest {
     public void givenProblemDuringCreation_whenCreateMessage_thenThrowException() {
         // given
         MessageModel messageToCreateModel = new MessageModel();
-        when(messageRepository.createMessage(messageToCreateModel)).thenThrow(new ResourceBadValueException("message", "test"));
 
         // when / then
         assertThrows(ResourceBadValueException.class, () -> messageApplicationService.createMessage(messageToCreateModel));

@@ -4,6 +4,7 @@ import com.elysium.reddot.ms.message.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
 import com.elysium.reddot.ms.message.application.service.MessageApplicationServiceImpl;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
+import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.message.GetMessageByIdProcessor;
 import com.elysium.reddot.ms.message.infrastructure.mapper.MessageProcessorMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;

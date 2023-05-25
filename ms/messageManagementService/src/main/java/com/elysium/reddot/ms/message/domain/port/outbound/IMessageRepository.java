@@ -11,9 +11,10 @@ public interface IMessageRepository {
 
     Optional<MessageModel> findMessageById(Long id);
 
+    Optional<MessageModel> findByContent(String content);
+
     List<MessageModel> findAllMessages();
 
     MessageModel updateMessage(MessageModel messageModel);
 
-    void deleteMessage(Long id);
 }

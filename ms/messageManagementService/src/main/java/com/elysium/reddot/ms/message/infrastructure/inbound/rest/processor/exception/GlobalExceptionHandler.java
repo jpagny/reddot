@@ -1,6 +1,6 @@
-package com.elysium.reddot.ms.message.infrastructure.exception.processor;
+package com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.exception;
 
-import com.elysium.reddot.ms.message.infrastructure.data.exception.GlobalExceptionDTO;
+import com.elysium.reddot.ms.message.infrastructure.data.dto.GlobalExceptionDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

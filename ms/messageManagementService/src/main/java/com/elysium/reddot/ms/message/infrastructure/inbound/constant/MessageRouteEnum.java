@@ -1,6 +1,6 @@
-package com.elysium.reddot.ms.message.infrastructure.inbound.rest.route;
+package com.elysium.reddot.ms.message.infrastructure.inbound.constant;
 
-public enum MessageRouteConstants {
+public enum MessageRouteEnum {
 
     GET_ALL_MESSAGES("direct:getAllMessages"),
     GET_MESSAGE_BY_ID("direct:getMessageById"),
@@ -9,7 +9,7 @@ public enum MessageRouteConstants {
 
     private final String routeName;
 
-    MessageRouteConstants(String routeName) {
+    MessageRouteEnum(String routeName) {
         this.routeName = routeName;
     }
 

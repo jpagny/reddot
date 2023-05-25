@@ -1,11 +1,12 @@
 package com.elysium.reddot.ms.message.domain.service;
 
+import com.elysium.reddot.ms.message.domain.exception.FieldEmptyException;
+import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.smallrye.common.constraint.Assert.assertFalse;
-import static io.smallrye.common.constraint.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MessageDomainServiceTest {
 
@@ -17,43 +18,26 @@ public class MessageDomainServiceTest {
     }
 
     @Test
-    @DisplayName("given a valid count of replies message when checking nested replies limit, then it should return true")
-    void givenValidCountRepliesMessage_whenCheckNestedRepliesLimit_thenTrue() {
+    @DisplayName("given a blank content when creating a message then an exception is thrown")
+    public void givenBlankContent_whenCreatingMessage_thenExceptionIsThrown() {
         // given
-        int countRepliesMessage = 5;
+        MessageModel messageModel = new MessageModel();
+        messageModel.setContent("");
 
-        // when
-        boolean result = messageDomainService.checkNestedRepliesLimit(countRepliesMessage);
-
-        // then
-        assertTrue(result);
+        // when && throw
+        assertThrows(FieldEmptyException.class, () -> messageDomainService.validateTopicForCreation(messageModel));
     }
 
     @Test
-    @DisplayName("given an invalid count of replies message when checking nested replies limit, then it should return false")
-    void givenInvalidCountRepliesMessage_whenCheckNestedRepliesLimit_thenFalse() {
+    @DisplayName("given a blank content when updating a message then an exception is thrown")
+    public void givenBlankContent_whenUpdatingMessage_thenExceptionIsThrown() {
         // given
-        int countRepliesMessage = 15;
+        MessageModel messageModel = new MessageModel();
+        messageModel.setContent("");
 
-        // when
-        boolean result = messageDomainService.checkNestedRepliesLimit(countRepliesMessage);
-
-        // then
-        assertFalse(result);
+        // when && throw
+        assertThrows(FieldEmptyException.class, () -> messageDomainService.validateTopicForUpdate(messageModel));
     }
 
-    @Test
-    @DisplayName("Given a valid count of replies message equal to the custom max replies limit when checking nested replies limit, then it should return true")
-    void givenCountEqualToCustomMaxReplies_whenCheckNestedRepliesLimit_thenTrue() {
-        // given
-        int countRepliesMessage = 5;
-        int newMaxRepliesMessage = 5;
-
-        // when
-        boolean result = messageDomainService.checkNestedRepliesLimit(countRepliesMessage, newMaxRepliesMessage);
-
-        // then
-        assertTrue(result);
-    }
 
 }

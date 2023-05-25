@@ -127,9 +127,6 @@ class ThreadRouteBuilderTest extends CamelTestSupport {
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
     }
 
-
-
-
     @Test
     @DisplayName("given threads exist when route getAllThreads is called then all threads retrieved")
     void givenThreadsExist_whenRouteGetAllThreads_thenAllThreadsRetrieved() throws URISyntaxException, IOException {

@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor;
+package com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.message;
 
 import com.elysium.reddot.ms.message.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
