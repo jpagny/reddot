@@ -83,7 +83,11 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
 
         log.debug("Updating message with id '{}', content '{}'", id, messageToUpdateModel.getContent());
 
-        messageRepository.findMessageById(id).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME_MESSAGE, String.valueOf(id)));
+        Optional<MessageModel> messageExisting = messageRepository.findMessageById(id);
+
+        if (messageExisting.isEmpty()) {
+            throw new ResourceNotFoundException(RESOURCE_NAME_MESSAGE, String.valueOf(id));
+        }
 
         try {
             messageDomainService.validateTopicForUpdate(messageToUpdateModel);

@@ -79,7 +79,7 @@ class MessageRabbitMQServiceTest {
         int count = messageRabbitMQService.countMessageByUserIdBetweenTwoDates(userId, onStart, onEnd);
 
         // then
-        assertEquals(count, 0);
+        assertEquals(0, count);
     }
 
 

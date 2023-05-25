@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MessageDomainServiceTest {
+class MessageDomainServiceTest {
 
     private static MessageDomainServiceImpl messageDomainService;
 
@@ -19,7 +19,7 @@ public class MessageDomainServiceTest {
 
     @Test
     @DisplayName("given a blank content when creating a message then an exception is thrown")
-    public void givenBlankContent_whenCreatingMessage_thenExceptionIsThrown() {
+    void givenBlankContent_whenCreatingMessage_thenExceptionIsThrown() {
         // given
         MessageModel messageModel = new MessageModel();
         messageModel.setContent("");
@@ -30,7 +30,7 @@ public class MessageDomainServiceTest {
 
     @Test
     @DisplayName("given a blank content when updating a message then an exception is thrown")
-    public void givenBlankContent_whenUpdatingMessage_thenExceptionIsThrown() {
+    void givenBlankContent_whenUpdatingMessage_thenExceptionIsThrown() {
         // given
         MessageModel messageModel = new MessageModel();
         messageModel.setContent("");

@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.message.infrastructure.data.rabbitMQ.received.request;
+package com.elysium.reddot.ms.message.infrastructure.data.rabbitmq.received.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

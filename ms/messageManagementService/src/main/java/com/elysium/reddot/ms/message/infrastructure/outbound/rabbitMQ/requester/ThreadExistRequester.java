@@ -2,7 +2,7 @@ package com.elysium.reddot.ms.message.infrastructure.outbound.rabbitmq.requester
 
 import com.elysium.reddot.ms.message.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.message.infrastructure.constant.RabbitMQConstant;
-import com.elysium.reddot.ms.message.infrastructure.data.rabbitMQ.received.response.ThreadExistsResponseDTO;
+import com.elysium.reddot.ms.message.infrastructure.data.rabbitmq.received.response.ThreadExistsResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -21,7 +21,7 @@ public class ThreadExistRequester {
         this.objectMapper = new ObjectMapper();
     }
 
-    public void verifyThreadIdExistsOrThrow(Long messageId) {
+    public void verifyThreadIdExistsOrThrow(Long messageId) throws IOException {
         ThreadExistsResponseDTO response = getMessageExistsResponse(messageId);
 
         if (response != null && !response.isExists()) {
@@ -29,7 +29,7 @@ public class ThreadExistRequester {
         }
     }
 
-    private ThreadExistsResponseDTO getMessageExistsResponse(Long messageId) {
+    private ThreadExistsResponseDTO getMessageExistsResponse(Long messageId) throws IOException {
         byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_THREAD_MESSAGE,
                 RabbitMQConstant.REQUEST_THREAD_EXIST,
@@ -41,7 +41,7 @@ public class ThreadExistRequester {
 
         } catch (IOException ex) {
             log.error("Fail to convert to json : " + ex);
-            throw new RuntimeException("Failed to convert to json", ex);
+            throw new IOException("Failed to convert to json", ex);
 
         }
     }

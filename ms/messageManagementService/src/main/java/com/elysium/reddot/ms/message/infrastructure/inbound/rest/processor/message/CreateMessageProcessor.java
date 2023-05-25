@@ -13,6 +13,8 @@ import org.apache.camel.Processor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 @Component
 @AllArgsConstructor
 @Slf4j
@@ -22,7 +24,7 @@ public class CreateMessageProcessor implements Processor {
     private final ThreadExistRequester threadExistRequester;
 
     @Override
-    public void process(Exchange exchange) {
+    public void process(Exchange exchange) throws IOException {
         MessageDTO inputMessageDTO = exchange.getIn().getBody(MessageDTO.class);
         MessageModel messageModel = MessageProcessorMapper.toModel(inputMessageDTO);
 

@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class MessageApplicationServiceTest {
+class MessageApplicationServiceTest {
 
     @Mock
     private MessageRepositoryAdapter messageRepository;
@@ -33,7 +33,7 @@ public class MessageApplicationServiceTest {
 
     @Test
     @DisplayName("Given a valid message id when getting message by id, then return the message")
-    public void givenValidId_whenGetMessageById_thenReturnMessage() {
+    void givenValidId_whenGetMessageById_thenReturnMessage() {
         // given
         Long id = 1L;
         MessageModel expectedMessage = new MessageModel();
@@ -50,7 +50,7 @@ public class MessageApplicationServiceTest {
 
     @Test
     @DisplayName("given an invalid message id when getting message by id, then throw ResourceNotFoundException")
-    public void givenInvalidId_whenGetMessageById_thenThrowException() {
+    void givenInvalidId_whenGetMessageById_thenThrowException() {
         // given
         Long id = 1L;
         when(messageRepository.findMessageById(id)).thenReturn(Optional.empty());
@@ -61,7 +61,7 @@ public class MessageApplicationServiceTest {
 
     @Test
     @DisplayName("given available messages in the repository when getting all messages, then return list of all messages")
-    public void givenAvailableMessages_whenGetAllMessages_thenReturnListOfAllMessages() {
+    void givenAvailableMessages_whenGetAllMessages_thenReturnListOfAllMessages() {
         // given
         MessageModel message1 = new MessageModel();
         MessageModel message2 = new MessageModel();
@@ -77,7 +77,7 @@ public class MessageApplicationServiceTest {
 
     @Test
     @DisplayName("given a valid message model when creating a message, then return the created message model")
-    public void givenValidMessageModel_whenCreateMessage_thenReturnCreatedMessageModel() {
+    void givenValidMessageModel_whenCreateMessage_thenReturnCreatedMessageModel() {
         // given
         MessageModel messageToCreateModel = new MessageModel("content",1L,"userId");
         MessageModel expectedMessageModel = new MessageModel("content",1L,"userId");
@@ -95,7 +95,7 @@ public class MessageApplicationServiceTest {
 
     @Test
     @DisplayName("given a problem during the message creation when creating a message, then throw ResourceBadValueException")
-    public void givenProblemDuringCreation_whenCreateMessage_thenThrowException() {
+    void givenProblemDuringCreation_whenCreateMessage_thenThrowException() {
         // given
         MessageModel messageToCreateModel = new MessageModel();
 
@@ -105,7 +105,7 @@ public class MessageApplicationServiceTest {
 
     @Test
     @DisplayName("given valid id and message model when update message then returns updated message model")
-    public void givenValidIdAndMessageModel_whenUpdateMessage_thenReturnUpdatedMessageModel() {
+    void givenValidIdAndMessageModel_whenUpdateMessage_thenReturnUpdatedMessageModel() {
         // given
         Long id = 1L;
         MessageModel messageModel = new MessageModel();
@@ -125,7 +125,7 @@ public class MessageApplicationServiceTest {
 
     @Test
     @DisplayName("given non-existent id and message model when update message then throws ResourceNotFoundException")
-    public void givenNonExistentIdAndMessageModel_whenUpdateMessage_thenThrowsResourceNotFoundException() {
+    void givenNonExistentIdAndMessageModel_whenUpdateMessage_thenThrowsResourceNotFoundException() {
         // given
         Long id = 1L;
         MessageModel messageModel = new MessageModel();

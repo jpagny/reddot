@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +48,7 @@ class CreateMessageProcessorTest {
 
     @Test
     @DisplayName("given valid message when createMessage is called then message created successfully")
-    void givenValidMessage_whenCreateMessage_thenMessageCreatedSuccessfully() {
+    void givenValidMessage_whenCreateMessage_thenMessageCreatedSuccessfully() throws IOException {
         // given
         MessageDTO messageToCreateDTO = new MessageDTO("content", 1L, "userId");
         MessageModel messageToCreateModel = new MessageModel("content", 1L, "userId");

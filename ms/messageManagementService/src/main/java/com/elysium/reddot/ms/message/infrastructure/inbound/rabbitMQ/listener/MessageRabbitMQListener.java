@@ -2,9 +2,9 @@ package com.elysium.reddot.ms.message.infrastructure.inbound.rabbitmq.listener;
 
 import com.elysium.reddot.ms.message.application.service.MessageRabbitMQService;
 import com.elysium.reddot.ms.message.infrastructure.constant.RabbitMQConstant;
-import com.elysium.reddot.ms.message.infrastructure.data.rabbitMQ.received.request.CountMessageByUserBetweenTwoDatesRequest;
-import com.elysium.reddot.ms.message.infrastructure.data.rabbitMQ.response.CountMessageByUserBetweenTwoDatesResponse;
-import com.elysium.reddot.ms.message.infrastructure.data.rabbitMQ.response.MessageExistsResponseDTO;
+import com.elysium.reddot.ms.message.infrastructure.data.rabbitmq.received.request.CountMessageByUserBetweenTwoDatesRequest;
+import com.elysium.reddot.ms.message.infrastructure.data.rabbitmq.response.CountMessageByUserBetweenTwoDatesResponse;
+import com.elysium.reddot.ms.message.infrastructure.data.rabbitmq.response.MessageExistsResponseDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
