@@ -1,6 +1,7 @@
 package com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitMQ.requester;
 
 import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceNotFoundException;
+import com.elysium.reddot.ms.replymessage.infrastructure.constant.RabbitMQConstant;
 import com.elysium.reddot.ms.replymessage.infrastructure.data.rabbitMQ.received.response.MessageExistsResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +15,6 @@ import java.io.IOException;
 public class MessageExistRequester {
     private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper;
-    public static final String THREAD_MESSAGE_EXCHANGE = "messageReplyMessageExchange";
-    public static final String THREAD_EXISTS_REQUEST_ROUTING_KEY = "message.exists.request";
 
     public MessageExistRequester(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
@@ -32,13 +31,12 @@ public class MessageExistRequester {
 
     private MessageExistsResponseDTO getMessageExistsResponse(Long messageId) {
         byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
-                THREAD_MESSAGE_EXCHANGE,
-                THREAD_EXISTS_REQUEST_ROUTING_KEY,
+                RabbitMQConstant.EXCHANGE_MESSAGE_REPLYMESSAGE,
+                RabbitMQConstant.REQUEST_MESSAGE_EXIST,
                 messageId
         );
 
         try {
-            log.debug("ICI PASSE !");
             return objectMapper.readValue(replyBytes, MessageExistsResponseDTO.class);
 
         } catch (IOException ex) {

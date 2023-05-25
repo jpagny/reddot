@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.replymessage.infrastructure.exception.processor;
+package com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.exception;
 
 import com.elysium.reddot.ms.replymessage.infrastructure.data.exception.GlobalExceptionDTO;
 import lombok.extern.slf4j.Slf4j;

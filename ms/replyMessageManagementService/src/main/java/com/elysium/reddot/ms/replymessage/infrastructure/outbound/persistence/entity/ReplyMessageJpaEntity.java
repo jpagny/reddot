@@ -16,13 +16,13 @@ public class ReplyMessageJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String content;
-
+    @Column(name = "parent_message_id")
     private Long parentMessageId;
-
+    @Column(name = "user_id")
     private String userId;
-
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }

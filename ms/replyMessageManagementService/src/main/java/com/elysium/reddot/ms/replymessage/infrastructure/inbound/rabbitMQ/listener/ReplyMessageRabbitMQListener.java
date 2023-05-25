@@ -1,6 +1,7 @@
 package com.elysium.reddot.ms.replymessage.infrastructure.inbound.rabbitMQ.listener;
 
 import com.elysium.reddot.ms.replymessage.application.service.ReplyMessageRabbitMQService;
+import com.elysium.reddot.ms.replymessage.infrastructure.constant.RabbitMQConstant;
 import com.elysium.reddot.ms.replymessage.infrastructure.data.rabbitMQ.received.request.CountRepliesMessageByUserBetweenTwoDatesRequest;
 import com.elysium.reddot.ms.replymessage.infrastructure.data.rabbitMQ.response.CountRepliesMessageByUserBetweenTwoDatesResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,29 +24,25 @@ public class ReplyMessageRabbitMQListener {
     private final RabbitTemplate rabbitTemplate;
     private final ReplyMessageRabbitMQService replyMessageRabbitMQService;
 
-    @RabbitListener(queues = "count.replyMessage.user.dates.queue")
+    @RabbitListener(queues = RabbitMQConstant.QUEUE_COUNT_REPLIES_MESSAGES_BY_USER_IN_RANGE_DATES_QUEUE)
     public void countMessagesByUserBetweenTwoDates(Message message) throws JsonProcessingException {
-        log.debug("RECU : " + message.getBody());
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
-        log.debug("1");
 
         String jsonMessage = (String) messageConverter.fromMessage(message);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         CountRepliesMessageByUserBetweenTwoDatesRequest requestReceived = objectMapper.readValue(jsonMessage, CountRepliesMessageByUserBetweenTwoDatesRequest.class);
 
-        log.debug("2");
         Integer countMessagesTotalOnRangeDate = replyMessageRabbitMQService.countRepliesMessageByUserIdBetweenTwoDates(
                 requestReceived.getUserId(),
                 requestReceived.getOnStart(),
                 requestReceived.getOnEnd());
-        log.debug("3");
         CountRepliesMessageByUserBetweenTwoDatesResponse response = new CountRepliesMessageByUserBetweenTwoDatesResponse(countMessagesTotalOnRangeDate);
-        log.debug("4 : " + response.toString());
+
         MessageProperties messageProperties = buildMessageProperties(message);
         String jsonResponse = buildJsonResponse(response);
         Message responseMessage = buildMessageResponse(jsonResponse, messageProperties);
-        log.debug("5 : " + responseMessage.toString());
+
         sendResponseToRabbit(message, responseMessage);
     }
 

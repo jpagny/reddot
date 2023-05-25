@@ -7,8 +7,8 @@ import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceNot
 import com.elysium.reddot.ms.replymessage.application.service.ReplyMessageApplicationServiceImpl;
 import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import com.elysium.reddot.ms.replymessage.infrastructure.data.exception.GlobalExceptionDTO;
-import com.elysium.reddot.ms.replymessage.infrastructure.exception.processor.GlobalExceptionHandler;
-import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.*;
+import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.exception.GlobalExceptionHandler;
+import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.replymessage.*;
 import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageProcessorMapper;
 import com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitMQ.requester.MessageExistRequester;
 import com.fasterxml.jackson.core.JsonProcessingException;

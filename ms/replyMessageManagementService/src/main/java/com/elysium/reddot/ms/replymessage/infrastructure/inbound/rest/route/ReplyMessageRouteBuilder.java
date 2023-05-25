@@ -1,14 +1,20 @@
 package com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.replymessage.application.data.dto.ReplyMessageDTO;
-import com.elysium.reddot.ms.replymessage.infrastructure.exception.processor.GlobalExceptionHandler;
-import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.ReplyMessageProcessorHolder;
+import com.elysium.reddot.ms.replymessage.infrastructure.exception.type.HasNotRoleException;
+import com.elysium.reddot.ms.replymessage.infrastructure.exception.type.TokenNotActiveException;
+import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.exception.GlobalExceptionHandler;
+import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.keycloak.KeycloakProcessorHolder;
+import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.replymessage.ReplyMessageProcessorHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
+
+import static org.apache.camel.support.builder.PredicateBuilder.not;
 
 @Component
 @AllArgsConstructor
@@ -16,6 +22,7 @@ public class ReplyMessageRouteBuilder extends RouteBuilder {
 
     private final GlobalExceptionHandler globalExceptionHandler;
     private final ReplyMessageProcessorHolder replyMessageProcessorHolder;
+    private final KeycloakProcessorHolder keycloakProcessorHolder;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -23,7 +30,6 @@ public class ReplyMessageRouteBuilder extends RouteBuilder {
 
         JacksonDataFormat format = new JacksonDataFormat();
         format.setObjectMapper(objectMapper);
-
 
         String requestId = "/{id}";
 
@@ -36,6 +42,24 @@ public class ReplyMessageRouteBuilder extends RouteBuilder {
                 .handled(true)
                 .process(globalExceptionHandler);
 
+        // for all routes, intercept first check token
+        interceptFrom()
+                .log("Check token")
+                .process(keycloakProcessorHolder.getCheckTokenProcessor())
+                .choice()
+                .when(header("active").isNotEqualTo(true))
+                .log(LoggingLevel.ERROR, "The token is inactive")
+                .process(exchange -> {
+                    throw new TokenNotActiveException();
+                })
+                .when(not(header("roles").contains("user")))
+                .log(LoggingLevel.ERROR, "Having role user is required")
+                .process(exchange -> {
+                    throw new HasNotRoleException("user");
+                })
+                .otherwise()
+                .log("Token check complete. Processing now underway...")
+                .end();
 
         // definition routes
         rest().

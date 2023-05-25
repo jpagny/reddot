@@ -21,8 +21,8 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers("/*").permitAll()
-                //.anyRequest().hasRole("user")
+                .antMatchers("/error").permitAll()
+                .anyRequest().hasRole("user")
                 .and()
                 .csrf().disable();
     }
@@ -38,7 +38,6 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     protected KeycloakAuthenticationProvider keycloakAuthenticationProvider() {
         SimpleAuthorityMapper grantedAuthorityMapper = new SimpleAuthorityMapper();
         grantedAuthorityMapper.setPrefix("ROLE_");
-
 
         KeycloakAuthenticationProvider provider = new KeycloakAuthenticationProvider();
         provider.setGrantedAuthoritiesMapper(grantedAuthorityMapper);
