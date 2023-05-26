@@ -45,7 +45,7 @@ class TopicRabbitMQListenerTest {
 
     @Test
     @DisplayName("Given valid message, when checkTopicExists, then success")
-    void givenValidMessage_whenCheckTopicExists_thenSuccess() throws JsonProcessingException {
+    void givenValidMessage_whenCheckTopicExists_thenSuccess() throws JsonProcessingException, org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException {
         // given
         MessageProperties messageProperties = new MessageProperties();
         messageProperties.setReplyTo("my.reply.queue");

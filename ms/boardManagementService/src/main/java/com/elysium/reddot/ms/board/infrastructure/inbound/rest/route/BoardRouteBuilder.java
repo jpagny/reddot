@@ -39,7 +39,7 @@ public class BoardRouteBuilder extends RouteBuilder {
 
 
         // definition routes
-        rest("/api/boards").
+        rest("").
                 get().to(BoardRouteEnum.GET_ALL_BOARDS.getRouteName())
                 .get(requestId).to(BoardRouteEnum.GET_BOARD_BY_ID.getRouteName())
                 .post().type(BoardDTO.class).to(BoardRouteEnum.CREATE_BOARD.getRouteName())

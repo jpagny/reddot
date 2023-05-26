@@ -33,19 +33,19 @@ public class TopicExistRequester {
     }
 
     private TopicExistsResponseDTO getTopicExistsResponse(Long topicId) throws IOException {
-        byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
+        Object reply = rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_TOPIC_BOARD,
                 RabbitMQConstant.REQUEST_TOPIC_EXIST,
                 topicId
         );
 
         try {
-            return objectMapper.readValue(replyBytes, TopicExistsResponseDTO.class);
-
-        } catch (IOException ex) {
+            return objectMapper.convertValue(reply, TopicExistsResponseDTO.class);
+        } catch (IllegalArgumentException ex) {
             log.error("Fail to convert to json : " + ex);
             throw new IOException("Failed to convert to json", ex);
-
         }
+
+
     }
 }
