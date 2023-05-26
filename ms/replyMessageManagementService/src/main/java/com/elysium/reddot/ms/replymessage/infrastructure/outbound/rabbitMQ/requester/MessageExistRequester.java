@@ -1,16 +1,16 @@
-package com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitMQ.requester;
+package com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitmq.requester;
 
 import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.replymessage.infrastructure.constant.RabbitMQConstant;
-import com.elysium.reddot.ms.replymessage.infrastructure.data.rabbitMQ.received.response.MessageExistsResponseDTO;
+import com.elysium.reddot.ms.replymessage.infrastructure.data.rabbitmq.received.response.MessageExistsResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Service
+@Component
 @Slf4j
 public class MessageExistRequester {
     private final RabbitTemplate rabbitTemplate;
@@ -21,7 +21,7 @@ public class MessageExistRequester {
         this.objectMapper = new ObjectMapper();
     }
 
-    public void verifyMessageIdExistsOrThrow(Long messageId) {
+    public void verifyMessageIdExistsOrThrow(Long messageId) throws IOException {
         MessageExistsResponseDTO response = getMessageExistsResponse(messageId);
 
         if (response != null && !response.isExists()) {
@@ -29,7 +29,7 @@ public class MessageExistRequester {
         }
     }
 
-    private MessageExistsResponseDTO getMessageExistsResponse(Long messageId) {
+    private MessageExistsResponseDTO getMessageExistsResponse(Long messageId) throws IOException {
         byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_MESSAGE_REPLYMESSAGE,
                 RabbitMQConstant.REQUEST_MESSAGE_EXIST,
@@ -41,7 +41,7 @@ public class MessageExistRequester {
 
         } catch (IOException ex) {
             log.error("Fail to convert to json : " + ex);
-            throw new RuntimeException("Failed to convert to json", ex);
+            throw new IOException("Failed to convert to json", ex);
 
         }
     }

@@ -99,7 +99,7 @@ class MessagesRouteBuilderIT extends TestContainerSetup {
     @Test
     @DisplayName("given messages exist when route getAllMessages is called then all messages retrieved")
     void givenMessagesExist_whenRouteGetAllMessages_thenAllMessagesAreRetrieved() throws Exception {
-        // arrange
+        // given
         LocalDateTime localDateTime = LocalDateTime.now();
         MessageDTO message1 = new MessageDTO(1L, "content_1", 1L, "userId", localDateTime, localDateTime);
         MessageDTO message2 = new MessageDTO(2L, "content_2", 1L, "userId", localDateTime, localDateTime);
@@ -113,11 +113,11 @@ class MessagesRouteBuilderIT extends TestContainerSetup {
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "All messages retrieved successfully", messageList);
 
-        // act
+        // when
         Exchange responseExchange = template.send("direct:getAllMessages", exchange);
         ApiResponseDTO actualResponse = objectMapper.readValue(responseExchange.getMessage().getBody(String.class), ApiResponseDTO.class);
 
-        // assert
+        // then
         assertEquals(expectedApiResponse.getStatus(), actualResponse.getStatus());
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
     }

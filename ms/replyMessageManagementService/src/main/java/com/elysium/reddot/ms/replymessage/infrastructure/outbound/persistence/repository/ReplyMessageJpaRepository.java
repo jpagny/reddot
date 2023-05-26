@@ -8,9 +8,13 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReplyMessageJpaRepository extends JpaRepository<ReplyMessageJpaEntity, Long> {
+
+    Optional<ReplyMessageJpaEntity> findByContent(String content);
+
     @Query("SELECT COUNT(m) FROM ReplyMessageJpaEntity m WHERE m.parentMessageId = :messageId")
     int countRepliesByMessageId(@Param("messageId") Long messageId);
 

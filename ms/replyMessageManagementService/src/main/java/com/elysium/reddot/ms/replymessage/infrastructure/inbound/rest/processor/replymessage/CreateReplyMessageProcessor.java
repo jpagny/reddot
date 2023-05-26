@@ -5,29 +5,30 @@ import com.elysium.reddot.ms.replymessage.application.data.dto.ReplyMessageDTO;
 import com.elysium.reddot.ms.replymessage.application.service.ReplyMessageApplicationServiceImpl;
 import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageProcessorMapper;
-import com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitMQ.requester.MessageExistRequester;
+import com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitmq.requester.MessageExistRequester;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 @Component
 @AllArgsConstructor
+@Slf4j
 public class CreateReplyMessageProcessor implements Processor {
 
     private final ReplyMessageApplicationServiceImpl replyMessageApplicationService;
-    private final MessageExistRequester threadExistRequester;
+    private final MessageExistRequester messageExistRequester;
 
     @Override
-    public void process(Exchange exchange) {
+    public void process(Exchange exchange) throws IOException {
         ReplyMessageDTO inputReplyMessageDTO = exchange.getIn().getBody(ReplyMessageDTO.class);
         ReplyMessageModel replyMessageModel = ReplyMessageProcessorMapper.toModel(inputReplyMessageDTO);
 
-        threadExistRequester.verifyMessageIdExistsOrThrow(replyMessageModel.getParentMessageID());
-
-        // add user id
-        replyMessageModel.setUserId("1");
+        messageExistRequester.verifyMessageIdExistsOrThrow(replyMessageModel.getParentMessageID());
 
         createReplyMessageAndSetResponse(exchange, replyMessageModel);
     }

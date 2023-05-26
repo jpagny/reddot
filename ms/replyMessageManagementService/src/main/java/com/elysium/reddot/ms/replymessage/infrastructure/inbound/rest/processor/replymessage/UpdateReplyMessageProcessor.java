@@ -23,12 +23,12 @@ public class UpdateReplyMessageProcessor implements Processor {
     public void process(Exchange exchange) {
         Long inputId = exchange.getIn().getHeader("id", Long.class);
         ReplyMessageDTO inputReplyMessageDTO = exchange.getIn().getBody(ReplyMessageDTO.class);
-        ReplyMessageModel replyReplyMessageToUpdateModel = ReplyMessageProcessorMapper.toModel(inputReplyMessageDTO);
+        ReplyMessageModel replyMessageToUpdateModel = ReplyMessageProcessorMapper.toModel(inputReplyMessageDTO);
 
-        ReplyMessageModel updatedReplyMessageModel = replyMessageService.updateReplyMessage(inputId, replyReplyMessageToUpdateModel);
+        ReplyMessageModel updatedReplyMessageModel = replyMessageService.updateReplyMessage(inputId, replyMessageToUpdateModel);
 
         ReplyMessageDTO updatedReplyMessageDTO = ReplyMessageProcessorMapper.toDTO(updatedReplyMessageModel);
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "Reply message with content " + updatedReplyMessageDTO.getContent() + " updated successfully", updatedReplyMessageDTO);
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), "Reply message updated successfully", updatedReplyMessageDTO);
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());
         exchange.getMessage().setBody(apiResponseDTO);
     }

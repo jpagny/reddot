@@ -44,6 +44,12 @@ public class ReplyMessageRepositoryAdapter implements IReplyMessageRepository {
     }
 
     @Override
+    public Optional<ReplyMessageModel> findByContent(String content) {
+        return replyMessageJpaRepository.findByContent(content)
+                .map(ReplyMessagePersistenceMapper::toModel);
+    }
+
+    @Override
     public ReplyMessageModel updateReplyMessage(ReplyMessageModel replyMessageModel) {
         ReplyMessageJpaEntity replyMessageEntity = ReplyMessagePersistenceMapper.toEntity(replyMessageModel);
         ReplyMessageJpaEntity updatedReplyMessage = replyMessageJpaRepository.save(replyMessageEntity);

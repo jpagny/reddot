@@ -1,9 +1,10 @@
 package com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.replymessage.application.data.dto.ReplyMessageDTO;
+import com.elysium.reddot.ms.replymessage.infrastructure.constant.ReplyMessageRouteEnum;
 import com.elysium.reddot.ms.replymessage.infrastructure.exception.type.HasNotRoleException;
 import com.elysium.reddot.ms.replymessage.infrastructure.exception.type.TokenNotActiveException;
-import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.exception.GlobalExceptionHandler;
+import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
 import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.keycloak.KeycloakProcessorHolder;
 import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.replymessage.ReplyMessageProcessorHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,6 +43,14 @@ public class ReplyMessageRouteBuilder extends RouteBuilder {
                 .handled(true)
                 .process(globalExceptionHandler);
 
+
+        // definition routes
+        rest().
+                get().to(ReplyMessageRouteEnum.GET_ALL_REPLIES_MESSAGE.getRouteName())
+                .get(requestId).to(ReplyMessageRouteEnum.GET_REPLY_MESSAGE_BY_ID.getRouteName())
+                .post().type(ReplyMessageDTO.class).to(ReplyMessageRouteEnum.CREATE_REPLY_MESSAGE.getRouteName())
+                .put(requestId).type(ReplyMessageDTO.class).to(ReplyMessageRouteEnum.UPDATE_REPLY_MESSAGE.getRouteName());
+
         // for all routes, intercept first check token
         interceptFrom()
                 .log("Check token")
@@ -61,15 +70,8 @@ public class ReplyMessageRouteBuilder extends RouteBuilder {
                 .log("Token check complete. Processing now underway...")
                 .end();
 
-        // definition routes
-        rest().
-                get().to(ReplyMessageRouteConstants.GET_ALL_REPLIES_MESSAGE.getRouteName())
-                .get(requestId).to(ReplyMessageRouteConstants.GET_REPLY_MESSAGE_BY_ID.getRouteName())
-                .post().type(ReplyMessageDTO.class).to(ReplyMessageRouteConstants.CREATE_REPLY_MESSAGE.getRouteName())
-                .put(requestId).type(ReplyMessageDTO.class).to(ReplyMessageRouteConstants.UPDATE_REPLY_MESSAGE.getRouteName());
-
         // route : get all replyMessages
-        from(ReplyMessageRouteConstants.GET_ALL_REPLIES_MESSAGE.getRouteName())
+        from(ReplyMessageRouteEnum.GET_ALL_REPLIES_MESSAGE.getRouteName())
                 .routeId("getAllReplyMessages")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Retrieving all replyMessages")
                 .process(replyMessageProcessorHolder.getGetAllRepliesMessageProcessor())
@@ -78,7 +80,7 @@ public class ReplyMessageRouteBuilder extends RouteBuilder {
                 .end();
 
         // route : get replyMessage by id
-        from(ReplyMessageRouteConstants.GET_REPLY_MESSAGE_BY_ID.getRouteName())
+        from(ReplyMessageRouteEnum.GET_REPLY_MESSAGE_BY_ID.getRouteName())
                 .routeId("getReplyMessageById")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Getting replyMessage with id '${header.id}'")
                 .process(replyMessageProcessorHolder.getGetReplyMessageByIdProcessor())
@@ -87,7 +89,7 @@ public class ReplyMessageRouteBuilder extends RouteBuilder {
                 .end();
 
         // route : create replyMessage
-        from(ReplyMessageRouteConstants.CREATE_REPLY_MESSAGE.getRouteName())
+        from(ReplyMessageRouteEnum.CREATE_REPLY_MESSAGE.getRouteName())
                 .routeId("createReplyMessage")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Creating a new replyMessage")
                 .process(replyMessageProcessorHolder.getCreateReplyMessageProcessor())
@@ -96,7 +98,7 @@ public class ReplyMessageRouteBuilder extends RouteBuilder {
                 .end();
 
         // route : update replyMessage
-        from(ReplyMessageRouteConstants.UPDATE_REPLY_MESSAGE.getRouteName())
+        from(ReplyMessageRouteEnum.UPDATE_REPLY_MESSAGE.getRouteName())
                 .routeId("updateReplyMessage")
                 .log("Route '${routeId}': Path '${header.CamelHttpUri}': Updating replyMessage with id '${header.id}'")
                 .process(replyMessageProcessorHolder.getUpdateReplyMessageProcessor())

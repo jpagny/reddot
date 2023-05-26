@@ -6,7 +6,7 @@ import com.elysium.reddot.ms.replymessage.application.service.ReplyMessageApplic
 import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.replymessage.CreateReplyMessageProcessor;
 import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageProcessorMapper;
-import com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitMQ.requester.MessageExistRequester;
+import com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitmq.requester.MessageExistRequester;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +48,7 @@ class CreateReplyMessageProcessorTest {
 
     @Test
     @DisplayName("given valid replyMessage when createReplyMessage is called then replyMessage created successfully")
-    void givenValidReplyMessage_whenCreateReplyMessage_thenReplyMessageCreatedSuccessfully() {
+    void givenValidReplyMessage_whenCreateReplyMessage_thenReplyMessageCreatedSuccessfully() throws IOException {
         // given
         ReplyMessageDTO messageToCreateDTO = new ReplyMessageDTO("content", 1L, "userId");
         ReplyMessageModel messageToCreateModel = new ReplyMessageModel("content", 1L, "userId");

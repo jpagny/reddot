@@ -1,15 +1,25 @@
 package com.elysium.reddot.ms.replymessage;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.test.context.TestPropertySource;
+import com.elysium.reddot.ms.replymessage.container.TestContainerSetup;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootApplication
-@TestPropertySource(locations = "classpath:application-test.properties")
-public class ReplyMessageManagementServiceApplicationIT {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-    public static void main(String[] args) {
-        SpringApplication.run(ReplyMessageManagementServiceApplication.class, args);
+@SpringBootTest
+@ActiveProfiles("test")
+class ReplyMessageManagementServiceApplicationIT extends TestContainerSetup {
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Test
+    void contextLoads() {
+        assertNotNull(applicationContext, "Application context should not be null");
     }
+
 
 }

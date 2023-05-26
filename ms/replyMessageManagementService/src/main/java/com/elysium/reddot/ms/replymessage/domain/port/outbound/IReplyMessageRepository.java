@@ -12,6 +12,8 @@ public interface IReplyMessageRepository {
 
     Optional<ReplyMessageModel> findReplyMessageById(Long id);
 
+    Optional<ReplyMessageModel> findByContent(String content);
+
     List<ReplyMessageModel> findAllRepliesMessage();
 
     ReplyMessageModel updateReplyMessage(ReplyMessageModel replyMessageModel);

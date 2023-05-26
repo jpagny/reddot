@@ -47,7 +47,7 @@ class UpdateReplyMessageProcessorTest {
         ReplyMessageDTO expectedReplyMessage = ReplyMessageProcessorMapper.toDTO(updatedReplyMessageModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Reply message with content " + updatedReplyMessageModel.getContent() + " updated successfully", expectedReplyMessage);
+                "Reply message updated successfully", expectedReplyMessage);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("CamelHttpUri", "/replyReplyMessages/" + replyReplyMessageId);

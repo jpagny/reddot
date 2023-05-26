@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.replymessage.application.service;
 
+import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceBadValueException;
 import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.replymessage.domain.constant.ApplicationDefaults;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +38,7 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
         log.debug("Fetching replyMessage with id {}", id);
 
         ReplyMessageModel foundReplyMessageModel = replyMessageRepository.findReplyMessageById(id).orElseThrow(
-                () -> new ResourceNotFoundException("RESOURCE_NAME_REPLY_MESSAGE", String.valueOf(id))
+                () -> new ResourceNotFoundException(RESOURCE_NAME_REPLY_MESSAGE, String.valueOf(id))
         );
 
         log.info("Successfully retrieved replyMessage with id {}, name '{}'",
@@ -59,6 +61,12 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
 
         log.debug("Creating new replyMessage with content '{}'",
                 replyMessageToCreateModel.getContent());
+
+        Optional<ReplyMessageModel> existingReplyMessage = replyMessageRepository.findByContent(replyMessageToCreateModel.getContent());
+
+        if (existingReplyMessage.isPresent()) {
+            throw new ResourceAlreadyExistException(RESOURCE_NAME_REPLY_MESSAGE, "content", replyMessageToCreateModel.getContent());
+        }
 
         try {
             int countTotalRepliedForThisMessage = replyMessageRepository.countRepliesByMessageId(replyMessageToCreateModel.getParentMessageID());
@@ -85,9 +93,12 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
 
         log.debug("Updating replyMessage with id '{}', content '{}'",
                 id, replyMessageToUpdateModel.getContent());
-        ReplyMessageModel existingReplyMessageModel = replyMessageRepository.findReplyMessageById(id).orElseThrow(
-                () -> new ResourceNotFoundException(RESOURCE_NAME_REPLY_MESSAGE, String.valueOf(id))
-        );
+
+        Optional<ReplyMessageModel> existingReplyMessageModel = replyMessageRepository.findReplyMessageById(id);
+
+        if (existingReplyMessageModel.isEmpty()) {
+            throw new ResourceNotFoundException(RESOURCE_NAME_REPLY_MESSAGE, String.valueOf(id));
+        }
 
         try {
             // rule domain
@@ -96,7 +107,7 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
 
         }
 
-        ReplyMessageModel updatedReplyMessageModel = replyMessageRepository.updateReplyMessage(existingReplyMessageModel);
+        ReplyMessageModel updatedReplyMessageModel = replyMessageRepository.updateReplyMessage(replyMessageToUpdateModel);
 
         log.info("Successfully updated replyMessage with id '{}', content'{}",
                 updatedReplyMessageModel.getId(),

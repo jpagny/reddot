@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.replymessage.infrastructure.data.rabbitMQ.received.response;
+package com.elysium.reddot.ms.replymessage.infrastructure.data.rabbitmq.received.response;
 
 import lombok.Data;
 
