@@ -21,28 +21,27 @@ public class BoardExistRequester {
         this.objectMapper = new ObjectMapper();
     }
 
-    public void verifyBoardIdExistsOrThrow(Long threadId) throws IOException {
-        BoardExistsResponseDTO response = getBoardExistsResponse(threadId);
+    public void verifyBoardIdExistsOrThrow(Long boardId) throws IOException {
+        BoardExistsResponseDTO response = getBoardExistsResponse(boardId);
 
         if (response != null && !response.isExists()) {
-            throw new ResourceNotFoundException("Board id", String.valueOf(threadId));
+            throw new ResourceNotFoundException("Board id", String.valueOf(boardId));
         }
     }
 
-    private BoardExistsResponseDTO getBoardExistsResponse(Long threadId) throws IOException {
-        byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
+    private BoardExistsResponseDTO getBoardExistsResponse(Long boardId) throws IOException {
+        String jsonString = objectMapper.writeValueAsString(boardId);
+        byte[] reply = (byte[]) rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_BOARD_THREAD,
                 RabbitMQConstant.REQUEST_BOARD_EXIST,
-                threadId
+                jsonString
         );
+
         try {
-            return objectMapper.readValue(replyBytes, BoardExistsResponseDTO.class);
-
-        } catch (IOException ex) {
-
+            return objectMapper.readValue(reply, BoardExistsResponseDTO.class);
+        } catch (IllegalArgumentException ex) {
             log.error("Fail to convert to json : " + ex);
             throw new IOException("Failed to convert to json", ex);
-
         }
     }
 }

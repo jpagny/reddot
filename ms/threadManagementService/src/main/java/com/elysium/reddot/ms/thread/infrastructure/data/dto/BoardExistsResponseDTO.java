@@ -5,7 +5,6 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class BoardExistsResponseDTO implements Serializable {
-    private Long boardId;
+public class BoardExistsResponseDTO {
     private boolean exists;
 }

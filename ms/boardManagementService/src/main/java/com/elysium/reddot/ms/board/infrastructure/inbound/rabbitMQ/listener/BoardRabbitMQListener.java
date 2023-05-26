@@ -14,6 +14,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -23,29 +25,47 @@ public class BoardRabbitMQListener {
     private final BoardRabbitMQService boardRabbitMQService;
 
     @RabbitListener(queues = RabbitMQConstant.QUEUE_BOARD_EXIST)
-    public void checkTopicExists(Message message) throws JsonProcessingException {
+    public void checkBoardExists(Message message) throws JsonProcessingException {
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
-        Long boardId = (Long) messageConverter.fromMessage(message);
+        byte[] bytes = (byte[]) messageConverter.fromMessage(message);
+        String boardIdString = new String(bytes, StandardCharsets.UTF_8);
+        Long boardId = Long.parseLong(boardIdString);
 
         boolean exists = boardRabbitMQService.checkBoardIdExists(boardId);
+        log.debug("Check board exists: {}", exists);
+
         BoardExistsResponseDTO response = new BoardExistsResponseDTO();
-        response.setBoardId(boardId);
         response.setExists(exists);
 
+        MessageProperties messageProperties = buildMessageProperties(message);
+        String jsonResponse = buildJsonResponse(response);
+        Message responseMessage = buildMessageResponse(jsonResponse, messageProperties);
+
+        sendResponseToRabbit(message, responseMessage);
+        log.debug("Sent response message: {}", responseMessage);
+    }
+
+    private MessageProperties buildMessageProperties(Message message) {
         MessageProperties messageProperties = new MessageProperties();
         messageProperties.setReplyTo(message.getMessageProperties().getReplyTo());
         messageProperties.setCorrelationId(message.getMessageProperties().getCorrelationId());
         messageProperties.setContentType(MessageProperties.CONTENT_TYPE_JSON);
+        return messageProperties;
+    }
 
+    private String buildJsonResponse(Object response) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        String jsonResponse = objectMapper.writeValueAsString(response);
+        return objectMapper.writeValueAsString(response);
+    }
 
-        Message responseMessage = new Message(jsonResponse.getBytes(), messageProperties);
+    private Message buildMessageResponse(String jsonResponse, MessageProperties messageProperties) {
+        return new Message(jsonResponse.getBytes(), messageProperties);
+    }
 
+    private void sendResponseToRabbit(Message message, Message responseMessage) {
         rabbitTemplate.send(
                 message.getMessageProperties().getReplyTo(),
                 responseMessage
         );
-
     }
 }

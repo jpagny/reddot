@@ -24,7 +24,6 @@ public class TopicRabbitMQListener {
     private final RabbitTemplate rabbitTemplate;
     private final TopicRabbitMQService topicRabbitMQService;
 
-
     @RabbitListener(queues = RabbitMQConstant.QUEUE_TOPIC_EXIST)
     public void checkTopicExists(Message message) throws JsonProcessingException {
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();

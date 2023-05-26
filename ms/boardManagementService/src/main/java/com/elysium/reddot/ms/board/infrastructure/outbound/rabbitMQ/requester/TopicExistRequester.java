@@ -46,6 +46,5 @@ public class TopicExistRequester {
             throw new IOException("Failed to convert to json", ex);
         }
 
-
     }
 }

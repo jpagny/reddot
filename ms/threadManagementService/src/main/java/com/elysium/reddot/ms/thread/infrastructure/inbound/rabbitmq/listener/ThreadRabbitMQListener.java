@@ -34,7 +34,6 @@ public class ThreadRabbitMQListener {
 
         boolean exists = threadRabbitMQService.checkThreadIdExists(threadId);
         BoardExistsResponseDTO response = new BoardExistsResponseDTO();
-        response.setBoardId(threadId);
         response.setExists(exists);
 
         Message responseMessage = createResponseMessage(message, response);
