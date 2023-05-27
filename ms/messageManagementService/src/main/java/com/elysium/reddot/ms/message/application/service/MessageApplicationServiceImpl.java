@@ -1,8 +1,10 @@
 package com.elysium.reddot.ms.message.application.service;
 
+import com.elysium.reddot.ms.message.application.exception.type.IsNotOwnerMessageException;
 import com.elysium.reddot.ms.message.application.exception.type.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.message.application.exception.type.ResourceBadValueException;
 import com.elysium.reddot.ms.message.application.exception.type.ResourceNotFoundException;
+import com.elysium.reddot.ms.message.domain.exception.DifferentUserException;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import com.elysium.reddot.ms.message.domain.port.inbound.IMessageManagementService;
 import com.elysium.reddot.ms.message.domain.port.outbound.IMessageRepository;
@@ -56,7 +58,7 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
         log.debug("Creating new message with content '{}'", messageToCreateModel.getContent());
 
         Optional<MessageModel> existingMessage = messageRepository
-                .findFirstByContentAndThreadId(messageToCreateModel.getContent(),messageToCreateModel.getThreadId());
+                .findFirstByContentAndThreadId(messageToCreateModel.getContent(), messageToCreateModel.getThreadId());
 
         if (existingMessage.isPresent()) {
             throw new ResourceAlreadyExistException("Message", "content", messageToCreateModel.getContent());
@@ -81,8 +83,7 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
 
     @Override
     public MessageModel updateMessage(Long id, MessageModel messageToUpdateModel) {
-
-        log.debug("Updating message with id '{}', content '{}'", id, messageToUpdateModel.getContent());
+        log.debug("Updating message with content '{}'", messageToUpdateModel.getContent());
 
         Optional<MessageModel> messageExisting = messageRepository.findMessageById(id);
 
@@ -91,11 +92,21 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
         }
 
         try {
-            messageDomainService.validateTopicForUpdate(messageToUpdateModel);
+            messageDomainService.validateTopicForUpdate(messageToUpdateModel, messageExisting.get());
+
+        } catch (DifferentUserException exception) {
+            log.error(exception.getMessage());
+            throw new IsNotOwnerMessageException();
 
         } catch (Exception exception) {
             throw new ResourceBadValueException(RESOURCE_NAME_MESSAGE, exception.getMessage());
+
         }
+
+        messageToUpdateModel.setId(id);
+        messageToUpdateModel.setThreadId(messageExisting.get().getThreadId());
+        messageToUpdateModel.setCreatedAt(messageExisting.get().getCreatedAt());
+        messageToUpdateModel.setUpdatedAt(LocalDateTime.now());
 
         MessageModel updatedMessageModel = messageRepository.updateMessage(messageToUpdateModel);
 

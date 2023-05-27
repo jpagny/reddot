@@ -6,7 +6,7 @@ public interface IMessageDomainService {
 
     void validateTopicForCreation(MessageModel messageModel);
 
-    void validateTopicForUpdate(MessageModel messageModel);
+    void validateTopicForUpdate(MessageModel messageModel, MessageModel messageExisting);
 
 
 }

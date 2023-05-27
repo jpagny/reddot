@@ -33,6 +33,10 @@ public class MessageDTO {
         this.threadId = threadId;
     }
 
+    public MessageDTO(String content){
+        this.content = content;
+    }
+
     public MessageDTO(String content, Long threadId, String userId){
         this.content = content;
         this.threadId = threadId;
