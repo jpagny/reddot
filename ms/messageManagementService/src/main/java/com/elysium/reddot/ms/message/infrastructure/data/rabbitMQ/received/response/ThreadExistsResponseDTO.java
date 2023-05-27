@@ -4,6 +4,5 @@ import lombok.Data;
 
 @Data
 public class ThreadExistsResponseDTO {
-    private Long threadId;
     private boolean exists;
 }

@@ -9,6 +9,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Service
 @Slf4j
@@ -21,23 +22,30 @@ public class ThreadExistRequester {
         this.objectMapper = new ObjectMapper();
     }
 
-    public void verifyThreadIdExistsOrThrow(Long messageId) throws IOException {
-        ThreadExistsResponseDTO response = getMessageExistsResponse(messageId);
+    public void verifyThreadIdExistsOrThrow(Long threadId) throws IOException {
+        ThreadExistsResponseDTO response = getMessageExistsResponse(threadId);
 
-        if (response != null && !response.isExists()) {
-            throw new ResourceNotFoundException("Thread", String.valueOf(messageId));
+        if (!response.isExists()) {
+            throw new ResourceNotFoundException("Thread", String.valueOf(threadId));
         }
     }
 
-    private ThreadExistsResponseDTO getMessageExistsResponse(Long messageId) throws IOException {
+    private ThreadExistsResponseDTO getMessageExistsResponse(Long threadId) throws IOException {
+        log.debug("Sending requester to check if threadId " + threadId + " is exist");
+
         byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_THREAD_MESSAGE,
                 RabbitMQConstant.REQUEST_THREAD_EXIST,
-                messageId
+                threadId
         );
 
+        assert replyBytes != null;
+        log.debug("Received response : " + Arrays.toString(replyBytes));
+
         try {
-            return objectMapper.readValue(replyBytes, ThreadExistsResponseDTO.class);
+            ThreadExistsResponseDTO responseDTO = objectMapper.readValue(replyBytes, ThreadExistsResponseDTO.class);
+            log.debug("Response in DTO : " + responseDTO.toString());
+            return responseDTO;
 
         } catch (IOException ex) {
             log.error("Fail to convert to json : " + ex);

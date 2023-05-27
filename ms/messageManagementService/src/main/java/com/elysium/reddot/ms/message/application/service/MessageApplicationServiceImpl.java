@@ -55,7 +55,8 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
 
         log.debug("Creating new message with content '{}'", messageToCreateModel.getContent());
 
-        Optional<MessageModel> existingMessage = messageRepository.findByContent(messageToCreateModel.getContent());
+        Optional<MessageModel> existingMessage = messageRepository
+                .findFirstByContentAndThreadId(messageToCreateModel.getContent(),messageToCreateModel.getThreadId());
 
         if (existingMessage.isPresent()) {
             throw new ResourceAlreadyExistException("Message", "content", messageToCreateModel.getContent());

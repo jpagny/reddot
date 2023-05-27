@@ -38,8 +38,8 @@ public class MessageRepositoryAdapter implements IMessageRepository {
     }
 
     @Override
-    public Optional<MessageModel> findByContent(String content) {
-        return messageJpaRepository.findByContent(content)
+    public Optional<MessageModel> findFirstByContentAndThreadId(String content, Long threadId) {
+        return messageJpaRepository.findFirstByContentAndThreadId(content,threadId)
                 .map(MessagePersistenceMapper::toModel);
     }
 

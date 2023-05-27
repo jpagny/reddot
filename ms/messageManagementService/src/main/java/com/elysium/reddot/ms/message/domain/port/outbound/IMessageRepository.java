@@ -11,7 +11,7 @@ public interface IMessageRepository {
 
     Optional<MessageModel> findMessageById(Long id);
 
-    Optional<MessageModel> findByContent(String content);
+    Optional<MessageModel> findFirstByContentAndThreadId(String content, Long parentMessageId);
 
     List<MessageModel> findAllMessages();
 

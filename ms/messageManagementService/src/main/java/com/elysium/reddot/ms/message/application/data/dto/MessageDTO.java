@@ -28,6 +28,11 @@ public class MessageDTO {
         this.userId = userId;
     }
 
+    public MessageDTO(String content, Long threadId){
+        this.content = content;
+        this.threadId = threadId;
+    }
+
     public MessageDTO(String content, Long threadId, String userId){
         this.content = content;
         this.threadId = threadId;

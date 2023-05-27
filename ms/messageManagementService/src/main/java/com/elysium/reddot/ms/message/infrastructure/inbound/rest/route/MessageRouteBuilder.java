@@ -39,7 +39,8 @@ public class MessageRouteBuilder extends RouteBuilder {
 
         onException(Exception.class)
                 .handled(true)
-                .process(globalExceptionHandler);
+                .process(globalExceptionHandler)
+                .marshal(format);
 
 
         // definition routes

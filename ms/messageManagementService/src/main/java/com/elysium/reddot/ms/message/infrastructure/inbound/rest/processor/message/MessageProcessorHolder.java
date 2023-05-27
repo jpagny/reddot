@@ -2,9 +2,10 @@ package com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.mess
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 @Component
 public class MessageProcessorHolder {

@@ -13,6 +13,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+
 @Component
 @Slf4j
 public class ThreadRabbitMQListener {
@@ -29,19 +31,24 @@ public class ThreadRabbitMQListener {
 
     @RabbitListener(queues = RabbitMQConstant.QUEUE_THREAD_EXIST)
     public void checkThreadExists(Message message) throws JsonProcessingException {
+        log.debug("Received request");
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
         Long threadId = (Long) messageConverter.fromMessage(message);
+        log.debug("Checking existing thread with id : " + threadId);
 
         boolean exists = threadRabbitMQService.checkThreadIdExists(threadId);
+        log.debug("Result existing thread with id : " + exists);
         BoardExistsResponseDTO response = new BoardExistsResponseDTO();
         response.setExists(exists);
 
+        log.debug("Building message");
         Message responseMessage = createResponseMessage(message, response);
 
         rabbitTemplate.send(
                 message.getMessageProperties().getReplyTo(),
                 responseMessage
         );
+        log.debug("Sending the response with : " + Arrays.toString(message.getBody()));
     }
 
     private Message createResponseMessage(Message requestMessage, BoardExistsResponseDTO response) throws JsonProcessingException {
