@@ -15,6 +15,4 @@ public interface ITopicManagementService {
 
     TopicModel updateTopic(Long id, TopicModel topicModel);
 
-    TopicModel deleteTopicById(Long id);
-    
 }

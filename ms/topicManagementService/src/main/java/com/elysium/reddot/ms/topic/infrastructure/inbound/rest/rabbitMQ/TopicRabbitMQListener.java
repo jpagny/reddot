@@ -14,8 +14,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
-
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -27,12 +25,9 @@ public class TopicRabbitMQListener {
     @RabbitListener(queues = RabbitMQConstant.QUEUE_TOPIC_EXIST)
     public void checkTopicExists(Message message) throws JsonProcessingException {
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
-        byte[] bytes = (byte[]) messageConverter.fromMessage(message);
-        String topicIdString = new String(bytes, StandardCharsets.UTF_8);
-        Long topicId = Long.parseLong(topicIdString);
+        Long topicId = (Long) messageConverter.fromMessage(message);
 
         boolean exists = topicRabbitMQService.checkTopicIdExists(topicId);
-        log.debug("Check topic exists: {}", exists);
 
         TopicExistsResponseDTO response = new TopicExistsResponseDTO();
         response.setExists(exists);
@@ -42,7 +37,6 @@ public class TopicRabbitMQListener {
         Message responseMessage = buildMessageResponse(jsonResponse, messageProperties);
 
         sendResponseToRabbit(message, responseMessage);
-        log.debug("Sent response message: {}", responseMessage);
     }
 
     private MessageProperties buildMessageProperties(Message message) {

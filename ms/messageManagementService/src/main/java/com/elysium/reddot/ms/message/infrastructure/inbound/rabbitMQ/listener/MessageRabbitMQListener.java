@@ -51,7 +51,6 @@ public class MessageRabbitMQListener {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         CountMessageByUserBetweenTwoDatesRequest requestReceived = objectMapper.readValue(jsonMessage, CountMessageByUserBetweenTwoDatesRequest.class);
-        log.debug("TESTTT : " + requestReceived.toString());
         Integer countMessagesTotalOnRangeDate = messageRabbitMQService.countMessageByUserIdBetweenTwoDates(
                 requestReceived.getUserId(),
                 requestReceived.getOnStart(),

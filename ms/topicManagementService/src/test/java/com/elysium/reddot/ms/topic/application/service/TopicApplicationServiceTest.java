@@ -194,40 +194,4 @@ class TopicApplicationServiceTest {
         verify(topicRepository, times(1)).findTopicById(topicId);
     }
 
-    @Test
-    @DisplayName("given existing topic when deleteTopicById is called then topic deleted")
-    void givenExistingTopic_whenDeleteTopicById_thenTopicDeleted() {
-        // given
-        Long topicId = 1L;
-        TopicModel existingTopicModel = new TopicModel(topicId, "Test Name", "Test Label", "Test Description");
-
-        // mock
-        when(topicRepository.findTopicById(topicId)).thenReturn(Optional.of(existingTopicModel));
-
-        // when
-        assertDoesNotThrow(() -> topicService.deleteTopicById(topicId),
-                "deleteTopicById should not throw an exception for an existing topic");
-
-        // then
-        verify(topicRepository, times(1)).findTopicById(topicId);
-        verify(topicRepository, times(1)).deleteTopic(topicId);
-    }
-
-    @Test
-    @DisplayName("given non-existent topic when deleteTopicById is called then throws ResourceNotFoundException")
-    void givenNonExistentTopic_whenDeleteTopicById_thenThrowsResourceNotFoundException() {
-        // given
-        Long nonExistentTopicId = 99L;
-
-        // mock
-        when(topicRepository.findTopicById(nonExistentTopicId)).thenReturn(Optional.empty());
-
-        // when && then
-        assertThrows(ResourceNotFoundException.class,
-                () -> topicService.deleteTopicById(nonExistentTopicId),
-                "deleteTopicById should throw a ResourceNotFoundException for a non-existent topic");
-        verify(topicRepository, times(1)).findTopicById(nonExistentTopicId);
-    }
-
-
 }

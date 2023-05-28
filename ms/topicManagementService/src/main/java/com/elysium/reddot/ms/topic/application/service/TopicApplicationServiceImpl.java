@@ -113,22 +113,4 @@ public class TopicApplicationServiceImpl implements ITopicManagementService {
         }
     }
 
-    @Override
-    public TopicModel deleteTopicById(Long id) throws ResourceNotFoundException {
-        log.debug("Deleting topic with id {}", id);
-
-        TopicModel topicToDelete = topicRepository.findTopicById(id).orElseThrow(
-                () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
-        );
-
-        topicRepository.deleteTopic(id);
-
-        log.info("Successfully deleted topic with id '{}', name '{}', description '{}'",
-                topicToDelete.getId(), topicToDelete.getName(), topicToDelete.getDescription());
-
-        return topicToDelete;
-    }
-
-
-
 }

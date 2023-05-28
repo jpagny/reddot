@@ -12,6 +12,5 @@ public class TopicProcessorHolder {
     private final GetTopicByIdProcessor getTopicByIdProcessor;
     private final CreateTopicProcessor createTopicProcessor;
     private final UpdateTopicProcessor updateTopicProcessor;
-    private final DeleteTopicProcessor deleteTopicProcessor;
 
 }
