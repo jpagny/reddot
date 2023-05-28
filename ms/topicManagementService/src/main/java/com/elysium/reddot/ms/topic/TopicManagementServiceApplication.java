@@ -5,6 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+/**
+ * Main class for starting the Topic Management Service application.
+ */
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableEurekaClient

@@ -2,12 +2,23 @@ package com.elysium.reddot.ms.topic.domain.model;
 
 import java.util.Objects;
 
+/**
+ * This class represents a model for a topic.
+ */
 public class TopicModel {
     private final Long id;
     private final String name;
     private String label;
     private String description;
 
+    /**
+     * Constructs a new TopicModel with the given id, name, label, and description.
+     *
+     * @param id          The unique identifier for this topic.
+     * @param name        The name of this topic.
+     * @param label       The label of this topic.
+     * @param description A description of this topic.
+     */
     public TopicModel(Long id, String name, String label, String description) {
         this.id = id;
         this.name = name;

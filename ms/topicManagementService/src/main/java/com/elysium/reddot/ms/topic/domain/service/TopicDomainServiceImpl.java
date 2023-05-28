@@ -4,19 +4,32 @@ import com.elysium.reddot.ms.topic.domain.exception.type.FieldEmptyException;
 import com.elysium.reddot.ms.topic.domain.exception.type.FieldWithSpaceException;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 
+/**
+ * This class provides an implementation of the ITopicDomainService interface.
+ * It provides methods for validating and updating TopicModels.
+ */
 public class TopicDomainServiceImpl implements ITopicDomainService {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void validateTopicForCreation(TopicModel topicModel) {
         validateName(topicModel.getName());
         validateLabel(topicModel.getLabel());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void validateTopicForUpdate(TopicModel topicModel) {
         validateLabel(topicModel.getLabel());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TopicModel updateExistingTopicWithUpdates(TopicModel existingTopic, TopicModel topicUpdates) {
         validateTopicForUpdate(topicUpdates);

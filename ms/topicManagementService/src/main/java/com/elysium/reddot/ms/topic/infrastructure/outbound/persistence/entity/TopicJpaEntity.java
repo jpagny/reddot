@@ -1,16 +1,15 @@
 package com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+/**
+ * Entity class representing a topic in the database.
+ */
 @Entity
 @Table(name = "topics")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class TopicJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

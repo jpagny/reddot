@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the {@link ITopicManagementService} interface, providing methods for managing Topic objects.
+ */
 @Service
 @Transactional
 @Slf4j
@@ -25,12 +28,18 @@ public class TopicApplicationServiceImpl implements ITopicManagementService {
     private final TopicDomainServiceImpl topicDomainService;
     private final ITopicRepository topicRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Autowired
     public TopicApplicationServiceImpl(ITopicRepository topicRepository) {
         this.topicDomainService = new TopicDomainServiceImpl();
         this.topicRepository = topicRepository;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TopicModel getTopicById(Long id) {
         log.debug("Fetching topic with id {}", id);
@@ -45,6 +54,9 @@ public class TopicApplicationServiceImpl implements ITopicManagementService {
         return foundTopicModel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<TopicModel> getAllTopics() {
         log.info("Fetching all topics from database...");
@@ -54,9 +66,11 @@ public class TopicApplicationServiceImpl implements ITopicManagementService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TopicModel createTopic(TopicModel topicToCreateModel) {
-
         log.debug("Creating new topic with name '{}', label '{}, description '{}'",
                 topicToCreateModel.getName(),
                 topicToCreateModel.getLabel(),
@@ -85,6 +99,9 @@ public class TopicApplicationServiceImpl implements ITopicManagementService {
         return createdTopicModel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TopicModel updateTopic(Long id, TopicModel topicToUpdateModel) {
         log.debug("Updating topic with id '{}', name '{}', label '{}', description '{}'",

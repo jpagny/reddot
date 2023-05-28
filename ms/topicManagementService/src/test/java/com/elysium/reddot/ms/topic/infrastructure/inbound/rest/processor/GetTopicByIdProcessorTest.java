@@ -2,10 +2,10 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
+import com.elysium.reddot.ms.topic.application.data.mapper.TopicDtoTopicModelMapper;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.topic.GetTopicByIdProcessor;
-import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicProcessorMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -43,7 +43,7 @@ class GetTopicByIdProcessorTest {
         // given
         Long id = 1L;
         TopicModel topicModel = new TopicModel(id, "name 1", "Name 1", "Topic 1");
-        TopicDTO expectedTopic = TopicProcessorMapper.toDTO(topicModel);
+        TopicDTO expectedTopic = TopicDtoTopicModelMapper.toDTO(topicModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "Topic with id " + id + " retrieved successfully", expectedTopic);

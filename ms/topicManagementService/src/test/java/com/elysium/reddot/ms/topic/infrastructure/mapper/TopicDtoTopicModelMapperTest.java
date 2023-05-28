@@ -1,6 +1,7 @@
 package com.elysium.reddot.ms.topic.infrastructure.mapper;
 
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
+import com.elysium.reddot.ms.topic.application.data.mapper.TopicDtoTopicModelMapper;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TopicProcessorMapperTest {
+class TopicDtoTopicModelMapperTest {
 
     @Test
     @DisplayName("given topicModel when toDTO is called then returns topicDTO")
@@ -19,7 +20,7 @@ class TopicProcessorMapperTest {
         TopicModel topicModel = new TopicModel(1L, "topic1", "label1", "description1");
 
         // When
-        TopicDTO topicDTO = TopicProcessorMapper.toDTO(topicModel);
+        TopicDTO topicDTO = TopicDtoTopicModelMapper.toDTO(topicModel);
 
         // Then
         assertEquals(topicModel.getId(), topicDTO.getId());
@@ -37,7 +38,7 @@ class TopicProcessorMapperTest {
         List<TopicModel> topicModels = Arrays.asList(topicModel1, topicModel2);
 
         // When
-        List<TopicDTO> topicDTOs = TopicProcessorMapper.toDTOList(topicModels);
+        List<TopicDTO> topicDTOs = TopicDtoTopicModelMapper.toDTOList(topicModels);
 
         // Then
         assertEquals(topicModels.size(), topicDTOs.size());
@@ -58,7 +59,7 @@ class TopicProcessorMapperTest {
         TopicDTO topicDTO = new TopicDTO(1L, "topic1", "label1", "description1");
 
         // When
-        TopicModel topicModel = TopicProcessorMapper.toModel(topicDTO);
+        TopicModel topicModel = TopicDtoTopicModelMapper.toModel(topicDTO);
 
         // Then
         assertEquals(topicDTO.getId(), topicModel.getId());

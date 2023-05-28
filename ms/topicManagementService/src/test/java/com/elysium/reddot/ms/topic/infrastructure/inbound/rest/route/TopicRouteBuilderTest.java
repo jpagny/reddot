@@ -2,6 +2,7 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
+import com.elysium.reddot.ms.topic.application.data.mapper.TopicDtoTopicModelMapper;
 import com.elysium.reddot.ms.topic.application.exception.type.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.topic.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
@@ -10,7 +11,6 @@ import com.elysium.reddot.ms.topic.infrastructure.constant.TopicRouteEnum;
 import com.elysium.reddot.ms.topic.infrastructure.data.dto.GlobalExceptionDTO;
 import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
 import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.topic.*;
-import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicProcessorMapper;
 import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -56,7 +56,7 @@ class TopicRouteBuilderTest extends CamelTestSupport {
                 new GetTopicByIdProcessor(topicService),
                 new CreateTopicProcessor(topicService),
                 new UpdateTopicProcessor(topicService)
-                );
+        );
 
         return new TopicRouteBuilder(globalExceptionHandler, topicProcessorHolder);
     }
@@ -68,7 +68,7 @@ class TopicRouteBuilderTest extends CamelTestSupport {
         TopicModel topic1Model = new TopicModel(1L, "name 1", "Name 1", "Topic 1");
         TopicModel topic2Model = new TopicModel(2L, "name 2", "Name 2", "Topic 2");
         List<TopicModel> topicListModel = Arrays.asList(topic1Model, topic2Model);
-        List<TopicDTO> expectedListTopics = TopicProcessorMapper.toDTOList(topicListModel);
+        List<TopicDTO> expectedListTopics = TopicDtoTopicModelMapper.toDTOList(topicListModel);
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
@@ -153,7 +153,7 @@ class TopicRouteBuilderTest extends CamelTestSupport {
         TopicDTO inputTopicDTO = new TopicDTO(null, "name", "Name", "Description");
         TopicModel inputTopicModel = new TopicModel(null, "name", "Name", "Description");
         TopicModel createdTopicModel = new TopicModel(1L, inputTopicModel.getName(), inputTopicModel.getLabel(), inputTopicModel.getDescription());
-        TopicDTO expectedTopic = TopicProcessorMapper.toDTO(createdTopicModel);
+        TopicDTO expectedTopic = TopicDtoTopicModelMapper.toDTO(createdTopicModel);
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
@@ -213,7 +213,7 @@ class TopicRouteBuilderTest extends CamelTestSupport {
         TopicDTO inputTopicDTO = new TopicDTO(topicId, "newName", "newDescription", "newIcon");
         TopicModel requestModel = new TopicModel(topicId, "newName", "newDescription", "newIcon");
         TopicModel updatedTopic = new TopicModel(topicId, "newName", "newDescription", "newIcon");
-        TopicDTO expectedTopic = TopicProcessorMapper.toDTO(updatedTopic);
+        TopicDTO expectedTopic = TopicDtoTopicModelMapper.toDTO(updatedTopic);
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");

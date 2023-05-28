@@ -16,7 +16,7 @@ class TopicApplicationMapperTest {
         TopicModel topicModel = new TopicModel(1L, "Test Name", "Test Label", "Test Description");
 
         // when
-        TopicDTO topicDTO = TopicApplicationMapper.toDTO(topicModel);
+        TopicDTO topicDTO = TopicDtoTopicModelMapper.toDTO(topicModel);
 
         // then
         assertEquals(topicModel.getId(), topicDTO.getId(), "The topic ID should match");
@@ -32,7 +32,7 @@ class TopicApplicationMapperTest {
         TopicDTO topicDTO = new TopicDTO(1L, "Test Name", "Test Label", "Test Description");
 
         // when
-        TopicModel topicModel = TopicApplicationMapper.toModel(topicDTO);
+        TopicModel topicModel = TopicDtoTopicModelMapper.toModel(topicDTO);
 
         // then
         assertEquals(topicDTO.getId(), topicModel.getId(), "The topic ID should match");

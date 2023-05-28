@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
+/**
+ * Component that holds instances of various topic processors.
+ */
 @AllArgsConstructor
 @Getter
 @Component

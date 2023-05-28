@@ -9,6 +9,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
 
+/**
+ * Component that defines the Camel routes for handling topic-related requests.
+ * It extends the RouteBuilder class from Apache Camel.
+ */
 @Component
 @RequiredArgsConstructor
 public class TopicRouteBuilder extends RouteBuilder {

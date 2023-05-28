@@ -2,10 +2,10 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
+import com.elysium.reddot.ms.topic.application.data.mapper.TopicDtoTopicModelMapper;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.topic.CreateTopicProcessor;
-import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicProcessorMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -45,7 +45,7 @@ class CreateTopicProcessorTest {
         TopicDTO topicToCreateDTO = new TopicDTO(null, "name", "Name", "Topic description");
         TopicModel topicToCreateModel = new TopicModel(null, "name", "Name", "Topic description");
         TopicModel createdTopicModel = new TopicModel(1L, "name", "Name", "Topic description");
-        TopicDTO expectedTopic = TopicProcessorMapper.toDTO(createdTopicModel);
+        TopicDTO expectedTopic = TopicDtoTopicModelMapper.toDTO(createdTopicModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),
                 "Topic with name " + createdTopicModel.getName() + " created successfully", expectedTopic);

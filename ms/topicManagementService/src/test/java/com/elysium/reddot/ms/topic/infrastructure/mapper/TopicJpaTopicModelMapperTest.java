@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.topic.infrastructure.mapper;
 
+import com.elysium.reddot.ms.topic.application.data.mapper.TopicJpaTopicModelMapper;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.entity.TopicJpaEntity;
 import org.junit.jupiter.api.DisplayName;
@@ -7,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TopicPersistenceMapperTest {
+class TopicJpaTopicModelMapperTest {
 
     @Test
     @DisplayName("given topicModel when toEntity is called then returns topicJpaEntity")
@@ -16,7 +17,7 @@ class TopicPersistenceMapperTest {
         TopicModel topicModel = new TopicModel(1L, "Test Name", "Test Label", "Test Description");
 
         // when
-        TopicJpaEntity topicJpaEntity = TopicPersistenceMapper.toEntity(topicModel);
+        TopicJpaEntity topicJpaEntity = TopicJpaTopicModelMapper.toEntity(topicModel);
 
         // then
         assertEquals(topicModel.getId(), topicJpaEntity.getId(), "The topic ID should match");
@@ -36,7 +37,7 @@ class TopicPersistenceMapperTest {
         topicJpaEntity.setDescription("Test Description");
 
         // when
-        TopicModel topicModel = TopicPersistenceMapper.toModel(topicJpaEntity);
+        TopicModel topicModel = TopicJpaTopicModelMapper.toModel(topicJpaEntity);
 
         // then
         assertEquals(topicJpaEntity.getId(), topicModel.getId(), "The topic ID should match");

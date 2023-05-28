@@ -1,5 +1,8 @@
 package com.elysium.reddot.ms.topic.infrastructure.constant;
 
+/**
+ * This enumeration defines the routes for various topic-related operations in the application.
+ */
 public enum TopicRouteEnum {
 
     GET_ALL_TOPICS("direct:getAllTopics"),

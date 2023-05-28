@@ -2,10 +2,10 @@ package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.topic.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.topic.application.data.dto.TopicDTO;
+import com.elysium.reddot.ms.topic.application.data.mapper.TopicDtoTopicModelMapper;
 import com.elysium.reddot.ms.topic.application.service.TopicApplicationServiceImpl;
 import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.topic.UpdateTopicProcessor;
-import com.elysium.reddot.ms.topic.infrastructure.mapper.TopicProcessorMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -44,7 +44,7 @@ class UpdateTopicProcessorTest {
         Long topicId = 1L;
         TopicDTO updatedTopicDTO = new TopicDTO(topicId, "new_name", "New Name", "New Topic description");
         TopicModel updatedTopicModel = new TopicModel(topicId, "new_name", "New Name", "New Topic description");
-        TopicDTO expectedTopic = TopicProcessorMapper.toDTO(updatedTopicModel);
+        TopicDTO expectedTopic = TopicDtoTopicModelMapper.toDTO(updatedTopicModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "Topic with name " + updatedTopicModel.getName() + " updated successfully", expectedTopic);
