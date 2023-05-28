@@ -13,7 +13,8 @@ import java.util.Optional;
 @Repository
 public interface ReplyMessageJpaRepository extends JpaRepository<ReplyMessageJpaEntity, Long> {
 
-    Optional<ReplyMessageJpaEntity> findByContent(String content);
+    @Query("SELECT m FROM ReplyMessageJpaEntity m WHERE m.content = :content AND m.parentMessageId = :parentMessageId ORDER BY m.createdAt")
+    Optional<ReplyMessageJpaEntity> findFirstByContentAndThreadId(@Param("content") String content, @Param("parentMessageId") Long parentMessageId);
 
     @Query("SELECT COUNT(m) FROM ReplyMessageJpaEntity m WHERE m.parentMessageId = :messageId")
     int countRepliesByMessageId(@Param("messageId") Long messageId);

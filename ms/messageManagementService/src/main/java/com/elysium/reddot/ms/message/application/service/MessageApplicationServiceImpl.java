@@ -61,14 +61,14 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
                 .findFirstByContentAndThreadId(messageToCreateModel.getContent(), messageToCreateModel.getThreadId());
 
         if (existingMessage.isPresent()) {
-            throw new ResourceAlreadyExistException("Message", "content", messageToCreateModel.getContent());
+            throw new ResourceAlreadyExistException(RESOURCE_NAME_MESSAGE, "content", messageToCreateModel.getContent());
         }
 
         messageToCreateModel.setCreatedAt(LocalDateTime.now());
         messageToCreateModel.setUpdatedAt(messageToCreateModel.getCreatedAt());
 
         try {
-            messageDomainService.validateTopicForCreation(messageToCreateModel);
+            messageDomainService.validateMessageForCreation(messageToCreateModel);
 
         } catch (Exception exception) {
             throw new ResourceBadValueException(RESOURCE_NAME_MESSAGE, exception.getMessage());
@@ -92,7 +92,7 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
         }
 
         try {
-            messageDomainService.validateTopicForUpdate(messageToUpdateModel, messageExisting.get());
+            messageDomainService.validateMessageForUpdate(messageToUpdateModel, messageExisting.get());
 
         } catch (DifferentUserException exception) {
             log.error(exception.getMessage());

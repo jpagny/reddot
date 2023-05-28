@@ -1,10 +1,11 @@
 package com.elysium.reddot.ms.replymessage.application.service;
 
+import com.elysium.reddot.ms.replymessage.application.exception.type.IsNotOwnerException;
 import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceBadValueException;
 import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.replymessage.domain.constant.ApplicationDefaults;
-import com.elysium.reddot.ms.replymessage.domain.exception.LimitExceededException;
+import com.elysium.reddot.ms.replymessage.domain.exception.DifferentUserException;
 import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import com.elysium.reddot.ms.replymessage.domain.port.inbound.IReplyMessageManagementService;
 import com.elysium.reddot.ms.replymessage.domain.port.outbound.IReplyMessageRepository;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -62,18 +64,31 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
         log.debug("Creating new replyMessage with content '{}'",
                 replyMessageToCreateModel.getContent());
 
-        Optional<ReplyMessageModel> existingReplyMessage = replyMessageRepository.findByContent(replyMessageToCreateModel.getContent());
+        Optional<ReplyMessageModel> existingReplyMessage = replyMessageRepository
+                .findFirstByContentAndParentMessageId(replyMessageToCreateModel.getContent(),
+                        replyMessageToCreateModel.getParentMessageID());
 
         if (existingReplyMessage.isPresent()) {
-            throw new ResourceAlreadyExistException(RESOURCE_NAME_REPLY_MESSAGE, "content", replyMessageToCreateModel.getContent());
+            throw new ResourceAlreadyExistException(RESOURCE_NAME_REPLY_MESSAGE, "content",
+                    replyMessageToCreateModel.getContent());
         }
 
-        try {
-            int countTotalRepliedForThisMessage = replyMessageRepository.countRepliesByMessageId(replyMessageToCreateModel.getParentMessageID());
-            replyMessageDomainService.verifyNestedRepliesLimit(countTotalRepliedForThisMessage, maxNestedReplies);
-            // other check
+        replyMessageToCreateModel.setCreatedAt(LocalDateTime.now());
+        replyMessageToCreateModel.setUpdatedAt(replyMessageToCreateModel.getCreatedAt());
 
-        } catch (LimitExceededException exception) {
+        try {
+            // check validate replyMessage
+            replyMessageDomainService.validateReplyMessageForCreation(replyMessageToCreateModel);
+
+            // check nested replies limit
+            int countTotalRepliedForThisMessage = replyMessageRepository
+                    .countRepliesByMessageId(replyMessageToCreateModel.getParentMessageID());
+            log.debug("ICII TOTAL : " + countTotalRepliedForThisMessage);
+            replyMessageDomainService.verifyNestedRepliesLimit(countTotalRepliedForThisMessage, maxNestedReplies);
+
+            // other check ...
+
+        } catch (Exception exception) {
             throw new ResourceBadValueException(RESOURCE_NAME_REPLY_MESSAGE, exception.getMessage());
 
         }
@@ -101,11 +116,20 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
         }
 
         try {
-            // rule domain
-        } catch (Exception ex) {
-            throw new ResourceBadValueException(RESOURCE_NAME_REPLY_MESSAGE, ex.getMessage());
+            replyMessageDomainService.validateReplyMessageForUpdate(replyMessageToUpdateModel, existingReplyMessageModel.get());
+
+        } catch (DifferentUserException exception) {
+            log.error(exception.getMessage());
+            throw new IsNotOwnerException(RESOURCE_NAME_REPLY_MESSAGE);
+
+        } catch (Exception exception) {
+            throw new ResourceBadValueException(RESOURCE_NAME_REPLY_MESSAGE, exception.getMessage());
 
         }
+
+        replyMessageToUpdateModel.setMessageId(existingReplyMessageModel.get().getParentMessageID());
+        replyMessageToUpdateModel.setCreatedAt(existingReplyMessageModel.get().getCreatedAt());
+        replyMessageToUpdateModel.setUpdatedAt(LocalDateTime.now());
 
         ReplyMessageModel updatedReplyMessageModel = replyMessageRepository.updateReplyMessage(replyMessageToUpdateModel);
 

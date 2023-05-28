@@ -31,6 +31,5 @@ public class GetAllMessagesProcessor implements Processor {
 
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());
         exchange.getMessage().setBody(apiResponseDTO);
-        log.debug("ICI " + exchange.getIn().getBody().toString());
     }
 }

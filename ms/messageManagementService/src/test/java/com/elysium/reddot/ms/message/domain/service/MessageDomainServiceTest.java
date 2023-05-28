@@ -25,7 +25,7 @@ class MessageDomainServiceTest {
         messageModel.setContent("");
 
         // when && throw
-        assertThrows(FieldEmptyException.class, () -> messageDomainService.validateTopicForCreation(messageModel));
+        assertThrows(FieldEmptyException.class, () -> messageDomainService.validateMessageForCreation(messageModel));
     }
 
     @Test
@@ -36,7 +36,7 @@ class MessageDomainServiceTest {
         messageModel.setContent("");
 
         // when && throw
-        assertThrows(FieldEmptyException.class, () -> messageDomainService.validateTopicForUpdate(messageModel,null));
+        assertThrows(FieldEmptyException.class, () -> messageDomainService.validateMessageForUpdate(messageModel,null));
     }
 
 

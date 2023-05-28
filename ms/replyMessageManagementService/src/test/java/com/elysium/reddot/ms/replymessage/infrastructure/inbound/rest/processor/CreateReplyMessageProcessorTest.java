@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
+import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -48,7 +49,7 @@ class CreateReplyMessageProcessorTest {
 
     @Test
     @DisplayName("given valid replyMessage when createReplyMessage is called then replyMessage created successfully")
-    void givenValidReplyMessage_whenCreateReplyMessage_thenReplyMessageCreatedSuccessfully() throws IOException {
+    void givenValidReplyMessage_whenCreateReplyMessage_thenReplyMessageCreatedSuccessfully() throws IOException, AuthenticationException {
         // given
         ReplyMessageDTO messageToCreateDTO = new ReplyMessageDTO("content", 1L, "userId");
         ReplyMessageModel messageToCreateModel = new ReplyMessageModel("content", 1L, "userId");

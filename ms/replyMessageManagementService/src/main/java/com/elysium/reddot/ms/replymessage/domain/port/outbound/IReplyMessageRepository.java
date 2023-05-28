@@ -12,7 +12,7 @@ public interface IReplyMessageRepository {
 
     Optional<ReplyMessageModel> findReplyMessageById(Long id);
 
-    Optional<ReplyMessageModel> findByContent(String content);
+    Optional<ReplyMessageModel> findFirstByContentAndParentMessageId(String content, Long parentMessageId);
 
     List<ReplyMessageModel> findAllRepliesMessage();
 

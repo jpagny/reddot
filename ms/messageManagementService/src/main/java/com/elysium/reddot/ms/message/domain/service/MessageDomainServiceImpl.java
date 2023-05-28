@@ -8,12 +8,12 @@ public class MessageDomainServiceImpl implements IMessageDomainService {
 
 
     @Override
-    public void validateTopicForCreation(MessageModel messageModel) {
+    public void validateMessageForCreation(MessageModel messageModel) {
         validateContent(messageModel.getContent());
     }
 
     @Override
-    public void validateTopicForUpdate(MessageModel messageModel, MessageModel messageExisting) {
+    public void validateMessageForUpdate(MessageModel messageModel, MessageModel messageExisting) {
         validateUser(messageExisting.getUserId(), messageExisting.getUserId());
         validateContent(messageModel.getContent());
     }

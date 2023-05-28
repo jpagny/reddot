@@ -40,6 +40,7 @@ public class CreateMessageProcessor implements Processor {
         MessageModel messageModel = MessageProcessorMapper.toModel(inputMessageDTO);
 
         threadExistRequester.verifyThreadIdExistsOrThrow(messageModel.getThreadId());
+
         createMessageAndSetResponse(exchange, messageModel);
     }
 

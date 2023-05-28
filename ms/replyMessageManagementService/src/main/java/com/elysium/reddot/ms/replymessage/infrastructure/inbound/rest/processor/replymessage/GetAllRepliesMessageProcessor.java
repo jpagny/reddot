@@ -6,6 +6,7 @@ import com.elysium.reddot.ms.replymessage.application.service.ReplyMessageApplic
 import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageProcessorMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.http.HttpStatus;
@@ -15,12 +16,14 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class GetAllRepliesMessageProcessor implements Processor {
 
     private final ReplyMessageApplicationServiceImpl replyReplyMessageService;
 
     @Override
     public void process(Exchange exchange) {
+        log.debug("ICIIIII");
         List<ReplyMessageModel> listReplyMessagesModel = replyReplyMessageService.getAllRepliesMessage();
 
         List<ReplyMessageDTO> listReplyMessagesDTO = ReplyMessageProcessorMapper.toDTOList(listReplyMessagesModel);

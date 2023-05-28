@@ -10,8 +10,6 @@ import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import com.elysium.reddot.ms.replymessage.infrastructure.constant.ReplyMessageRouteEnum;
 import com.elysium.reddot.ms.replymessage.infrastructure.data.exception.GlobalExceptionDTO;
 import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
-import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.keycloak.CheckTokenProcessor;
-import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.keycloak.KeycloakProcessorHolder;
 import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.replymessage.*;
 import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageProcessorMapper;
 import com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitmq.requester.MessageExistRequester;
@@ -72,15 +70,12 @@ class ReplyMessageRouteBuilderTest extends CamelTestSupport {
         ReplyMessageProcessorHolder replyMessageProcessorHolder = new ReplyMessageProcessorHolder(
                 new GetAllRepliesMessageProcessor(replyMessageService),
                 new GetReplyMessageByIdProcessor(replyMessageService),
-                new CreateReplyMessageProcessor(replyMessageService, messageExistRequester),
+                new CreateReplyMessageProcessor(replyMessageService, keycloakService, messageExistRequester, objectMapper),
                 new UpdateReplyMessageProcessor(replyMessageService)
         );
 
-        KeycloakProcessorHolder keycloakProcessorHolder = new KeycloakProcessorHolder(
-                new CheckTokenProcessor(keycloakService)
-        );
 
-        return new ReplyMessageRouteBuilder(globalExceptionHandler, replyMessageProcessorHolder, keycloakProcessorHolder, objectMapper);
+        return new ReplyMessageRouteBuilder(globalExceptionHandler, replyMessageProcessorHolder, objectMapper);
     }
 
     @Test

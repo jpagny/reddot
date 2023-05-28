@@ -44,8 +44,8 @@ public class ReplyMessageRepositoryAdapter implements IReplyMessageRepository {
     }
 
     @Override
-    public Optional<ReplyMessageModel> findByContent(String content) {
-        return replyMessageJpaRepository.findByContent(content)
+    public Optional<ReplyMessageModel> findFirstByContentAndParentMessageId(String content, Long parentMessageId) {
+        return replyMessageJpaRepository.findFirstByContentAndThreadId(content,parentMessageId)
                 .map(ReplyMessagePersistenceMapper::toModel);
     }
 
