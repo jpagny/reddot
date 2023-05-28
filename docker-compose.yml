@@ -15,9 +15,9 @@ services:
     environment:
       - spring.profiles.active=demo
       - spring.config.import=configserver:http://spring-config-server:11000/
-      - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
+      - eureka.client.serviceUrl.defaultZone=http://reddotSpringEureka:11001/eureka
       - keycloak.auth-server-url=http://keycloakServer:11003
-      - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
+      - opentracing.jaeger.http-sender.url=http://reddotJaeger:14268/api/traces
     depends_on:
       spring-config-server:
         condition: service_healthy
@@ -39,9 +39,9 @@ services:
     environment:
       - spring.profiles.active=demo
       - eureka.client.serviceUrl.defaultZone=http://reddotSpringEureka:11001/eureka
-      - spring.datasource.url=jdbc:mysql://topic_db:10100/topic?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      - spring.datasource.url=jdbc:mysql://topicDbmysql:10100/topic?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       - keycloak.auth-server-url=http://keycloakServer:11003
-      - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
+      - opentracing.jaeger.http-sender.url=http://reddotJaeger:14268/api/traces
       - spring.rabbitmq.host=rabbitmq
     depends_on:
       spring-gateway-server:
@@ -55,7 +55,7 @@ services:
   # topic database
   topic_db:
     image: mysql:latest
-    container_name: topic_db_mysql
+    container_name: topicDbmysql
     environment:
       - MYSQL_TCP_PORT=10100
       - MYSQL_ROOT_PASSWORD=rootroot
@@ -166,7 +166,7 @@ services:
     build:
       context: edge/springGatewayServer
       dockerfile: Dockerfile
-    container_name: reddot_spring_gateway
+    container_name: reddotSpringGateway
     ports:
       - "11002:11002"
     environment:
@@ -221,7 +221,7 @@ services:
   #prometheus
   prometheus:
     image: prom/prometheus
-    container_name: reddot_prometheus
+    container_name: reddotPrometheus
     volumes:
       - .\edge\prometheus\prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
@@ -234,7 +234,7 @@ services:
   #jaeger
   jaeger:
     image: jaegertracing/all-in-one:latest
-    container_name: reddot_jaeger
+    container_name: reddotJaeger
     ports:
       - "11005:16686"
       - 6831:6831/udp
