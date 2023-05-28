@@ -38,7 +38,7 @@ services:
       - "10002:10002"
     environment:
       - spring.profiles.active=demo
-      - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
+      - eureka.client.serviceUrl.defaultZone=http://reddotSpringEureka:11001/eureka
       - spring.datasource.url=jdbc:mysql://topic_db:10100/topic?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       - keycloak.auth-server-url=http://keycloakServer:11003
       - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
@@ -154,7 +154,7 @@ services:
     build:
       context: edge/springEurekaServer
       dockerfile: Dockerfile
-    container_name: reddot_spring_eureka
+    container_name: reddotSpringEureka
     ports:
       - "11001:11001"
     networks:
@@ -171,7 +171,7 @@ services:
       - "11002:11002"
     environment:
       - spring.config.import=configserver:http://spring-config-server:11000/
-      - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
+      - eureka.client.serviceUrl.defaultZone=http://reddotSpringEureka:11001/eureka
       - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
     depends_on:
       spring-config-server:
