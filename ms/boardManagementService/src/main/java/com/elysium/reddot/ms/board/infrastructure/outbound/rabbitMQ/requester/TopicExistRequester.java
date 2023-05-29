@@ -50,7 +50,7 @@ public class TopicExistRequester {
         log.debug("Topic id {} exists", topicId);
     }
 
-    private TopicExistsResponseDTO getTopicExistsResponse(Long topicId) throws IOException {
+    private TopicExistsResponseDTO getTopicExistsResponse(Long topicId) {
         log.debug("Sending topic existence request for ID: {}", topicId);
 
         Object replyObject = rabbitTemplate.convertSendAndReceive(

@@ -1,5 +1,8 @@
 package com.elysium.reddot.ms.thread.application.service;
 
+import com.elysium.reddot.ms.thread.application.exception.type.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.thread.application.exception.type.ResourceBadValueException;
+import com.elysium.reddot.ms.thread.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import com.elysium.reddot.ms.thread.infrastructure.outbound.persistence.ThreadRepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,7 +92,7 @@ class ThreadApplicationServiceTest {
         ThreadModel expectedThread = new ThreadModel(1L, "test", "Test Label", "Test Description",1L,"userId");
 
         // mock
-        when(threadRepository.findThreadByName(threadToCreateLabel.getName())).thenReturn(Optional.empty());
+        when(threadRepository.findFirstByNameAndBoardId(threadToCreateLabel.getName(),threadToCreateLabel.getBoardId())).thenReturn(Optional.empty());
         when(threadRepository.createThread(threadToCreateLabel)).thenReturn(expectedThread);
 
         // when
@@ -97,7 +100,7 @@ class ThreadApplicationServiceTest {
 
         // then
         assertEquals(expectedThread, actualThreadModel, "The created thread should match the expected thread");
-        verify(threadRepository, times(1)).findThreadByName(expectedThread.getName());
+        verify(threadRepository, times(1)).findFirstByNameAndBoardId(expectedThread.getName(),expectedThread.getBoardId());
         verify(threadRepository, times(1)).createThread(threadToCreateLabel);
     }
 
@@ -108,13 +111,13 @@ class ThreadApplicationServiceTest {
         ThreadModel existingThreadModel = new ThreadModel(1L, "Test Name", "Test Label", "Test Description",1L,"userId");
 
         // mock
-        when(threadRepository.findThreadByName(existingThreadModel.getName())).thenReturn(Optional.of(existingThreadModel));
+        when(threadRepository.findFirstByNameAndBoardId(existingThreadModel.getName(),existingThreadModel.getBoardId())).thenReturn(Optional.of(existingThreadModel));
 
         // when && then
         assertThrows(ResourceAlreadyExistException.class,
                 () -> threadService.createThread(existingThreadModel),
                 "createThread should throw a ResourceAlreadyExistException for an existing thread");
-        verify(threadRepository, times(1)).findThreadByName(existingThreadModel.getName());
+        verify(threadRepository, times(1)).findFirstByNameAndBoardId(existingThreadModel.getName(),existingThreadModel.getBoardId());
     }
 
     @Test
@@ -124,13 +127,13 @@ class ThreadApplicationServiceTest {
         ThreadModel invalidThreadModel = new ThreadModel(1L, "", "Invalid Label", "Invalid Description",1L,"userId");
 
         // mock
-        when(threadRepository.findThreadByName(invalidThreadModel.getName())).thenReturn(Optional.empty());
+        when(threadRepository.findFirstByNameAndBoardId(invalidThreadModel.getName(),invalidThreadModel.getBoardId())).thenReturn(Optional.empty());
 
         // when && then
         assertThrows(ResourceBadValueException.class,
                 () -> threadService.createThread(invalidThreadModel),
                 "createThread should throw a ResourceBadValueException for an invalid thread");
-        verify(threadRepository, times(1)).findThreadByName(invalidThreadModel.getName());
+        verify(threadRepository, times(1)).findFirstByNameAndBoardId(invalidThreadModel.getName(),invalidThreadModel.getBoardId());
     }
 
     @Test
@@ -189,41 +192,6 @@ class ThreadApplicationServiceTest {
                         (threadId, invalidThreadToUpdateModel),
                 "updateThread should throw a ResourceBadValueException for an invalid thread");
         verify(threadRepository, times(1)).findThreadById(threadId);
-    }
-
-    @Test
-    @DisplayName("given existing thread when deleteThreadById is called then thread deleted")
-    void givenExistingThread_whenDeleteThreadById_thenThreadDeleted() {
-        // given
-        Long threadId = 1L;
-        ThreadModel existingThreadModel = new ThreadModel(threadId, "Test Name", "Test Label", "Test Description",1L,"userId");
-
-        // mock
-        when(threadRepository.findThreadById(threadId)).thenReturn(Optional.of(existingThreadModel));
-
-        // when
-        assertDoesNotThrow(() -> threadService.deleteThreadById(threadId),
-                "deleteThreadById should not throw an exception for an existing thread");
-
-        // then
-        verify(threadRepository, times(1)).findThreadById(threadId);
-        verify(threadRepository, times(1)).deleteThread(threadId);
-    }
-
-    @Test
-    @DisplayName("given non-existent thread when deleteThreadById is called then throws ResourceNotFoundException")
-    void givenNonExistentThread_whenDeleteThreadById_thenThrowsResourceNotFoundException() {
-        // given
-        Long nonExistentThreadId = 99L;
-
-        // mock
-        when(threadRepository.findThreadById(nonExistentThreadId)).thenReturn(Optional.empty());
-
-        // when && then
-        assertThrows(ResourceNotFoundException.class,
-                () -> threadService.deleteThreadById(nonExistentThreadId),
-                "deleteThreadById should throw a ResourceNotFoundException for a non-existent thread");
-        verify(threadRepository, times(1)).findThreadById(nonExistentThreadId);
     }
 
 

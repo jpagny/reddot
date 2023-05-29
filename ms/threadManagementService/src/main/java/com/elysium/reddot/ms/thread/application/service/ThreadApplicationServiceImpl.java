@@ -77,7 +77,7 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
                 threadToCreateModel.getBoardId(),
                 threadToCreateModel.getUserId());
 
-        Optional<ThreadModel> existingThread = threadRepository.findThreadByName(threadToCreateModel.getName());
+        Optional<ThreadModel> existingThread = threadRepository.findFirstByNameAndBoardId(threadToCreateModel.getName(), threadToCreateModel.getBoardId());
 
         if (existingThread.isPresent()) {
             throw new ResourceAlreadyExistException(RESOURCE_NAME_TOPIC, "name", threadToCreateModel.getName(), threadToCreateModel.getBoardId());
@@ -119,7 +119,7 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
         );
 
         try {
-            ThreadModel threadModelWithUpdates = threadDomainService.updateExistingThreadWithUpdates(existingThreadModel, threadToUpdateModel);
+            ThreadModel threadModelWithUpdates = threadDomainService.updateExistingThreadWithUpdates(threadToUpdateModel, existingThreadModel);
 
             ThreadModel updatedThreadModel = threadRepository.updateThread(threadModelWithUpdates);
 

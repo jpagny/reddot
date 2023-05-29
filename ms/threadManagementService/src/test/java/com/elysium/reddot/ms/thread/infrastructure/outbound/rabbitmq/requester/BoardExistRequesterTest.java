@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.thread.infrastructure.outbound.rabbitmq.requester;
 
+import com.elysium.reddot.ms.thread.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.thread.infrastructure.constant.RabbitMQConstant;
 import com.elysium.reddot.ms.thread.infrastructure.data.dto.BoardExistsResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,15 +40,15 @@ class BoardExistRequesterTest {
     void givenBoardIdExists_whenVerifyBoardIdExistsOrThrow_thenNoException() throws Exception {
         // given
         Long boardId = 123L;
+        String boardIdString = "123";
         BoardExistsResponseDTO response = new BoardExistsResponseDTO();
-        response.setBoardId(boardId);
         response.setExists(true);
 
         // mock
         when(rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_BOARD_THREAD,
                 RabbitMQConstant.REQUEST_BOARD_EXIST,
-                boardId
+                boardIdString
         )).thenReturn(objectMapper.writeValueAsBytes(response));
 
         // when
@@ -62,15 +63,15 @@ class BoardExistRequesterTest {
     void givenBoardIdDoesNotExist_whenVerifyBoardIdExistsOrThrow_thenException() throws IOException {
         // given
         Long boardId = 123L;
+        String boardIdString = "123";
         BoardExistsResponseDTO response = new BoardExistsResponseDTO();
-        response.setBoardId(boardId);
         response.setExists(false);
 
         // mock
         when(rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_BOARD_THREAD,
                 RabbitMQConstant.REQUEST_BOARD_EXIST,
-                boardId
+                boardIdString
         )).thenReturn(objectMapper.writeValueAsBytes(response));
 
         // when and then

@@ -2,6 +2,7 @@ package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
+import com.elysium.reddot.ms.thread.application.service.KeycloakService;
 import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread.UpdateThreadProcessor;
@@ -18,6 +19,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
+import javax.naming.AuthenticationException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -29,17 +32,20 @@ class UpdateThreadProcessorTest {
     @Mock
     private ThreadApplicationServiceImpl threadService;
 
+    @Mock
+    private KeycloakService keycloakService;
+
     private CamelContext camelContext;
 
     @BeforeEach
     void setUp() {
         camelContext = new DefaultCamelContext();
-        updateThreadProcessor = new UpdateThreadProcessor(threadService);
+        updateThreadProcessor = new UpdateThreadProcessor(threadService, keycloakService);
     }
 
     @Test
     @DisplayName("given valid thread when updateThread is called then thread updated successfully")
-    void givenValidThread_whenUpdateThread_thenThreadIsUpdatedSuccessfully() {
+    void givenValidThread_whenUpdateThread_thenThreadIsUpdatedSuccessfully() throws AuthenticationException {
         // given
         Long threadId = 1L;
         ThreadDTO updatedThreadDTO = new ThreadDTO(threadId, "new_name", "New Name", "New Thread description", 1L, "userId");

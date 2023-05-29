@@ -2,6 +2,7 @@ package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.threa
 
 import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
+import com.elysium.reddot.ms.thread.application.service.KeycloakService;
 import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadDTOThreadModel;
@@ -13,6 +14,7 @@ import org.apache.camel.Processor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import javax.naming.AuthenticationException;
 import java.io.IOException;
 
 /**
@@ -25,15 +27,22 @@ import java.io.IOException;
 public class CreateThreadProcessor implements Processor {
 
     private final ThreadApplicationServiceImpl threadApplicationService;
+    private final KeycloakService keycloakService;
     private final BoardExistRequester boardExistRequester;
 
     @Override
-    public void process(Exchange exchange) throws IOException {
+    public void process(Exchange exchange) throws IOException, AuthenticationException {
         log.debug("Processing create thread request...");
 
         ThreadDTO inputThreadDTO = exchange.getIn().getBody(ThreadDTO.class);
-        ThreadModel threadModel = ThreadDTOThreadModel.toModel(inputThreadDTO);
         log.debug("Received input ThreadDTO: {}", inputThreadDTO);
+
+        // add user id
+        String userId = keycloakService.getUserId();
+        inputThreadDTO.setUserId(userId);
+        log.debug("Adding userId: {}", inputThreadDTO);
+
+        ThreadModel threadModel = ThreadDTOThreadModel.toModel(inputThreadDTO);
 
         log.debug("Verifying existence of board ID: {}", threadModel.getBoardId());
         boardExistRequester.verifyBoardIdExistsOrThrow(threadModel.getBoardId());
@@ -47,6 +56,7 @@ public class CreateThreadProcessor implements Processor {
         log.debug("Creating thread using ThreadApplicationService...");
 
         ThreadModel createdThreadModel = threadApplicationService.createThread(threadModel);
+
         ThreadDTO createdThreadDTO = ThreadDTOThreadModel.toDTO(createdThreadModel);
         ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.CREATED.value(),
                 "Thread with name " + createdThreadModel.getName() + " created successfully", createdThreadDTO);

@@ -2,6 +2,7 @@ package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
+import com.elysium.reddot.ms.thread.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.thread.container.TestContainerSetup;
 import com.elysium.reddot.ms.thread.infrastructure.constant.ThreadRouteEnum;
 import com.elysium.reddot.ms.thread.infrastructure.data.dto.GlobalExceptionDTO;
@@ -328,57 +329,6 @@ class ThreadRouteBuilderIT extends TestContainerSetup {
         assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
     }
-
-    @Test
-    @DisplayName("given thread exists when route deleteThread is called then thread deleted")
-    void givenThreadExists_whenRouteDeleteThread_thenThreadDeleted() throws Exception {
-        // given
-        Long threadId = 1L;
-        ThreadDTO threadDTO = new ThreadDTO(threadId, "name_1", "Label 1", "Description 1", 1L, "userId");
-
-        String token = obtainAccessToken("user1", "test");
-        Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setHeader("Authorization", "Bearer " + token);
-        exchange.getIn().setHeader("id", threadId);
-
-        // expected
-        ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Thread with id " + threadId + " deleted successfully", threadDTO);
-
-        // when
-        Exchange result = template.send(ThreadRouteEnum.DELETE_THREAD.getRouteName(), exchange);
-        ApiResponseDTO actualResponse = result.getMessage().getBody(ApiResponseDTO.class);
-
-        // assert
-        assertEquals(expectedApiResponse.getStatus(), actualResponse.getStatus());
-        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-        assertEquals(expectedApiResponse.getData(), actualResponse.getData());
-    }
-
-    @Test
-    @DisplayName("given invalid request when route deleteThread is called then throws ResourceNotFoundExceptionHandler")
-    void givenInvalidRequest_whenRouteDeleteThread_thenResourceNotFoundExceptionHandler() throws Exception {
-        // given
-        Long nonExistingId = 99L;
-
-        String token = obtainAccessToken("user1", "test");
-        Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setHeader("Authorization", "Bearer " + token);
-        exchange.getIn().setHeader("id", nonExistingId);
-
-        // expected
-        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceNotFoundException",
-                "The thread with ID 99 does not exist.");
-
-        // when
-        Exchange result = template.send(ThreadRouteEnum.DELETE_THREAD.getRouteName(), exchange);
-        GlobalExceptionDTO actualResponse = result.getMessage().getBody(GlobalExceptionDTO.class);
-
-        // then
-        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
-        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-    }
-
 
     private String obtainAccessToken(String username, String password) throws Exception {
 

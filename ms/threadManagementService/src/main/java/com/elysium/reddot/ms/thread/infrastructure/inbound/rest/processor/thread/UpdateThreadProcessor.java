@@ -2,6 +2,7 @@ package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.threa
 
 import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
+import com.elysium.reddot.ms.thread.application.service.KeycloakService;
 import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadDTOThreadModel;
@@ -11,6 +12,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+
+import javax.naming.AuthenticationException;
 
 /**
  * The UpdateThreadProcessor class is a Camel Processor component that handles the update of a thread.
@@ -22,17 +25,23 @@ import org.springframework.stereotype.Component;
 public class UpdateThreadProcessor implements Processor {
 
     private final ThreadApplicationServiceImpl threadService;
+    private final KeycloakService keycloakService;
 
     @Override
-    public void process(Exchange exchange) {
+    public void process(Exchange exchange) throws AuthenticationException {
         log.debug("Processing update thread request...");
 
         Long inputId = exchange.getIn().getHeader("id", Long.class);
         ThreadDTO inputThreadDTO = exchange.getIn().getBody(ThreadDTO.class);
-        ThreadModel threadToUpdateModel = ThreadDTOThreadModel.toModel(inputThreadDTO);
         log.debug("Received input ID: {}", inputId);
         log.debug("Received input ThreadDTO: {}", inputThreadDTO);
 
+        // add user id
+        String userId = keycloakService.getUserId();
+        inputThreadDTO.setUserId(userId);
+        log.debug("Adding userId: {}", inputThreadDTO);
+
+        ThreadModel threadToUpdateModel = ThreadDTOThreadModel.toModel(inputThreadDTO);
 
         ThreadModel updatedThreadModel = threadService.updateThread(inputId, threadToUpdateModel);
         log.debug("Updated thread: {}", updatedThreadModel);

@@ -1,5 +1,7 @@
 package com.elysium.reddot.ms.thread.domain.service;
 
+import com.elysium.reddot.ms.thread.domain.exception.type.FieldEmptyException;
+import com.elysium.reddot.ms.thread.domain.exception.type.FieldWithSpaceException;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -90,12 +92,12 @@ class ThreadDomainServiceTest {
         threadToUpdate.setDescription("Updated Description");
 
         // when
-        ThreadModel updatedThread = threadDomainService.updateExistingThreadWithUpdates(existingThread, threadToUpdate);
+        ThreadModel updatedThread = threadDomainService.updateExistingThreadWithUpdates(threadToUpdate,existingThread);
 
         // then
+        assertEquals("test", updatedThread.getName());
         assertEquals("Updated Label", updatedThread.getLabel());
         assertEquals("Updated Description", updatedThread.getDescription());
-        assertEquals("test", updatedThread.getName());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.thread.domain.service;
 
+import com.elysium.reddot.ms.thread.domain.exception.type.DifferentUserException;
 import com.elysium.reddot.ms.thread.domain.exception.type.FieldEmptyException;
 import com.elysium.reddot.ms.thread.domain.exception.type.FieldWithSpaceException;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
@@ -31,7 +32,8 @@ public class ThreadDomainServiceImpl implements IThreadDomainService {
      * {@inheritDoc}
      */
     @Override
-    public ThreadModel updateExistingThreadWithUpdates(ThreadModel existingThread, ThreadModel threadUpdates) {
+    public ThreadModel updateExistingThreadWithUpdates(ThreadModel threadUpdates, ThreadModel existingThread) {
+        validateUser(threadUpdates.getUserId(), existingThread.getUserId());
         validateThreadForUpdate(threadUpdates);
 
         existingThread.setLabel(threadUpdates.getLabel());
@@ -47,11 +49,26 @@ public class ThreadDomainServiceImpl implements IThreadDomainService {
         if (containsSpace(name)) {
             throw new FieldWithSpaceException("name");
         }
+
     }
 
     private void validateLabel(String label) {
         if (isBlank(label)) {
             throw new FieldEmptyException("label");
+        }
+    }
+
+    private void validateUser(String userFromMessageToCreate, String userFromMessageExisting) {
+        if (isBlank(userFromMessageToCreate)) {
+            throw new FieldEmptyException("userId from message to create");
+        }
+
+        if (isBlank(userFromMessageExisting)) {
+            throw new FieldEmptyException("userId from message existing");
+        }
+
+        if (!userFromMessageToCreate.equals(userFromMessageExisting)) {
+            throw new DifferentUserException(userFromMessageToCreate, userFromMessageExisting);
         }
     }
 

@@ -39,6 +39,7 @@ public class UpdateMessageProcessor implements Processor {
         log.debug("User id found :" + userId);
         inputMessageDTO.setUserId(userId);
         MessageModel messageToUpdateModel = MessageProcessorMapper.toModel(inputMessageDTO);
+
         log.debug("Processing update message");
         MessageModel updatedMessageModel = messageService.updateMessage(inputId, messageToUpdateModel);
         MessageDTO updatedMessageDTO = MessageProcessorMapper.toDTO(updatedMessageModel);
