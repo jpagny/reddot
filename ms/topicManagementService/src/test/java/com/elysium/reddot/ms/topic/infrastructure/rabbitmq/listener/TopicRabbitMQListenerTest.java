@@ -40,7 +40,7 @@ class TopicRabbitMQListenerTest {
     @Test
     @DisplayName("given a valid message, when checkTopicExists is called, then send a reply message")
     void givenValidMessage_whenCheckBoardExists_thenSendReplyMessage() throws IOException {
-        /*
+
         // given
         Long topicId = 123L;
         boolean exists = true;
@@ -63,7 +63,7 @@ class TopicRabbitMQListenerTest {
         // then
         verify(rabbitTemplate, times(1)).send(eq("replyTo"), any(Message.class));
 
-         */
+
     }
 
 }

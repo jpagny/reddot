@@ -1,8 +1,7 @@
-package com.elysium.reddot.ms.board.infrastructure.inbound.rest.rabbitmq.listener;
+package com.elysium.reddot.ms.board.infrastructure.inbound.rabbitmq.listener;
 
 import com.elysium.reddot.ms.board.application.service.BoardRabbitMQService;
-import com.elysium.reddot.ms.board.infrastructure.inbound.rabbitmq.listener.BoardRabbitMQListener;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +12,9 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConverter;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -30,14 +32,15 @@ class RabbitMQListenerTest {
 
     @BeforeEach
     void setUp() {
-        rabbitMQListener = new BoardRabbitMQListener(rabbitTemplate, boardRabbitMQService);
+        rabbitMQListener = new BoardRabbitMQListener(rabbitTemplate, boardRabbitMQService, new ObjectMapper());
     }
 
     @Test
     @DisplayName("given a valid message, when checkBoardExists is called, then send a reply message")
-    void givenValidMessage_whenCheckBoardExists_thenSendReplyMessage() throws JsonProcessingException {
+    void givenValidMessage_whenCheckBoardExists_thenSendReplyMessage() throws IOException {
         // given
-        Long boardId = 123L;
+        long boardId = 123L;
+        byte[] boardIdBytes = ByteBuffer.allocate(Long.BYTES).putLong(boardId).array();
         boolean exists = true;
 
         // mock
@@ -46,7 +49,7 @@ class RabbitMQListenerTest {
         MessageProperties messageProperties = mock(MessageProperties.class);
 
         when(rabbitTemplate.getMessageConverter()).thenReturn(messageConverter);
-        when(messageConverter.fromMessage(any())).thenReturn(boardId);
+        when(messageConverter.fromMessage(any())).thenReturn(boardIdBytes);
         when(boardRabbitMQService.checkBoardIdExists(boardId)).thenReturn(exists);
         when(message.getMessageProperties()).thenReturn(messageProperties);
         when(messageProperties.getReplyTo()).thenReturn("replyTo");

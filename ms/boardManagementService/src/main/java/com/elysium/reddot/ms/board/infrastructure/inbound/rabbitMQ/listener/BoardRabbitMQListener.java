@@ -14,6 +14,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
 /**
  * Listener class to handle messages from RabbitMQ related to board existence checks.
  */
@@ -24,6 +27,7 @@ public class BoardRabbitMQListener {
 
     private final RabbitTemplate rabbitTemplate;
     private final BoardRabbitMQService boardRabbitMQService;
+    private final ObjectMapper objectMapper;
 
     /**
      * Listens to the QUEUE_BOARD_EXIST queue and checks if a board with the given ID exists.
@@ -33,11 +37,12 @@ public class BoardRabbitMQListener {
      * @throws JsonProcessingException if any error occurs during JSON processing
      */
     @RabbitListener(queues = RabbitMQConstant.QUEUE_BOARD_EXIST)
-    public void checkBoardExists(Message message) throws JsonProcessingException {
+    public void checkBoardExists(Message message) throws IOException {
         log.debug("Received RabbitMQ message to check board existence.");
 
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
-        Long boardId = (Long) messageConverter.fromMessage(message);
+        byte[] extractedMessage = (byte[]) messageConverter.fromMessage(message);
+        Long boardId = ByteBuffer.wrap(extractedMessage).getLong();
 
         log.debug("Checking existence of board with ID: {}", boardId);
 

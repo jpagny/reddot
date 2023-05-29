@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,23 +42,20 @@ class TopicExistRequesterTest {
     @Test
     @DisplayName("given a topic id exists, when verifyTopicIdExistsOrThrow is called, then no exception is thrown")
     void givenTopicIdExists_whenVerifyTopicIdExistsOrThrow_thenNoException() throws Exception {
-        /*
+
         // given
         Long topicId = 123L;
-        TopicExistsResponseDTO response = new TopicExistsResponseDTO();
-        response.setExists(true);
 
         // mock
         when(rabbitTemplate.convertSendAndReceive(
                 any(String.class),
                 any(String.class),
                 any(Long.class)
-        )).thenReturn(objectMapper.writeValueAsBytes(response));
+        )).thenReturn(Map.of("exists", true));
 
 
         // when
         assertDoesNotThrow(() -> topicExistRequester.verifyTopicIdExistsOrThrow(topicId));
-
 
         // then
         verify(rabbitTemplate).convertSendAndReceive(
@@ -66,29 +64,25 @@ class TopicExistRequesterTest {
                 topicId
         );
 
-         */
     }
 
     @Test
     @DisplayName("given a topic id does not exist, when verifyTopicIdExistsOrThrow is called, then ResourceNotFoundException is thrown")
     void givenTopicIdDoesNotExist_whenVerifyTopicIdExistsOrThrow_thenException() throws IOException {
-        /*
+
         // given
         Long topicId = 123L;
-        TopicExistsResponseDTO response = new TopicExistsResponseDTO();
-        response.setExists(false);
 
         // mock
         when(rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_TOPIC_BOARD,
                 RabbitMQConstant.REQUEST_TOPIC_EXIST,
                 topicId
-        )).thenReturn(objectMapper.writeValueAsBytes(response));
+        )).thenReturn(Map.of("exists", false));
 
         // when and then
         assertThrows(ResourceNotFoundException.class, () -> topicExistRequester.verifyTopicIdExistsOrThrow(topicId));
 
-         */
     }
 
 
