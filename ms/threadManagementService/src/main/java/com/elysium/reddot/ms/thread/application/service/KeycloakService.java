@@ -1,34 +1,19 @@
 package com.elysium.reddot.ms.thread.application.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.adapters.RefreshableKeycloakSecurityContext;
-import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.AccessToken;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Set;
 
 @Service
 @Slf4j
+@SuppressWarnings("unchecked")
 public class KeycloakService {
 
     public String getUserId() throws AuthenticationException {
@@ -43,7 +28,7 @@ public class KeycloakService {
         }
 
         KeycloakAuthenticationToken keycloakAuthentication = (KeycloakAuthenticationToken) authentication;
-        KeycloakPrincipal principal = (KeycloakPrincipal) keycloakAuthentication.getPrincipal();
+        KeycloakPrincipal<KeycloakSecurityContext> principal = (KeycloakPrincipal<KeycloakSecurityContext>) keycloakAuthentication.getPrincipal();
         AccessToken token = principal.getKeycloakSecurityContext().getToken();
 
         return token.getSubject();

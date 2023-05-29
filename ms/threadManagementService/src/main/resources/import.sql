@@ -1,2 +1,2 @@
-INSERT INTO threads (name, label, description) VALUES ('elysium_security','Elysium security', 'All topics about Elysium Security');
-INSERT INTO threads (name, label, description) VALUES ('root_me','Root-me', 'All topics about Root-me');
+INSERT INTO threads (name, label, description,board_id,user_id) VALUES ('ctf_1','CTF 1', 'All topics about the CTF n°1',2,'bfcff13a-51c9-4e95-b362-639984413fb4');
+INSERT INTO threads (name, label, description,board_id,user_id) VALUES ('ctf_2','CTF 2', 'All topics about the CTF n°2',2,'bfcff13a-51c9-4e95-b362-639984413fb4');
