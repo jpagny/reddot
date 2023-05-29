@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.thread.application.service;
 
+import com.elysium.reddot.ms.thread.application.exception.type.IsNotOwnerMessageException;
 import com.elysium.reddot.ms.thread.application.exception.type.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.thread.application.exception.type.ResourceBadValueException;
 import com.elysium.reddot.ms.thread.application.exception.type.ResourceNotFoundException;
@@ -191,6 +192,25 @@ class ThreadApplicationServiceTest {
                 () -> threadService.updateThread
                         (threadId, invalidThreadToUpdateModel),
                 "updateThread should throw a ResourceBadValueException for an invalid thread");
+        verify(threadRepository, times(1)).findThreadById(threadId);
+    }
+
+    @Test
+    @DisplayName("given invalid thread when updateThread is called then throws ResourceBadValueException")
+    void givenValidThreadWithDifferentUserId_whenUpdateThread_thenThrowsResourceNoOwner() {
+        // given
+        Long threadId = 1L;
+        ThreadModel existingThreadModel = new ThreadModel(threadId, "name", "Old Label", "Old Description",1L,"userId");
+        ThreadModel threadWithWrongUserIdToUpdateModel = new ThreadModel(threadId, "name", "New label", "Description",1L,"userId2");
+
+        // mock
+        when(threadRepository.findThreadById(threadId)).thenReturn(Optional.of(existingThreadModel));
+
+        // when && then
+        assertThrows(IsNotOwnerMessageException.class,
+                () -> threadService.updateThread
+                        (threadId, threadWithWrongUserIdToUpdateModel),
+                "updateThread should throw a IsNotOwnerMessageException for an invalid userId");
         verify(threadRepository, times(1)).findThreadById(threadId);
     }
 

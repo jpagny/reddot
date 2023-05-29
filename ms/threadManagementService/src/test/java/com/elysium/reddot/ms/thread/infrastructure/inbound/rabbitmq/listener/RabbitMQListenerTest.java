@@ -36,10 +36,10 @@ class RabbitMQListenerTest {
     @Test
     @DisplayName("given a valid message, when checkThreadExists is called, then send a reply message")
     void givenValidMessage_whenCheckThreadExists_thenSendReplyMessage() throws JsonProcessingException {
-        /*
         // given
-        String boardIdString = "123";
+        String threadIdString = "123";
         Long boardId = 123L;
+        byte[] rawMessage = threadIdString.getBytes();
         boolean exists = true;
 
         // mock
@@ -48,7 +48,7 @@ class RabbitMQListenerTest {
         MessageProperties messageProperties = mock(MessageProperties.class);
 
         when(rabbitTemplate.getMessageConverter()).thenReturn(messageConverter);
-        when(messageConverter.fromMessage(any())).thenReturn(boardIdString);
+        when(messageConverter.fromMessage(any())).thenReturn(rawMessage);
         when(threadRabbitMQService.checkThreadIdExists(boardId)).thenReturn(exists);
         when(message.getMessageProperties()).thenReturn(messageProperties);
         when(messageProperties.getReplyTo()).thenReturn("replyTo");
@@ -59,7 +59,5 @@ class RabbitMQListenerTest {
 
         // then
         verify(rabbitTemplate, times(1)).send(eq("replyTo"), any(Message.class));
-
-         */
     }
 }

@@ -1,8 +1,10 @@
 package com.elysium.reddot.ms.thread.application.service;
 
+import com.elysium.reddot.ms.thread.application.exception.type.IsNotOwnerMessageException;
 import com.elysium.reddot.ms.thread.application.exception.type.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.thread.application.exception.type.ResourceBadValueException;
 import com.elysium.reddot.ms.thread.application.exception.type.ResourceNotFoundException;
+import com.elysium.reddot.ms.thread.domain.exception.type.DifferentUserException;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import com.elysium.reddot.ms.thread.domain.port.inbound.IThreadManagementService;
 import com.elysium.reddot.ms.thread.domain.port.outbound.IThreadRepository;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ThreadApplicationServiceImpl implements IThreadManagementService {
 
-    private static final String RESOURCE_NAME_TOPIC = "thread";
+    private static final String RESOURCE_NAME_THREAD = "thread";
     private final ThreadDomainServiceImpl threadDomainService;
     private final IThreadRepository threadRepository;
 
@@ -43,7 +45,7 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
         log.debug("Fetching thread with id {}", id);
 
         ThreadModel foundThreadModel = threadRepository.findThreadById(id).orElseThrow(
-                () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
+                () -> new ResourceNotFoundException(RESOURCE_NAME_THREAD, String.valueOf(id))
         );
 
         log.info("Successfully retrieved thread with id {}, name '{}', description '{}'",
@@ -80,13 +82,13 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
         Optional<ThreadModel> existingThread = threadRepository.findFirstByNameAndBoardId(threadToCreateModel.getName(), threadToCreateModel.getBoardId());
 
         if (existingThread.isPresent()) {
-            throw new ResourceAlreadyExistException(RESOURCE_NAME_TOPIC, "name", threadToCreateModel.getName(), threadToCreateModel.getBoardId());
+            throw new ResourceAlreadyExistException(RESOURCE_NAME_THREAD, "name", threadToCreateModel.getName(), threadToCreateModel.getBoardId());
         }
 
         try {
             threadDomainService.validateThreadForCreation(threadToCreateModel);
         } catch (Exception exception) {
-            throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, exception.getMessage());
+            throw new ResourceBadValueException(RESOURCE_NAME_THREAD, exception.getMessage());
         }
 
         ThreadModel createdThreadModel = threadRepository.createThread(threadToCreateModel);
@@ -115,12 +117,11 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
                 threadToUpdateModel.getUserId());
 
         ThreadModel existingThreadModel = threadRepository.findThreadById(id).orElseThrow(
-                () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
+                () -> new ResourceNotFoundException(RESOURCE_NAME_THREAD, String.valueOf(id))
         );
 
         try {
             ThreadModel threadModelWithUpdates = threadDomainService.updateExistingThreadWithUpdates(threadToUpdateModel, existingThreadModel);
-
             ThreadModel updatedThreadModel = threadRepository.updateThread(threadModelWithUpdates);
 
             log.info("Successfully updated thread with name '{}', label'{}, description '{}', boardId '{}', userId '{}'",
@@ -132,10 +133,15 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
 
             return updatedThreadModel;
 
-        } catch (Exception ex) {
-            throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, ex.getMessage());
+        } catch (DifferentUserException exception) {
+            log.error(exception.getMessage());
+            throw new IsNotOwnerMessageException();
+
+        } catch (Exception exception) {
+            throw new ResourceBadValueException(RESOURCE_NAME_THREAD, exception.getMessage());
 
         }
+
     }
 
 
