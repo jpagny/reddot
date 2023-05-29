@@ -2,6 +2,7 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
+import com.elysium.reddot.ms.board.application.data.mapper.BoardDTOBoardModelMapper;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board.UpdateBoardProcessor;
@@ -43,7 +44,7 @@ class UpdateBoardProcessorTest {
         Long boardId = 1L;
         BoardDTO updatedBoardDTO = new BoardDTO(boardId, "new_name", "New Name", "New Board description",1L);
         BoardModel updatedBoardModel = new BoardModel(boardId, "new_name", "New Name", "New Board description",1L);
-        BoardDTO expectedBoard = BoardProcessorMapper.toDTO(updatedBoardModel);
+        BoardDTO expectedBoard = BoardDTOBoardModelMapper.toDTO(updatedBoardModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "Board with name " + updatedBoardModel.getName() + " updated successfully", expectedBoard);

@@ -8,8 +8,7 @@ public enum BoardRouteEnum {
     GET_ALL_BOARDS("direct:getAllBoards"),
     GET_BOARD_BY_ID("direct:getBoardById"),
     CREATE_BOARD("direct:createBoard"),
-    UPDATE_BOARD("direct:updateBoard"),
-    DELETE_BOARD("direct:deleteBoard");
+    UPDATE_BOARD("direct:updateBoard");
 
     private final String routeName;
 

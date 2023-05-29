@@ -2,20 +2,22 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
+import com.elysium.reddot.ms.board.application.data.mapper.BoardDTOBoardModelMapper;
+import com.elysium.reddot.ms.board.application.exception.type.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.board.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteEnum;
 import com.elysium.reddot.ms.board.infrastructure.data.dto.GlobalExceptionDTO;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board.*;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
-import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.keycloak.CheckTokenProcessor;
-import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.keycloak.KeycloakProcessorHolder;
 import com.elysium.reddot.ms.board.infrastructure.outbound.rabbitmq.requester.TopicExistRequester;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
+import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.Policy;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,8 +28,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,14 +37,13 @@ class BoardRouteBuilderTest extends CamelTestSupport {
     private BoardApplicationServiceImpl boardService;
 
     @Mock
-    private KeycloakService keycloakService;
-
-    @Mock
     private TopicExistRequester topicExistRequester;
 
     @Override
     protected CamelContext createCamelContext() {
-        return new DefaultCamelContext();
+        SimpleRegistry registry = new SimpleRegistry();
+        registry.bind("adminPolicy", new MockPolicy());
+        return new DefaultCamelContext(registry);
     }
 
     @Override
@@ -55,66 +54,10 @@ class BoardRouteBuilderTest extends CamelTestSupport {
                 new GetAllBoardsProcessor(boardService),
                 new GetBoardByIdProcessor(boardService),
                 new CreateBoardProcessor(boardService, topicExistRequester),
-                new UpdateBoardProcessor(boardService),
-                new DeleteBoardProcessor(boardService)
+                new UpdateBoardProcessor(boardService)
         );
 
-        KeycloakProcessorHolder keycloakProcessorHolder = new KeycloakProcessorHolder(
-                new CheckTokenProcessor(keycloakService)
-        );
-
-        return new BoardRouteBuilder(globalExceptionHandler, boardProcessorHolder, keycloakProcessorHolder);
-    }
-
-
-    @Test
-    @DisplayName("given the token is inactive, when getAllBoards route is processed, then TokenNotActiveException is returned")
-    void givenInactiveToken_whenRouteGetAllBoards_thenTokenNotActiveExceptionReturned() throws Exception {
-        // given
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":false}";
-
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
-
-        // expected
-        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("TokenNotActiveException",
-                "Your token is inactive.");
-
-        // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
-
-        // when
-        Exchange responseExchange = template.send(BoardRouteEnum.GET_ALL_BOARDS.getRouteName(), exchange);
-        GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
-
-        // then
-        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
-        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-    }
-
-    @Test
-    @DisplayName("Given an active token without user role, when getAllBoards route is processed, then HasNotRoleException is returned")
-    void givenActiveTokenWithoutUserRole_whenRouteGetAllBoards_thenHasNotRoleExceptionReturned() throws Exception {
-        // given
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"bidon\"]},\"active\":true}";
-
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
-
-        // expected
-        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("HasNotRoleException",
-                "Having role user is required.");
-
-        // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
-
-        // when
-        Exchange responseExchange = template.send(BoardRouteEnum.GET_ALL_BOARDS.getRouteName(), exchange);
-        GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
-
-        // then
-        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
-        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
+        return new BoardRouteBuilder(globalExceptionHandler, boardProcessorHolder);
     }
 
     @Test
@@ -124,7 +67,6 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         Long boardId = 1L;
         BoardModel board = new BoardModel(boardId, "name 1", "Name 1", "Board 1", 1L);
         BoardDTO expectedBoard = new BoardDTO(boardId, "name 1", "Name 1", "Board 1", 1L);
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
@@ -135,7 +77,6 @@ class BoardRouteBuilderTest extends CamelTestSupport {
                 "Board with id 1 retrieved successfully", expectedBoard);
 
         // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
         when(boardService.getBoardById(boardId)).thenReturn(board);
 
         // when
@@ -156,15 +97,12 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
         exchange.getIn().setHeader("id", nonExistingId);
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
-
 
         // expected
         GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceNotFoundException",
                 "The board with ID 99 does not exist.");
 
         // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
         when(boardService.getBoardById(nonExistingId)).thenThrow(new ResourceNotFoundException("board", String.valueOf(nonExistingId)));
 
         // when
@@ -183,8 +121,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         BoardDTO inputBoardDTO = new BoardDTO(null, "name", "Name", "Description", 1L);
         BoardModel inputBoardModel = new BoardModel(null, "name", "Name", "Description", 1L);
         BoardModel createdBoardModel = new BoardModel(1L, inputBoardModel.getName(), inputBoardModel.getLabel(), inputBoardModel.getDescription(), 1L);
-        BoardDTO expectedBoard = BoardProcessorMapper.toDTO(createdBoardModel);
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
+        BoardDTO expectedBoard = BoardDTOBoardModelMapper.toDTO(createdBoardModel);
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
@@ -196,7 +133,6 @@ class BoardRouteBuilderTest extends CamelTestSupport {
                 "Board with name " + expectedBoard.getName() + " created successfully", expectedBoard);
 
         // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
         when(boardService.createBoard(inputBoardModel)).thenReturn(createdBoardModel);
 
         // when
@@ -215,7 +151,6 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         // given
         BoardDTO existingBoardDTO = new BoardDTO(1L, "name", "Name", "Board description", 1L);
         BoardModel existingBoardModel = new BoardModel(1L, "name", "Name", "Board description", 1L);
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
@@ -227,7 +162,6 @@ class BoardRouteBuilderTest extends CamelTestSupport {
                 "The board with name 'name' already exists.");
 
         // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
         when(boardService.createBoard(existingBoardModel)).thenThrow(new ResourceAlreadyExistException("board", "name", "name"));
 
         // when
@@ -247,8 +181,7 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         BoardDTO inputBoardDTO = new BoardDTO(boardId, "newName", "newDescription", "newIcon", 1L);
         BoardModel requestModel = new BoardModel(boardId, "newName", "newDescription", "newIcon", 1L);
         BoardModel updatedBoard = new BoardModel(boardId, "newName", "newDescription", "newIcon", 1L);
-        BoardDTO expectedBoard = BoardProcessorMapper.toDTO(updatedBoard);
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
+        BoardDTO expectedBoard = BoardDTOBoardModelMapper.toDTO(updatedBoard);
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
@@ -260,7 +193,6 @@ class BoardRouteBuilderTest extends CamelTestSupport {
                 "Board with name " + updatedBoard.getName() + " updated successfully", expectedBoard);
 
         // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
         when(boardService.updateBoard(boardId, requestModel)).thenReturn(updatedBoard);
 
         // when
@@ -280,7 +212,6 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         Long nonExistingId = 99L;
         BoardDTO inputRequestDTO = new BoardDTO(nonExistingId, "newName", "newDescription", "newIcon", 1L);
         BoardModel request = new BoardModel(nonExistingId, "newName", "newDescription", "newIcon", 1L);
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
@@ -291,7 +222,6 @@ class BoardRouteBuilderTest extends CamelTestSupport {
                 "The board with ID 99 does not exist.");
 
         // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
         when(boardService.updateBoard(nonExistingId, request)).thenThrow(new ResourceNotFoundException("board", String.valueOf(nonExistingId)));
 
         // when
@@ -303,65 +233,17 @@ class BoardRouteBuilderTest extends CamelTestSupport {
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
     }
 
-    @Test
-    @DisplayName("given board exists when route deleteBoard is called then board deleted")
-    void givenBoardExists_whenRouteDeleteBoard_thenBoardDeleted() throws Exception {
-        // given
-        Long boardId = 1L;
-        BoardModel boardModel = new BoardModel(boardId, "test", "Test", "Test board", 1L);
-        BoardDTO expectedBoard = new BoardDTO(boardId, "test", "Test", "Test board", 1L);
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
+}
 
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
-        exchange.getIn().setHeader("id", boardId);
+class MockPolicy implements Policy {
 
-        // expected
-        ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
-                "Board with id " + boardId + " deleted successfully", expectedBoard);
+    @Override
+    public void beforeWrap(Route route, NamedNode definition) {
 
-        // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
-        when(boardService.deleteBoardById(1L)).thenReturn(boardModel);
-
-        // when
-        Exchange result = template.send(BoardRouteEnum.DELETE_BOARD.getRouteName(), exchange);
-        ApiResponseDTO actualResponse = result.getMessage().getBody(ApiResponseDTO.class);
-
-        // then
-        assertEquals(expectedApiResponse.getStatus(), actualResponse.getStatus());
-        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-        assertEquals(expectedApiResponse.getData(), actualResponse.getData());
     }
 
-    @Test
-    @DisplayName("given invalid request when route deleteBoard is called then throws resourceNotFoundExceptionHandler")
-    void givenInvalidRequest_whenRouteDeleteBoard_thenThrowsResourceNotFoundExceptionHandler() throws Exception {
-        // given
-        Long nonExistingId = 99L;
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
-        exchange.getIn().setHeader("id", nonExistingId);
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
-
-
-        // expected
-        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceNotFoundException",
-                "The board with ID 99 does not exist.");
-
-        // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
-        doThrow(new ResourceNotFoundException("board", String.valueOf(nonExistingId)))
-                .when(boardService).deleteBoardById(nonExistingId);
-
-        // when
-        Exchange result = template.send(BoardRouteEnum.DELETE_BOARD.getRouteName(), exchange);
-        GlobalExceptionDTO actualResponse = result.getMessage().getBody(GlobalExceptionDTO.class);
-
-        // then
-        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
-        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
+    @Override
+    public Processor wrap(Route route, Processor processor) {
+        return processor;
     }
-
-
 }

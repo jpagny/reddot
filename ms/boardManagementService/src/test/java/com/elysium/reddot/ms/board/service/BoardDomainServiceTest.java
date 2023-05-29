@@ -1,5 +1,7 @@
 package com.elysium.reddot.ms.board.service;
 
+import com.elysium.reddot.ms.board.domain.exception.type.FieldEmptyException;
+import com.elysium.reddot.ms.board.domain.exception.type.FieldWithSpaceException;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.domain.service.BoardDomainServiceImpl;
 import org.junit.jupiter.api.BeforeAll;

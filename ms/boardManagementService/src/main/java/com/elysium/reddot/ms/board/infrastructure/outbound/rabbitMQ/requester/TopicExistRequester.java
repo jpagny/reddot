@@ -9,6 +9,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Component class to request topic existence verification using RabbitMQ.
@@ -40,7 +41,7 @@ public class TopicExistRequester {
 
         TopicExistsResponseDTO response = getTopicExistsResponse(topicId);
 
-        if (response != null && !response.isExists()) {
+        if (!response.isExists()) {
             log.error("Topic id {} does not exist", topicId);
             throw new ResourceNotFoundException("Topic id", String.valueOf(topicId));
         }
@@ -51,17 +52,24 @@ public class TopicExistRequester {
     private TopicExistsResponseDTO getTopicExistsResponse(Long topicId) throws IOException {
         log.debug("Sending topic existence request for ID: {}", topicId);
 
-        Object reply = rabbitTemplate.convertSendAndReceive(
+        byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_TOPIC_BOARD,
                 RabbitMQConstant.REQUEST_TOPIC_EXIST,
                 topicId
         );
 
+        assert replyBytes != null;
+        log.debug("Received response : " + Arrays.toString(replyBytes));
+
         try {
-            return objectMapper.convertValue(reply, TopicExistsResponseDTO.class);
-        } catch (IllegalArgumentException ex) {
+            TopicExistsResponseDTO responseDTO = objectMapper.readValue(replyBytes, TopicExistsResponseDTO.class);
+            log.debug("Response in DTO : " + responseDTO.toString());
+            return responseDTO;
+
+        } catch (IOException ex) {
             log.error("Fail to convert to json : " + ex);
             throw new IOException("Failed to convert to json", ex);
+
         }
 
     }

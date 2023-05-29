@@ -1,6 +1,7 @@
 package com.elysium.reddot.ms.board.infrastructure.mapper;
 
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
+import com.elysium.reddot.ms.board.application.data.mapper.BoardDTOBoardModelMapper;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BoardProcessorMapperTest {
+class BoardDTOBoardModelMapperTest {
 
     @Test
     @DisplayName("given boardModel when toDTO is called then returns boardDTO")
@@ -19,7 +20,7 @@ class BoardProcessorMapperTest {
         BoardModel boardModel = new BoardModel(1L, "board1", "label1", "description1",1L);
 
         // When
-        BoardDTO boardDTO = BoardProcessorMapper.toDTO(boardModel);
+        BoardDTO boardDTO = BoardDTOBoardModelMapper.toDTO(boardModel);
 
         // Then
         assertEquals(boardModel.getId(), boardDTO.getId());
@@ -37,7 +38,7 @@ class BoardProcessorMapperTest {
         List<BoardModel> boardModels = Arrays.asList(boardModel1, boardModel2);
 
         // When
-        List<BoardDTO> boardDTOs = BoardProcessorMapper.toDTOList(boardModels);
+        List<BoardDTO> boardDTOs = BoardDTOBoardModelMapper.toDTOList(boardModels);
 
         // Then
         assertEquals(boardModels.size(), boardDTOs.size());
@@ -58,7 +59,7 @@ class BoardProcessorMapperTest {
         BoardDTO boardDTO = new BoardDTO(1L, "board1", "label1", "description1",1L);
 
         // When
-        BoardModel boardModel = BoardProcessorMapper.toModel(boardDTO);
+        BoardModel boardModel = BoardDTOBoardModelMapper.toModel(boardDTO);
 
         // Then
         assertEquals(boardDTO.getId(), boardModel.getId());

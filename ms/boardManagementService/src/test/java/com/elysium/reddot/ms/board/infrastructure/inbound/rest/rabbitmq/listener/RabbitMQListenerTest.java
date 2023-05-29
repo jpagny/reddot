@@ -42,7 +42,7 @@ class RabbitMQListenerTest {
 
         // mock
         MessageConverter messageConverter = mock(MessageConverter.class);
-        Message message = mock(org.springframework.amqp.core.Message.class);
+        Message message = mock(Message.class);
         MessageProperties messageProperties = mock(MessageProperties.class);
 
         when(rabbitTemplate.getMessageConverter()).thenReturn(messageConverter);
@@ -53,9 +53,9 @@ class RabbitMQListenerTest {
         when(messageProperties.getCorrelationId()).thenReturn("correlationId");
 
         // when
-        rabbitMQListener.checkTopicExists(message);
+        rabbitMQListener.checkBoardExists(message);
 
         // then
-        verify(rabbitTemplate, times(1)).send(eq("replyTo"), any(org.springframework.amqp.core.Message.class));
+        verify(rabbitTemplate, times(1)).send(eq("replyTo"), any(Message.class));
     }
 }

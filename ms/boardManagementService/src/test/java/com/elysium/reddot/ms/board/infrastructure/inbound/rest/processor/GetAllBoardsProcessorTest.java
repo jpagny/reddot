@@ -2,6 +2,7 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
+import com.elysium.reddot.ms.board.application.data.mapper.BoardDTOBoardModelMapper;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board.GetAllBoardsProcessor;
@@ -46,7 +47,7 @@ class GetAllBoardsProcessorTest {
         BoardModel board1Model = new BoardModel(1L, "name 1", "Name 1", "Board 1",1L);
         BoardModel board2Model = new BoardModel(2L, "name 2", "Name 2", "Board 2",1L);
         List<BoardModel> boardListModel = Arrays.asList(board1Model, board2Model);
-        List<BoardDTO> expectedListBoards = BoardProcessorMapper.toDTOList(boardListModel);
+        List<BoardDTO> expectedListBoards = BoardDTOBoardModelMapper.toDTOList(boardListModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "All boards retrieved successfully", expectedListBoards);

@@ -2,6 +2,7 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
+import com.elysium.reddot.ms.board.application.data.mapper.BoardDTOBoardModelMapper;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board.GetBoardByIdProcessor;
@@ -42,7 +43,7 @@ class GetBoardByIdProcessorTest {
         // given
         Long id = 1L;
         BoardModel boardModel = new BoardModel(id, "name 1", "Name 1", "Board 1",1L);
-        BoardDTO expectedBoard = BoardProcessorMapper.toDTO(boardModel);
+        BoardDTO expectedBoard = BoardDTOBoardModelMapper.toDTO(boardModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "Board with id " + id + " retrieved successfully", expectedBoard);

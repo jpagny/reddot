@@ -65,7 +65,7 @@ class TopicRouteBuilderIT extends TestContainerSetup {
     @DisplayName("given authenticated user with token when get topics then success")
     void givenAuthenticatedUserWithToken_whenGetTopics_thenSuccess() throws Exception {
         // given
-        String token = obtainAccessToken("user1", "test");
+        String token = obtainAccessToken("admin", "admin");
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("Authorization", "Bearer " + token);
 
@@ -85,7 +85,7 @@ class TopicRouteBuilderIT extends TestContainerSetup {
         TopicDTO topic2 = new TopicDTO(2L, "name_2", "Label 2", "Description 2");
         List<TopicDTO> topicList = Arrays.asList(topic1, topic2);
 
-        String token = obtainAccessToken("user1", "test");
+        String token = obtainAccessToken("admin", "admin");
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("Authorization", "Bearer " + token);
 
@@ -110,7 +110,7 @@ class TopicRouteBuilderIT extends TestContainerSetup {
         Long topicId = 1L;
         TopicDTO topic = new TopicDTO(topicId, "name_1", "Label 1", "Description 1");
 
-        String token = obtainAccessToken("user1", "test");
+        String token = obtainAccessToken("admin", "admin");
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("Authorization", "Bearer " + token);
         exchange.getIn().setHeader("id", topicId);
@@ -134,7 +134,7 @@ class TopicRouteBuilderIT extends TestContainerSetup {
     void givenNonExistingTopicId_whenRouteGetTopicById_thenThrowResourceNotFoundExceptionHandler() throws Exception {
         // given
         Long nonExistingId = 99L;
-        String token = obtainAccessToken("user1", "test");
+        String token = obtainAccessToken("admin", "admin");
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("Authorization", "Bearer " + token);
         exchange.getIn().setHeader("id", nonExistingId);

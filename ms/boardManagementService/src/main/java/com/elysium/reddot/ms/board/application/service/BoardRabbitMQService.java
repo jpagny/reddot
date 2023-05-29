@@ -23,8 +23,8 @@ public class BoardRabbitMQService {
      * @return true if the board exists, false otherwise
      */
     public boolean checkBoardIdExists(Long id) {
-        Optional<BoardModel> topicModel = boardRepository.findBoardById(id);
-        return topicModel.isPresent();
+        Optional<BoardModel> boardModel = boardRepository.findBoardById(id);
+        return boardModel.isPresent();
     }
 
 

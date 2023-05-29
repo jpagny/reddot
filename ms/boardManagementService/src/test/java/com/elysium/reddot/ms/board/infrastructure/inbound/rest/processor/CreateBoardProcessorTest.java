@@ -2,6 +2,7 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
+import com.elysium.reddot.ms.board.application.data.mapper.BoardDTOBoardModelMapper;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board.CreateBoardProcessor;
@@ -46,7 +47,7 @@ class CreateBoardProcessorTest {
         BoardDTO boardToCreateDTO = new BoardDTO(null, "name", "Name", "Board description", 1L);
         BoardModel boardToCreateModel = new BoardModel(null, "name", "Name", "Board description", 1L);
         BoardModel createdBoardModel = new BoardModel(1L, "name", "Name", "Board description", 1L);
-        BoardDTO expectedBoard = BoardProcessorMapper.toDTO(createdBoardModel);
+        BoardDTO expectedBoard = BoardDTOBoardModelMapper.toDTO(createdBoardModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),
                 "Board with name " + createdBoardModel.getName() + " created successfully", expectedBoard);

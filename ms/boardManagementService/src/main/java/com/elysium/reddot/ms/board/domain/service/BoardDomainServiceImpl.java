@@ -32,13 +32,13 @@ public class BoardDomainServiceImpl implements IBoardDomainService {
      * {@inheritDoc}
      */
     @Override
-    public BoardModel updateExistingBoardWithUpdates(BoardModel existingTopic, BoardModel topicUpdates) {
-        validateBoardForUpdate(topicUpdates);
+    public BoardModel updateExistingBoardWithUpdates(BoardModel existingBoard, BoardModel boardUpdates) {
+        validateBoardForUpdate(boardUpdates);
 
-        existingTopic.setLabel(topicUpdates.getLabel());
-        existingTopic.setDescription(topicUpdates.getDescription());
+        existingBoard.setLabel(boardUpdates.getLabel());
+        existingBoard.setDescription(boardUpdates.getDescription());
 
-        return existingTopic;
+        return existingBoard;
     }
 
     private void validateName(String name) {

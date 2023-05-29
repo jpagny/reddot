@@ -14,8 +14,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
-
 /**
  * Listener class to handle messages from RabbitMQ related to board existence checks.
  */
@@ -36,15 +34,16 @@ public class BoardRabbitMQListener {
      */
     @RabbitListener(queues = RabbitMQConstant.QUEUE_BOARD_EXIST)
     public void checkBoardExists(Message message) throws JsonProcessingException {
-        log.info("Received a message to check board existence: {}", message);
+        log.debug("Received RabbitMQ message to check board existence.");
 
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
-        byte[] bytes = (byte[]) messageConverter.fromMessage(message);
-        String boardIdString = new String(bytes, StandardCharsets.UTF_8);
-        Long boardId = Long.parseLong(boardIdString);
+        Long boardId = (Long) messageConverter.fromMessage(message);
+
+        log.debug("Checking existence of board with ID: {}", boardId);
 
         boolean exists = boardRabbitMQService.checkBoardIdExists(boardId);
-        log.debug("Check board exists: {}", exists);
+
+        log.debug("Board existence check result: {}", exists);
 
         BoardExistsResponseDTO response = new BoardExistsResponseDTO();
         response.setExists(exists);
@@ -54,7 +53,7 @@ public class BoardRabbitMQListener {
         Message responseMessage = buildMessageResponse(jsonResponse, messageProperties);
 
         sendResponseToRabbit(message, responseMessage);
-        log.info("Sent response message: {}", responseMessage);
+        log.debug("Sent response for board existence check.");
     }
 
     private MessageProperties buildMessageProperties(Message message) {

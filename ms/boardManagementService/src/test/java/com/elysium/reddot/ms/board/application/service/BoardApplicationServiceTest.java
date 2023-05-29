@@ -1,5 +1,8 @@
 package com.elysium.reddot.ms.board.application.service;
 
+import com.elysium.reddot.ms.board.application.exception.type.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.board.application.exception.type.ResourceBadValueException;
+import com.elysium.reddot.ms.board.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.BoardRepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;
@@ -190,41 +193,5 @@ class BoardApplicationServiceTest {
                 "updateBoard should throw a ResourceBadValueException for an invalid board");
         verify(boardRepository, times(1)).findBoardById(boardId);
     }
-
-    @Test
-    @DisplayName("given existing board when deleteBoardById is called then board deleted")
-    void givenExistingBoard_whenDeleteBoardById_thenBoardDeleted() {
-        // given
-        Long boardId = 1L;
-        BoardModel existingBoardModel = new BoardModel(boardId, "Test Name", "Test Label", "Test Description",1L);
-
-        // mock
-        when(boardRepository.findBoardById(boardId)).thenReturn(Optional.of(existingBoardModel));
-
-        // when
-        assertDoesNotThrow(() -> boardService.deleteBoardById(boardId),
-                "deleteBoardById should not throw an exception for an existing board");
-
-        // then
-        verify(boardRepository, times(1)).findBoardById(boardId);
-        verify(boardRepository, times(1)).deleteBoard(boardId);
-    }
-
-    @Test
-    @DisplayName("given non-existent board when deleteBoardById is called then throws ResourceNotFoundException")
-    void givenNonExistentBoard_whenDeleteBoardById_thenThrowsResourceNotFoundException() {
-        // given
-        Long nonExistentBoardId = 99L;
-
-        // mock
-        when(boardRepository.findBoardById(nonExistentBoardId)).thenReturn(Optional.empty());
-
-        // when && then
-        assertThrows(ResourceNotFoundException.class,
-                () -> boardService.deleteBoardById(nonExistentBoardId),
-                "deleteBoardById should throw a ResourceNotFoundException for a non-existent board");
-        verify(boardRepository, times(1)).findBoardById(nonExistentBoardId);
-    }
-
 
 }

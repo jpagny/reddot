@@ -39,9 +39,7 @@ public class TopicRouteBuilder extends RouteBuilder {
                 get().to(TopicRouteEnum.GET_ALL_TOPICS.getRouteName())
                 .get(requestId).to(TopicRouteEnum.GET_TOPIC_BY_ID.getRouteName())
                 .post().type(TopicDTO.class).to(TopicRouteEnum.CREATE_TOPIC.getRouteName())
-                .put(requestId).type(TopicDTO.class).to(TopicRouteEnum.UPDATE_TOPIC.getRouteName())
-                .delete(requestId).to(TopicRouteEnum.DELETE_TOPIC.getRouteName());
-
+                .put(requestId).type(TopicDTO.class).to(TopicRouteEnum.UPDATE_TOPIC.getRouteName());
         // route : get all topics
         from(TopicRouteEnum.GET_ALL_TOPICS.getRouteName())
                 .routeId("getAllTopics")

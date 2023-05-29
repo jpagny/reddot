@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.board.infrastructure.outbound.rabbitmq.requester;
 
+import com.elysium.reddot.ms.board.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.board.infrastructure.constant.RabbitMQConstant;
 import com.elysium.reddot.ms.board.infrastructure.data.dto.TopicExistsResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +15,10 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,21 +44,26 @@ class TopicExistRequesterTest {
         // given
         Long topicId = 123L;
         TopicExistsResponseDTO response = new TopicExistsResponseDTO();
-        response.setTopicId(topicId);
         response.setExists(true);
 
         // mock
         when(rabbitTemplate.convertSendAndReceive(
+                any(String.class),
+                any(String.class),
+                any(Long.class)
+        )).thenReturn(objectMapper.writeValueAsBytes(response));
+
+
+        // when
+        assertDoesNotThrow(() -> topicExistRequester.verifyTopicIdExistsOrThrow(topicId));
+
+
+        // then
+        verify(rabbitTemplate).convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_TOPIC_BOARD,
                 RabbitMQConstant.REQUEST_TOPIC_EXIST,
                 topicId
-        )).thenReturn(objectMapper.writeValueAsBytes(response));
-
-        // when
-        topicExistRequester.verifyTopicIdExistsOrThrow(topicId);
-
-        // then
-        // No exception is thrown
+        );
     }
 
     @Test
@@ -63,7 +72,6 @@ class TopicExistRequesterTest {
         // given
         Long topicId = 123L;
         TopicExistsResponseDTO response = new TopicExistsResponseDTO();
-        response.setTopicId(topicId);
         response.setExists(false);
 
         // mock

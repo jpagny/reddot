@@ -36,8 +36,7 @@ public class BoardRouteBuilder extends RouteBuilder {
                 get().to(BoardRouteEnum.GET_ALL_BOARDS.getRouteName())
                 .get(requestId).to(BoardRouteEnum.GET_BOARD_BY_ID.getRouteName())
                 .post().type(BoardDTO.class).to(BoardRouteEnum.CREATE_BOARD.getRouteName())
-                .put(requestId).type(BoardDTO.class).to(BoardRouteEnum.UPDATE_BOARD.getRouteName())
-                .delete(requestId).to(BoardRouteEnum.DELETE_BOARD.getRouteName());
+                .put(requestId).type(BoardDTO.class).to(BoardRouteEnum.UPDATE_BOARD.getRouteName());
 
         // route : get all boards
         from(BoardRouteEnum.GET_ALL_BOARDS.getRouteName())

@@ -8,9 +8,7 @@ public enum TopicRouteEnum {
     GET_ALL_TOPICS("direct:getAllTopics"),
     GET_TOPIC_BY_ID("direct:getTopicById"),
     CREATE_TOPIC("direct:createTopic"),
-    UPDATE_TOPIC("direct:updateTopic"),
-    DELETE_TOPIC("direct:deleteTopic");
-
+    UPDATE_TOPIC("direct:updateTopic");
     private final String routeName;
 
     TopicRouteEnum(String routeName) {
