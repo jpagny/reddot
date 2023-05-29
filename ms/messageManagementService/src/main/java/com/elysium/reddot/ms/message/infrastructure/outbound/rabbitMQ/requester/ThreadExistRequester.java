@@ -11,17 +11,33 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * The ThreadExistRequester class is responsible for verifying the existence of a thread
+ * by sending a request and receiving a response through RabbitMQ.
+ */
 @Service
 @Slf4j
 public class ThreadExistRequester {
     private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructs a new ThreadExistRequester with the specified RabbitTemplate.
+     *
+     * @param rabbitTemplate the RabbitTemplate to use for sending and receiving messages
+     */
     public ThreadExistRequester(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
         this.objectMapper = new ObjectMapper();
     }
 
+    /**
+     * Verifies if a thread with the specified ID exists, and throws a ResourceNotFoundException if it does not.
+     *
+     * @param threadId the ID of the thread to verify
+     * @throws IOException               if an I/O error occurs while sending or receiving the message
+     * @throws ResourceNotFoundException if the thread with the specified ID does not exist
+     */
     public void verifyThreadIdExistsOrThrow(Long threadId) throws IOException {
         ThreadExistsResponseDTO response = getMessageExistsResponse(threadId);
 

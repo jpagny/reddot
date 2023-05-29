@@ -3,7 +3,7 @@ package com.elysium.reddot.ms.thread.infrastructure.outbound.persistence;
 
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import com.elysium.reddot.ms.thread.domain.port.outbound.IThreadRepository;
-import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadJpaThreadModelMapper;
+import com.elysium.reddot.ms.thread.application.data.mapper.ThreadJpaThreadModelMapper;
 import com.elysium.reddot.ms.thread.infrastructure.outbound.persistence.entity.ThreadJpaEntity;
 import com.elysium.reddot.ms.thread.infrastructure.outbound.persistence.repository.ThreadJpaRepository;
 import org.springframework.stereotype.Component;

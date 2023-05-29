@@ -5,7 +5,7 @@ import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
 import com.elysium.reddot.ms.message.application.service.MessageApplicationServiceImpl;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.message.GetMessageByIdProcessor;
-import com.elysium.reddot.ms.message.infrastructure.mapper.MessageProcessorMapper;
+import com.elysium.reddot.ms.message.application.data.mapper.MessageDTOMessageModelMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -43,7 +43,7 @@ class GetMessageByIdProcessorTest {
         // given
         Long id = 1L;
         MessageModel messageModel = new MessageModel("content", 1L, "userId");
-        MessageDTO expectedMessage = MessageProcessorMapper.toDTO(messageModel);
+        MessageDTO expectedMessage = MessageDTOMessageModelMapper.toDTO(messageModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "Message with id " + id + " retrieved successfully", expectedMessage);

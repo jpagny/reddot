@@ -2,9 +2,6 @@ package com.elysium.reddot.ms.message.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.message.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
-import com.elysium.reddot.ms.message.application.exception.type.ResourceAlreadyExistException;
-import com.elysium.reddot.ms.message.application.exception.type.ResourceBadValueException;
-import com.elysium.reddot.ms.message.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.message.application.service.KeycloakService;
 import com.elysium.reddot.ms.message.application.service.MessageApplicationServiceImpl;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
@@ -12,7 +9,7 @@ import com.elysium.reddot.ms.message.infrastructure.constant.MessageRouteEnum;
 import com.elysium.reddot.ms.message.infrastructure.data.dto.GlobalExceptionDTO;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.message.*;
-import com.elysium.reddot.ms.message.infrastructure.mapper.MessageProcessorMapper;
+import com.elysium.reddot.ms.message.application.data.mapper.MessageDTOMessageModelMapper;
 import com.elysium.reddot.ms.message.infrastructure.outbound.rabbitmq.requester.ThreadExistRequester;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -141,7 +138,7 @@ class MessageRouteBuilderTest extends CamelTestSupport {
         MessageModel message1Model = new MessageModel("content", 1L, "userId");
         MessageModel message2Model = new MessageModel("content2", 1L, "userId");
         List<MessageModel> messageListModel = Arrays.asList(message1Model, message2Model);
-        List<MessageDTO> expectedListMessages = MessageProcessorMapper.toDTOList(messageListModel);
+        List<MessageDTO> expectedListMessages = MessageDTOMessageModelMapper.toDTOList(messageListModel);
 
         String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
@@ -234,7 +231,7 @@ class MessageRouteBuilderTest extends CamelTestSupport {
         MessageDTO inputMessageDTO = new MessageDTO("content", 1L, "userId");
         MessageModel inputMessageModel = new MessageModel("content", 1L, "userId");
         MessageModel createdMessageModel = new MessageModel(inputMessageModel.getContent(), inputMessageModel.getThreadId(), inputMessageModel.getUserId());
-        MessageDTO expectedMessage = MessageProcessorMapper.toDTO(createdMessageModel);
+        MessageDTO expectedMessage = MessageDTOMessageModelMapper.toDTO(createdMessageModel);
 
         String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
@@ -298,7 +295,7 @@ class MessageRouteBuilderTest extends CamelTestSupport {
     void givenInvalidMessage_whenRouteCreateMessage_thenMessageCreated() throws IOException, URISyntaxException {
         // given
         MessageDTO inputMessageDTO = new MessageDTO(null, 1L, "userId");
-        MessageModel messageModelWithBadValue = MessageProcessorMapper.toModel(inputMessageDTO);
+        MessageModel messageModelWithBadValue = MessageDTOMessageModelMapper.toModel(inputMessageDTO);
 
         String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
@@ -334,7 +331,7 @@ class MessageRouteBuilderTest extends CamelTestSupport {
         MessageDTO inputMessageDTO = new MessageDTO("content", 1L, "userId");
         MessageModel requestModel = new MessageModel("content", 1L, "userId");
         MessageModel updatedMessage = new MessageModel("content", 1L, "userId");
-        MessageDTO expectedMessage = MessageProcessorMapper.toDTO(updatedMessage);
+        MessageDTO expectedMessage = MessageDTOMessageModelMapper.toDTO(updatedMessage);
 
         String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 

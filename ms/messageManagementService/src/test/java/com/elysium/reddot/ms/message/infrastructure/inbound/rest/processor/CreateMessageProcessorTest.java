@@ -5,7 +5,7 @@ import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
 import com.elysium.reddot.ms.message.application.service.MessageApplicationServiceImpl;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.message.CreateMessageProcessor;
-import com.elysium.reddot.ms.message.infrastructure.mapper.MessageProcessorMapper;
+import com.elysium.reddot.ms.message.application.data.mapper.MessageDTOMessageModelMapper;
 import com.elysium.reddot.ms.message.infrastructure.outbound.rabbitmq.requester.ThreadExistRequester;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -53,7 +53,7 @@ class CreateMessageProcessorTest {
         MessageDTO messageToCreateDTO = new MessageDTO("content", 1L, "userId");
         MessageModel messageToCreateModel = new MessageModel("content", 1L, "userId");
         MessageModel createdMessageModel = new MessageModel(1L, "content", 1L, "Message description", LocalDateTime.now(), LocalDateTime.now());
-        MessageDTO expectedMessage = MessageProcessorMapper.toDTO(createdMessageModel);
+        MessageDTO expectedMessage = MessageDTOMessageModelMapper.toDTO(createdMessageModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),
                 "Message with content " + createdMessageModel.getContent() + " created successfully", expectedMessage);

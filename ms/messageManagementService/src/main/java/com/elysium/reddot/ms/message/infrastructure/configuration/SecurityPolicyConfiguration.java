@@ -11,6 +11,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 import java.util.List;
 
+/**
+ * This configuration class is responsible for setting up security policies for different roles.
+ */
 @Configuration
 public class SecurityPolicyConfiguration {
 
@@ -33,5 +36,6 @@ public class SecurityPolicyConfiguration {
         policy.setSpringSecurityAccessPolicy(new SpringSecurityAccessPolicy(roleVoter.getRolePrefix() + "user"));
         return policy;
     }
+
 
 }

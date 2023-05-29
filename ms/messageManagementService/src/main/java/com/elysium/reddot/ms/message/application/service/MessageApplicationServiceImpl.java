@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * This is a service class for handling the business logic related to messages. It implements the IMessageManagementService interface.
+ */
 @Service
 @Transactional
 @Slf4j
@@ -34,6 +37,9 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
         this.messageRepository = messageRepository;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MessageModel getMessageById(Long id) {
         log.debug("Fetching message with id {}", id);
@@ -45,6 +51,9 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
         return foundMessageModel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<MessageModel> getAllMessages() {
         log.info("Fetching all messages from database...");
@@ -52,6 +61,9 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
         return messageRepository.findAllMessages().parallelStream().collect(Collectors.toList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MessageModel createMessage(MessageModel messageToCreateModel) {
 
@@ -61,7 +73,7 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
                 .findFirstByContentAndThreadId(messageToCreateModel.getContent(), messageToCreateModel.getThreadId());
 
         if (existingMessage.isPresent()) {
-            throw new ResourceAlreadyExistException(RESOURCE_NAME_MESSAGE, "content", messageToCreateModel.getContent());
+            throw new ResourceAlreadyExistException(RESOURCE_NAME_MESSAGE, "content", messageToCreateModel.getContent(), messageToCreateModel.getThreadId());
         }
 
         messageToCreateModel.setCreatedAt(LocalDateTime.now());
@@ -81,6 +93,9 @@ public class MessageApplicationServiceImpl implements IMessageManagementService 
         return createdMessageModel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MessageModel updateMessage(Long id, MessageModel messageToUpdateModel) {
         log.debug("Updating message with content '{}'", messageToUpdateModel.getContent());

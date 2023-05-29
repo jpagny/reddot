@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.message.infrastructure.mapper;
+package com.elysium.reddot.ms.message.application.data.mapper;
 
 import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
@@ -6,9 +6,9 @@ import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MessageProcessorMapper {
+public class MessageDTOMessageModelMapper {
 
-    private MessageProcessorMapper() {
+    private MessageDTOMessageModelMapper() {
     }
 
     public static MessageDTO toDTO(MessageModel messageModel) {
@@ -24,7 +24,7 @@ public class MessageProcessorMapper {
 
     public static List<MessageDTO> toDTOList(List<MessageModel> messageModels) {
         return messageModels.stream()
-                .map(MessageProcessorMapper::toDTO)
+                .map(MessageDTOMessageModelMapper::toDTO)
                 .collect(Collectors.toList());
     }
 

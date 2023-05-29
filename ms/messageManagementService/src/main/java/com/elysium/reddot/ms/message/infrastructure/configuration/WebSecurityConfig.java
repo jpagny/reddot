@@ -13,6 +13,11 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
+/**
+ * This class extends KeycloakWebSecurityConfigurerAdapter which is a convenient base class for
+ * Spring Security setups in conjunction with Keycloak for authentication and authorization.
+ * It handles Keycloak-specific security configurations.
+ */
 @KeycloakConfiguration
 public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 

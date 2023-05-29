@@ -1,11 +1,11 @@
-package com.elysium.reddot.ms.message.infrastructure.mapper;
+package com.elysium.reddot.ms.message.application.data.mapper;
 
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import com.elysium.reddot.ms.message.infrastructure.outbound.persistence.entity.MessageJpaEntity;
 
-public class MessagePersistenceMapper {
+public class MessageJpaMessageModelMapper {
 
-    private MessagePersistenceMapper() {
+    private MessageJpaMessageModelMapper() {
     }
 
     public static MessageJpaEntity toEntity(MessageModel messageModel) {

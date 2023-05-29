@@ -35,7 +35,6 @@ public class MessageRouteBuilder extends RouteBuilder {
                 .process(globalExceptionHandler)
                 .marshal(format);
 
-
         // definition routes
         rest().
                 get().to(MessageRouteEnum.GET_ALL_MESSAGES.getRouteName())

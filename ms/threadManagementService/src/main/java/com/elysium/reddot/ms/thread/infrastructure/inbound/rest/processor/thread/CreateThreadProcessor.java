@@ -5,7 +5,7 @@ import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
 import com.elysium.reddot.ms.thread.application.service.KeycloakService;
 import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
-import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadDTOThreadModel;
+import com.elysium.reddot.ms.thread.application.data.mapper.ThreadDTOThreadModel;
 import com.elysium.reddot.ms.thread.infrastructure.outbound.rabbitmq.requester.BoardExistRequester;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

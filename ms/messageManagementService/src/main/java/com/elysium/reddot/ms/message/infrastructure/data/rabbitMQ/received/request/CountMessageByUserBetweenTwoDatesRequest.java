@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * A data class that represents a request to count messages
+ * sent by a specific user between two dates.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

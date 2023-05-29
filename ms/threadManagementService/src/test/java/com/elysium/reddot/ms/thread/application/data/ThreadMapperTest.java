@@ -2,7 +2,7 @@ package com.elysium.reddot.ms.thread.application.data;
 
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
-import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadDTOThreadModel;
+import com.elysium.reddot.ms.thread.application.data.mapper.ThreadDTOThreadModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

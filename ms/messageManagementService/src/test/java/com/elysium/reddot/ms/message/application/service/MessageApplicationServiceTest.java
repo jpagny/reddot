@@ -1,7 +1,5 @@
 package com.elysium.reddot.ms.message.application.service;
 
-import com.elysium.reddot.ms.message.application.exception.type.ResourceBadValueException;
-import com.elysium.reddot.ms.message.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import com.elysium.reddot.ms.message.infrastructure.outbound.persistence.MessageRepositoryAdapter;
 import org.junit.jupiter.api.DisplayName;

@@ -5,7 +5,7 @@ import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
 import com.elysium.reddot.ms.message.application.service.MessageApplicationServiceImpl;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.message.UpdateMessageProcessor;
-import com.elysium.reddot.ms.message.infrastructure.mapper.MessageProcessorMapper;
+import com.elysium.reddot.ms.message.application.data.mapper.MessageDTOMessageModelMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -44,7 +44,7 @@ class UpdateMessageProcessorTest {
         Long messageId = 1L;
         MessageDTO updatedMessageDTO = new MessageDTO("contentUpdated", 1L, "userId");
         MessageModel updatedMessageModel = new MessageModel("contentUpdated", 1L, "userId");
-        MessageDTO expectedMessage = MessageProcessorMapper.toDTO(updatedMessageModel);
+        MessageDTO expectedMessage = MessageDTOMessageModelMapper.toDTO(updatedMessageModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "Message with content " + updatedMessageModel.getContent() + " updated successfully", expectedMessage);

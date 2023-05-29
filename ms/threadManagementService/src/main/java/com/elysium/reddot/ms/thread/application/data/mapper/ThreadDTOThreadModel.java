@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.thread.infrastructure.mapper;
+package com.elysium.reddot.ms.thread.application.data.mapper;
 
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;

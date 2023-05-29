@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Represents a message entity in the database.
+ */
 @Entity
 @Table(name = "messages")
 @Data

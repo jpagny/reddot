@@ -17,6 +17,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
 
+/**
+ * A component that listens to RabbitMQ messages related to messages and performs corresponding actions.
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -25,41 +28,74 @@ public class MessageRabbitMQListener {
     private final RabbitTemplate rabbitTemplate;
     private final MessageRabbitMQService messageRabbitMQService;
 
+    /**
+     * Listens to the QUEUE_MESSAGE_EXIST queue and checks the existence of a message.
+     *
+     * @param message the incoming RabbitMQ message
+     * @throws JsonProcessingException if an error occurs during JSON processing
+     */
     @RabbitListener(queues = RabbitMQConstant.QUEUE_MESSAGE_EXIST)
     public void checkMessageExists(Message message) throws JsonProcessingException {
+        log.debug("Received RabbitMQ message to check message existence.");
+
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
         Long messageId = (Long) messageConverter.fromMessage(message);
+        log.debug("Received message ID: {}", messageId);
 
         boolean exists = messageRabbitMQService.checkMessageIdExists(messageId);
+        log.debug("Message existence check result: {}", exists);
 
         MessageExistsResponseDTO response = new MessageExistsResponseDTO();
-        response.setParentMessageID(messageId);
         response.setExists(exists);
+        log.debug("Created MessageExistsResponseDTO: {}", response);
 
         MessageProperties messageProperties = buildMessageProperties(message);
         String jsonResponse = buildJsonResponse(response);
         Message responseMessage = buildMessageResponse(jsonResponse, messageProperties);
+        log.debug("Built response message: {}", responseMessage);
 
         sendResponseToRabbit(message, responseMessage);
+        log.debug("Sent response for message existence check.");
     }
 
+    /**
+     * Listens to the QUEUE_COUNT_MESSAGES_BY_USER_IN_RANGE_DATES_QUEUE queue and counts the number of messages
+     * by user within a specified date range.
+     *
+     * @param message the incoming RabbitMQ message
+     * @throws JsonProcessingException if an error occurs during JSON processing
+     */
     @RabbitListener(queues = RabbitMQConstant.QUEUE_COUNT_MESSAGES_BY_USER_IN_RANGE_DATES_QUEUE)
     public void countMessagesByUserBetweenTwoDates(Message message) throws JsonProcessingException {
+        log.debug("Received RabbitMQ message to count messages by user between two dates.");
+
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
 
         String jsonMessage = (String) messageConverter.fromMessage(message);
+        log.debug("Received JSON message: {}", jsonMessage);
+
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         CountMessageByUserBetweenTwoDatesRequest requestReceived = objectMapper.readValue(jsonMessage, CountMessageByUserBetweenTwoDatesRequest.class);
+        log.debug("Parsed CountMessageByUserBetweenTwoDatesRequest: {}", requestReceived);
+
         Integer countMessagesTotalOnRangeDate = messageRabbitMQService.countMessageByUserIdBetweenTwoDates(
                 requestReceived.getUserId(),
                 requestReceived.getOnStart(),
                 requestReceived.getOnEnd());
+        log.debug("Total count of messages for user between dates: {}", countMessagesTotalOnRangeDate);
+
         CountMessageByUserBetweenTwoDatesResponse response = new CountMessageByUserBetweenTwoDatesResponse(countMessagesTotalOnRangeDate);
+        log.debug("Created CountMessageByUserBetweenTwoDatesResponse: {}", response);
+
         MessageProperties messageProperties = buildMessageProperties(message);
         String jsonResponse = buildJsonResponse(response);
         Message responseMessage = buildMessageResponse(jsonResponse, messageProperties);
+        log.debug("Built response message: {}", responseMessage);
+
         sendResponseToRabbit(message, responseMessage);
+
+        log.debug("Sent response for counting messages by user between two dates.");
     }
 
     private MessageProperties buildMessageProperties(Message message) {
@@ -85,6 +121,5 @@ public class MessageRabbitMQListener {
                 responseMessage
         );
     }
-
 
 }

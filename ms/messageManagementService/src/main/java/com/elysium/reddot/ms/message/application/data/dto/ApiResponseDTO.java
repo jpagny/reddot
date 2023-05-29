@@ -1,17 +1,36 @@
 package com.elysium.reddot.ms.message.application.data.dto;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+/**
+ * This class is a Data Transfer Object (DTO) for an API response.
+ * It encapsulates the status, message, and data of a response.
+ */
+@Getter
+@RequiredArgsConstructor
+@ApiModel(description = "Data Transfer Object representing an API response")
 public class ApiResponseDTO {
 
-    private int status;
-    private String message;
-    private Object data;
+    /**
+     * The status code of the API response.
+     */
+    @ApiModelProperty("The status code of the API response")
+    private final int status;
+
+    /**
+     * The message of the API response.
+     */
+    @ApiModelProperty("The message of the API response")
+    private final String message;
+
+    /**
+     * The data of the API response.
+     */
+    @ApiModelProperty("The data of the API response")
+    private final Object data;
 
 }

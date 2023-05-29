@@ -1,5 +1,10 @@
 package com.elysium.reddot.ms.message.infrastructure.constant;
 
+/**
+ * This class contains constants for RabbitMQ configuration.
+ * These constants are used to define exchanges, queues, and request strings.
+ * The class is final and has a private constructor to prevent instantiation.
+ */
 public final class RabbitMQConstant {
 
     private RabbitMQConstant() {

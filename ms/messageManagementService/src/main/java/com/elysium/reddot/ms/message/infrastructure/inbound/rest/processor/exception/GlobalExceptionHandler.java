@@ -7,6 +7,9 @@ import org.apache.camel.Processor;
 import org.apache.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+/**
+ * A component that handles global exceptions and processes them into a standardized response.
+ */
 @Component
 @Slf4j
 public class GlobalExceptionHandler implements Processor {

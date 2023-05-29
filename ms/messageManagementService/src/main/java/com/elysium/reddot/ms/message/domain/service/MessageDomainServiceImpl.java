@@ -6,12 +6,17 @@ import com.elysium.reddot.ms.message.domain.model.MessageModel;
 
 public class MessageDomainServiceImpl implements IMessageDomainService {
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void validateMessageForCreation(MessageModel messageModel) {
         validateContent(messageModel.getContent());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void validateMessageForUpdate(MessageModel messageModel, MessageModel messageExisting) {
         validateUser(messageExisting.getUserId(), messageExisting.getUserId());

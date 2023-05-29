@@ -5,7 +5,7 @@ import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
 import com.elysium.reddot.ms.message.application.service.MessageApplicationServiceImpl;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.message.GetAllMessagesProcessor;
-import com.elysium.reddot.ms.message.infrastructure.mapper.MessageProcessorMapper;
+import com.elysium.reddot.ms.message.application.data.mapper.MessageDTOMessageModelMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -47,7 +47,7 @@ class GetAllMessagesProcessorTest {
         MessageModel message1Model = new MessageModel("content", 1L, "userId");
         MessageModel message2Model = new MessageModel("content2", 1L, "userId");
         List<MessageModel> messageListModel = Arrays.asList(message1Model, message2Model);
-        List<MessageDTO> expectedListMessages = MessageProcessorMapper.toDTOList(messageListModel);
+        List<MessageDTO> expectedListMessages = MessageDTOMessageModelMapper.toDTOList(messageListModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "All messages retrieved successfully", expectedListMessages);

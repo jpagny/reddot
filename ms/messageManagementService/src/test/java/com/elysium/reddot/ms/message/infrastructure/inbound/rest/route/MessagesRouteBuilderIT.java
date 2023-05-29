@@ -2,7 +2,6 @@ package com.elysium.reddot.ms.message.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.message.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
-import com.elysium.reddot.ms.message.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.message.container.TestContainerSetup;
 import com.elysium.reddot.ms.message.infrastructure.data.dto.GlobalExceptionDTO;
 import com.elysium.reddot.ms.message.infrastructure.constant.MessageRouteEnum;

@@ -3,6 +3,13 @@ package com.elysium.reddot.ms.message.domain.model;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * This class represents a model of a Message within the application.
+ * <p>
+ * Each MessageModel instance represents a unique message in a thread. It contains details about the
+ * message content, associated thread id, user id and the timestamps of when the message was created
+ * and last updated.
+ */
 public class MessageModel {
 
     private Long id;
@@ -14,6 +21,16 @@ public class MessageModel {
 
     public MessageModel(){}
 
+    /**
+     * Constructs a MessageModel with all fields.
+     *
+     * @param id the unique identifier of the message
+     * @param content the content of the message
+     * @param threadId the id of the thread that this message belongs to
+     * @param userId the id of the user who created the message
+     * @param createdAt the timestamp of when the message was created
+     * @param updatedAt the timestamp of when the message was last updated
+     */
     public MessageModel(Long id, String content, Long threadId, String userId, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.content = content;
@@ -23,6 +40,13 @@ public class MessageModel {
         this.updatedAt = updatedAt;
     }
 
+    /**
+     * Constructs a MessageModel with content, threadId and userId.
+     *
+     * @param content the content of the message
+     * @param threadId the id of the thread that this message belongs to
+     * @param userId the id of the user who created the message
+     */
     public MessageModel(String content, Long threadId, String userId){
         this.content = content;
         this.threadId = threadId;
