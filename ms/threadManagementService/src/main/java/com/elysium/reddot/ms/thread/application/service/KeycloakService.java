@@ -11,6 +11,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.adapters.RefreshableKeycloakSecurityContext;
+import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,13 +24,19 @@ import org.springframework.stereotype.Service;
 import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
 public class KeycloakService {
 
     public String getUserId() throws AuthenticationException {
+        log.debug("Fetching authentication");
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        log.debug("Instance of : " + authentication.getClass());
 
         if (!(authentication instanceof KeycloakAuthenticationToken)) {
             throw new AuthenticationException("Must be authenticated by Keycloak");

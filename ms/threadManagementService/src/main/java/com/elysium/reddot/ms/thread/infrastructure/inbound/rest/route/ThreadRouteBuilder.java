@@ -4,13 +4,13 @@ import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
 import com.elysium.reddot.ms.thread.infrastructure.constant.ThreadRouteEnum;
 import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
 import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread.ThreadProcessorHolder;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ThreadRouteBuilder extends RouteBuilder {
 
     private final GlobalExceptionHandler globalExceptionHandler;

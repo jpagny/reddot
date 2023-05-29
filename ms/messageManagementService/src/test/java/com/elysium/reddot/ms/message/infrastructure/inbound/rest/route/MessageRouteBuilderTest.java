@@ -11,8 +11,6 @@ import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import com.elysium.reddot.ms.message.infrastructure.constant.MessageRouteEnum;
 import com.elysium.reddot.ms.message.infrastructure.data.dto.GlobalExceptionDTO;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
-import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.keycloak.CheckTokenProcessor;
-import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.keycloak.KeycloakProcessorHolder;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.message.*;
 import com.elysium.reddot.ms.message.infrastructure.mapper.MessageProcessorMapper;
 import com.elysium.reddot.ms.message.infrastructure.outbound.rabbitmq.requester.ThreadExistRequester;
