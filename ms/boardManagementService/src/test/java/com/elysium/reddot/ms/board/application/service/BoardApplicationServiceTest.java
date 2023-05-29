@@ -92,7 +92,7 @@ class BoardApplicationServiceTest {
         BoardModel expectedBoard = new BoardModel(1L, "test", "Test Label", "Test Description",1L);
 
         // mock
-        when(boardRepository.findBoardByName(boardToCreateLabel.getName())).thenReturn(Optional.empty());
+        when(boardRepository.findFirstByNameAndTopicId(boardToCreateLabel.getName(),1L)).thenReturn(Optional.empty());
         when(boardRepository.createBoard(boardToCreateLabel)).thenReturn(expectedBoard);
 
         // when
@@ -100,7 +100,7 @@ class BoardApplicationServiceTest {
 
         // then
         assertEquals(expectedBoard, actualBoardModel, "The created board should match the expected board");
-        verify(boardRepository, times(1)).findBoardByName(expectedBoard.getName());
+        verify(boardRepository, times(1)).findFirstByNameAndTopicId(expectedBoard.getName(),1L);
         verify(boardRepository, times(1)).createBoard(boardToCreateLabel);
     }
 
@@ -111,13 +111,13 @@ class BoardApplicationServiceTest {
         BoardModel existingBoardModel = new BoardModel(1L, "Test Name", "Test Label", "Test Description",1L);
 
         // mock
-        when(boardRepository.findBoardByName(existingBoardModel.getName())).thenReturn(Optional.of(existingBoardModel));
+        when(boardRepository.findFirstByNameAndTopicId(existingBoardModel.getName(),1L)).thenReturn(Optional.of(existingBoardModel));
 
         // when && then
         assertThrows(ResourceAlreadyExistException.class,
                 () -> boardService.createBoard(existingBoardModel),
                 "createBoard should throw a ResourceAlreadyExistException for an existing board");
-        verify(boardRepository, times(1)).findBoardByName(existingBoardModel.getName());
+        verify(boardRepository, times(1)).findFirstByNameAndTopicId(existingBoardModel.getName(),1L);
     }
 
     @Test
@@ -127,13 +127,13 @@ class BoardApplicationServiceTest {
         BoardModel invalidBoardModel = new BoardModel(1L, "", "Invalid Label", "Invalid Description",1L);
 
         // mock
-        when(boardRepository.findBoardByName(invalidBoardModel.getName())).thenReturn(Optional.empty());
+        when(boardRepository.findFirstByNameAndTopicId(invalidBoardModel.getName(),1L)).thenReturn(Optional.empty());
 
         // when && then
         assertThrows(ResourceBadValueException.class,
                 () -> boardService.createBoard(invalidBoardModel),
                 "createBoard should throw a ResourceBadValueException for an invalid board");
-        verify(boardRepository, times(1)).findBoardByName(invalidBoardModel.getName());
+        verify(boardRepository, times(1)).findFirstByNameAndTopicId(invalidBoardModel.getName(),1L);
     }
 
     @Test

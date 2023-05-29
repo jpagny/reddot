@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Listener class to handle messages from RabbitMQ related to board existence checks.
@@ -41,8 +42,13 @@ public class BoardRabbitMQListener {
         log.debug("Received RabbitMQ message to check board existence.");
 
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
-        byte[] extractedMessage = (byte[]) messageConverter.fromMessage(message);
-        Long boardId = ByteBuffer.wrap(extractedMessage).getLong();
+        Object rawMessage = messageConverter.fromMessage(message);
+
+        byte[] byteArray = (byte[]) rawMessage;
+        String rawString = new String(byteArray, StandardCharsets.UTF_8);
+        log.debug("Raw byte array as string: {}", rawString);
+
+        Long boardId = Long.parseLong(rawString);
 
         log.debug("Checking existence of board with ID: {}", boardId);
 

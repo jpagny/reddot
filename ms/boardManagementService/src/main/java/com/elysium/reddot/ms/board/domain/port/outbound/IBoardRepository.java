@@ -28,12 +28,13 @@ public interface IBoardRepository {
     Optional<BoardModel> findBoardById(Long id);
 
     /**
-     * Retrieves a specific BoardModel by its name.
+     * Retrieves a specific BoardModel by its name and by topicId
      *
      * @param name the name of the board to be retrieved
+     * @param topicId the id of the topic
      * @return an Optional containing the BoardModel if found, otherwise an empty Optional
      */
-    Optional<BoardModel> findBoardByName(String name);
+    Optional<BoardModel> findFirstByNameAndTopicId(String name, Long topicId);
 
     /**
      * Retrieves all BoardModels.

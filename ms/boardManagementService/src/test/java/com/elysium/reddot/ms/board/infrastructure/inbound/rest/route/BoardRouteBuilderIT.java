@@ -234,7 +234,7 @@ class BoardRouteBuilderIT extends TestContainerSetup {
 
         // expected
         GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceAlreadyExistException",
-                "The board with name 'name_1' already exists.");
+                "The board with name 'name_1' already exists with topic id 1.");
 
         // mock
         doNothing().when(topicExistRequester).verifyTopicIdExistsOrThrow(1L);

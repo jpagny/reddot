@@ -84,10 +84,14 @@ public class BoardApplicationServiceImpl implements IBoardManagementService {
                 boardToCreateModel.getLabel(),
                 boardToCreateModel.getDescription());
 
-        Optional<BoardModel> existingBoard = boardRepository.findBoardByName(boardToCreateModel.getName());
+        Optional<BoardModel> existingBoard = boardRepository
+                .findFirstByNameAndTopicId(boardToCreateModel.getName(), boardToCreateModel.getTopicId());
 
         if (existingBoard.isPresent()) {
-            throw new ResourceAlreadyExistException(RESOURCE_NAME_BOARD, "name", boardToCreateModel.getName());
+            throw new ResourceAlreadyExistException(RESOURCE_NAME_BOARD,
+                    "name",
+                    boardToCreateModel.getName(),
+                    boardToCreateModel.getTopicId());
         }
 
         try {

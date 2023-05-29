@@ -159,10 +159,10 @@ class BoardRouteBuilderTest extends CamelTestSupport {
 
         // expected
         GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceAlreadyExistException",
-                "The board with name 'name' already exists.");
+                "The board with name 'name' already exists with topic id 1.");
 
         // mock
-        when(boardService.createBoard(existingBoardModel)).thenThrow(new ResourceAlreadyExistException("board", "name", "name"));
+        when(boardService.createBoard(existingBoardModel)).thenThrow(new ResourceAlreadyExistException("board", "name", "name",1L));
 
         // when
         Exchange responseExchange = template.send(BoardRouteEnum.CREATE_BOARD.getRouteName(), exchange);

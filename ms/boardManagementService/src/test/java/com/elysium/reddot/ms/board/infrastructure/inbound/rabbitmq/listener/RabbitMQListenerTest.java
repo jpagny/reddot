@@ -15,6 +15,7 @@ import org.springframework.amqp.support.converter.MessageConverter;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -39,8 +40,9 @@ class RabbitMQListenerTest {
     @DisplayName("given a valid message, when checkBoardExists is called, then send a reply message")
     void givenValidMessage_whenCheckBoardExists_thenSendReplyMessage() throws IOException {
         // given
-        long boardId = 123L;
-        byte[] boardIdBytes = ByteBuffer.allocate(Long.BYTES).putLong(boardId).array();
+        String boardIdString = "123";
+        byte[] boardIdBytes = boardIdString.getBytes(StandardCharsets.UTF_8);
+        Long boardId = 123L;
         boolean exists = true;
 
         // mock

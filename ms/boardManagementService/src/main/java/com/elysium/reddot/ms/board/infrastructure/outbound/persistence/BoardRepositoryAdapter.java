@@ -44,8 +44,8 @@ public class BoardRepositoryAdapter implements IBoardRepository {
      * {@inheritDoc}
      */
     @Override
-    public Optional<BoardModel> findBoardByName(String name) {
-        return boardJpaRepository.findByName(name)
+    public Optional<BoardModel> findFirstByNameAndTopicId(String name, Long topicId) {
+        return boardJpaRepository.findFirstByNameAndTopicId(name, topicId)
                 .map(BoardJpaBoardModelMapper::toModel);
     }
 

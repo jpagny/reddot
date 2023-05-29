@@ -10,10 +10,11 @@ public class ResourceAlreadyExistException extends RuntimeException {
      * Constructs a new exception with a detailed message.
      *
      * @param resourceType The type of the resource that already exists.
-     * @param fieldName The field name that is used to check the existence of the resource.
+     * @param fieldName    The field name that is used to check the existence of the resource.
      * @param resourceName The name of the resource that already exists.
      */
-    public ResourceAlreadyExistException(String resourceType, String fieldName, String resourceName) {
-        super("The " + resourceType + " with " + fieldName + " '" + resourceName + "' already exists.");
+    public ResourceAlreadyExistException(String resourceType, String fieldName, String resourceName, Long resourceTopicId) {
+        super("The " + resourceType + " with " + fieldName + " '" + resourceName + "' already exists with topic id "
+                + resourceTopicId + ".");
     }
 }
