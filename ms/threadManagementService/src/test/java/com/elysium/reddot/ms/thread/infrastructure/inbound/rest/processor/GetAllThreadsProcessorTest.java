@@ -5,7 +5,7 @@ import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
 import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread.GetAllThreadsProcessor;
-import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadProcessorMapper;
+import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadDTOThreadModel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -47,7 +47,7 @@ class GetAllThreadsProcessorTest {
         ThreadModel thread1Model = new ThreadModel(1L, "name 1", "Name 1", "Thread 1",1L,"userId");
         ThreadModel thread2Model = new ThreadModel(2L, "name 2", "Name 2", "Thread 2",1L,"userId");
         List<ThreadModel> threadListModel = Arrays.asList(thread1Model, thread2Model);
-        List<ThreadDTO> expectedListThreads = ThreadProcessorMapper.toDTOList(threadListModel);
+        List<ThreadDTO> expectedListThreads = ThreadDTOThreadModel.toDTOList(threadListModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "All threads retrieved successfully", expectedListThreads);

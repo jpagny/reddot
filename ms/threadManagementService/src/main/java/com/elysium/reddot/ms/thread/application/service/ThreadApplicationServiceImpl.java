@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * The ThreadApplicationServiceImpl class implements the IThreadManagementService interface
+ * and provides the implementation for managing threads in the application layer.
+ */
 @Service
 @Transactional
 @Slf4j
@@ -31,6 +35,9 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
         this.threadRepository = threadRepository;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ThreadModel getThreadById(Long id) {
         log.debug("Fetching thread with id {}", id);
@@ -45,6 +52,9 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
         return foundThreadModel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<ThreadModel> getAllThreads() {
         log.info("Fetching all threads from database...");
@@ -54,6 +64,9 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ThreadModel createThread(ThreadModel threadToCreateModel) {
 
@@ -67,7 +80,7 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
         Optional<ThreadModel> existingThread = threadRepository.findThreadByName(threadToCreateModel.getName());
 
         if (existingThread.isPresent()) {
-            throw new ResourceAlreadyExistException(RESOURCE_NAME_TOPIC, "name", threadToCreateModel.getName());
+            throw new ResourceAlreadyExistException(RESOURCE_NAME_TOPIC, "name", threadToCreateModel.getName(), threadToCreateModel.getBoardId());
         }
 
         try {
@@ -89,6 +102,9 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
         return createdThreadModel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ThreadModel updateThread(Long id, ThreadModel threadToUpdateModel) {
         log.debug("Updating new thread with name '{}', label '{}, description '{}', boardId '{}', userId '{}'",
@@ -122,20 +138,5 @@ public class ThreadApplicationServiceImpl implements IThreadManagementService {
         }
     }
 
-    @Override
-    public ThreadModel deleteThreadById(Long id) throws ResourceNotFoundException {
-        log.debug("Deleting thread with id {}", id);
-
-        ThreadModel threadToDelete = threadRepository.findThreadById(id).orElseThrow(
-                () -> new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))
-        );
-
-        threadRepository.deleteThread(id);
-
-        log.info("Successfully deleted thread with id '{}', name '{}', description '{}'",
-                threadToDelete.getId(), threadToDelete.getName(), threadToDelete.getDescription());
-
-        return threadToDelete;
-    }
 
 }

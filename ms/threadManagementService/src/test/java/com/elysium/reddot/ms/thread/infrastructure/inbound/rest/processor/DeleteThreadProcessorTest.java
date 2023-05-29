@@ -4,8 +4,7 @@ import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
 import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
-import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread.DeleteThreadProcessor;
-import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadProcessorMapper;
+import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadDTOThreadModel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -44,7 +43,7 @@ class DeleteThreadProcessorTest {
         // given
         Long threadId = 1L;
         ThreadModel threadToDeleteModel = new ThreadModel(threadId, "name", "Name", "Thread description",1L,"userId");
-        ThreadDTO expectedThread = ThreadProcessorMapper.toDTO(threadToDeleteModel);
+        ThreadDTO expectedThread = ThreadDTOThreadModel.toDTO(threadToDeleteModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "Thread with id " + threadId + " deleted successfully", expectedThread);

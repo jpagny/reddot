@@ -1,22 +1,35 @@
 package com.elysium.reddot.ms.thread.domain.service;
 
-import com.elysium.reddot.ms.thread.domain.exception.FieldEmptyException;
-import com.elysium.reddot.ms.thread.domain.exception.FieldWithSpaceException;
+import com.elysium.reddot.ms.thread.domain.exception.type.FieldEmptyException;
+import com.elysium.reddot.ms.thread.domain.exception.type.FieldWithSpaceException;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 
+/**
+ * The ThreadDomainServiceImpl class implements the IThreadDomainService interface
+ * and provides the implementation for validating and updating thread models in the domain layer.
+ */
 public class ThreadDomainServiceImpl implements IThreadDomainService {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void validateThreadForCreation(ThreadModel threadModel) {
         validateName(threadModel.getName());
         validateLabel(threadModel.getLabel());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void validateThreadForUpdate(ThreadModel threadModel) {
         validateLabel(threadModel.getLabel());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ThreadModel updateExistingThreadWithUpdates(ThreadModel existingThread, ThreadModel threadUpdates) {
         validateThreadForUpdate(threadUpdates);

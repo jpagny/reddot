@@ -5,7 +5,7 @@ import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
 import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread.CreateThreadProcessor;
-import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadProcessorMapper;
+import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadDTOThreadModel;
 import com.elysium.reddot.ms.thread.infrastructure.outbound.rabbitmq.requester.BoardExistRequester;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -50,7 +50,7 @@ class CreateThreadProcessorTest {
         ThreadDTO threadToCreateDTO = new ThreadDTO(null, "name", "Name", "Thread description",1L,"userId");
         ThreadModel threadToCreateModel = new ThreadModel(null, "name", "Name", "Thread description",1L,"userId");
         ThreadModel createdThreadModel = new ThreadModel(1L, "name", "Name", "Thread description",1L,"userId");
-        ThreadDTO expectedThread = ThreadProcessorMapper.toDTO(createdThreadModel);
+        ThreadDTO expectedThread = ThreadDTOThreadModel.toDTO(createdThreadModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),
                 "Thread with name " + createdThreadModel.getName() + " created successfully", expectedThread);

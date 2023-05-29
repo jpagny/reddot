@@ -33,7 +33,7 @@ class RabbitMQListenerTest {
 
     @BeforeEach
     void setUp() {
-        rabbitMQListener = new BoardRabbitMQListener(rabbitTemplate, boardRabbitMQService, new ObjectMapper());
+        rabbitMQListener = new BoardRabbitMQListener(rabbitTemplate, boardRabbitMQService);
     }
 
     @Test

@@ -3,11 +3,21 @@ package com.elysium.reddot.ms.thread.infrastructure.mapper;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import com.elysium.reddot.ms.thread.infrastructure.outbound.persistence.entity.ThreadJpaEntity;
 
-public class ThreadPersistenceMapper {
+/**
+ * The ThreadJpaThreadModelMapper class provides static methods to map between ThreadModel and ThreadJpaEntity objects.
+ * It converts a ThreadModel object to a ThreadJpaEntity object and vice versa.
+ */
+public class ThreadJpaThreadModelMapper {
 
-    private ThreadPersistenceMapper() {
+    private ThreadJpaThreadModelMapper() {
     }
 
+    /**
+     * Converts a ThreadModel object to a ThreadJpaEntity object.
+     *
+     * @param threadModel The ThreadModel object to be converted.
+     * @return The corresponding ThreadJpaEntity object.
+     */
     public static ThreadJpaEntity toEntity(ThreadModel threadModel) {
         ThreadJpaEntity threadJpaEntity = new ThreadJpaEntity();
         threadJpaEntity.setId(threadModel.getId());
@@ -19,6 +29,12 @@ public class ThreadPersistenceMapper {
         return threadJpaEntity;
     }
 
+    /**
+     * Converts a ThreadJpaEntity object to a ThreadModel object.
+     *
+     * @param threadJpaEntity The ThreadJpaEntity object to be converted.
+     * @return The corresponding ThreadModel object.
+     */
     public static ThreadModel toModel(ThreadJpaEntity threadJpaEntity) {
         return new ThreadModel(
                 threadJpaEntity.getId(),

@@ -2,6 +2,10 @@ package com.elysium.reddot.ms.thread.domain.model;
 
 import java.util.Objects;
 
+/**
+ * ThreadModel represents a discussion thread in a message board system.
+ * Each thread is linked to a board by its boardId and created by a user represented by userId.
+ */
 public class ThreadModel {
     private final Long id;
     private final String name;
@@ -10,6 +14,16 @@ public class ThreadModel {
     private Long boardId;
     private String userId;
 
+    /**
+     * Constructs a new ThreadModel with the given parameters.
+     *
+     * @param id the unique identifier for the thread.
+     * @param name the name of the thread.
+     * @param label the label assigned to the thread.
+     * @param description the description of the thread.
+     * @param boardId the ID of the board the thread belongs to.
+     * @param userId the ID of the user who created the thread.
+     */
     public ThreadModel(Long id, String name, String label, String description, Long boardId, String userId) {
         this.id = id;
         this.name = name;

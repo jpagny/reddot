@@ -15,7 +15,6 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -28,7 +27,6 @@ public class BoardRabbitMQListener {
 
     private final RabbitTemplate rabbitTemplate;
     private final BoardRabbitMQService boardRabbitMQService;
-    private final ObjectMapper objectMapper;
 
     /**
      * Listens to the QUEUE_BOARD_EXIST queue and checks if a board with the given ID exists.

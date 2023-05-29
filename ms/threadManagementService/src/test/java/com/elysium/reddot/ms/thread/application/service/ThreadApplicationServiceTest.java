@@ -1,8 +1,5 @@
 package com.elysium.reddot.ms.thread.application.service;
 
-import com.elysium.reddot.ms.thread.application.exception.type.ResourceAlreadyExistException;
-import com.elysium.reddot.ms.thread.application.exception.type.ResourceBadValueException;
-import com.elysium.reddot.ms.thread.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import com.elysium.reddot.ms.thread.infrastructure.outbound.persistence.ThreadRepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;

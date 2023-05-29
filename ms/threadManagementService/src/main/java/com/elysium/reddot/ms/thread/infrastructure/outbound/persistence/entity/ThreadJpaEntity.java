@@ -6,6 +6,10 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+/**
+ * The ThreadJpaEntity class represents a JPA entity for the "threads" table in the database.
+ * It maps the columns of the table to the fields of the entity class.
+ */
 @Entity
 @Table(name = "threads")
 @Data

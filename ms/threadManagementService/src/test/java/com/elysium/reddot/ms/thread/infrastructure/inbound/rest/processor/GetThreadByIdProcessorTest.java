@@ -5,7 +5,7 @@ import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
 import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread.GetThreadByIdProcessor;
-import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadProcessorMapper;
+import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadDTOThreadModel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -43,7 +43,7 @@ class GetThreadByIdProcessorTest {
         // given
         Long id = 1L;
         ThreadModel threadModel = new ThreadModel(id, "name 1", "Name 1", "Thread 1",1L,"userId");
-        ThreadDTO expectedThread = ThreadProcessorMapper.toDTO(threadModel);
+        ThreadDTO expectedThread = ThreadDTOThreadModel.toDTO(threadModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "Thread with id " + id + " retrieved successfully", expectedThread);

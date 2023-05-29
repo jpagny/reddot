@@ -10,55 +10,9 @@
         <relativePath>../reddot-parent-pom.xml</relativePath>
     </parent>
 
-    <groupId>com.elysium.reddot.ms</groupId>
     <artifactId>threadManagementService</artifactId>
     <version>1.0.0</version>
     <name>threadManagementService</name>
     <description>threadManagementService</description>
-
-    <!-- Spring Boot -->
-    <properties>
-        <keycloak.version>21.1.1</keycloak.version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-admin-client</artifactId>
-            <version>${keycloak.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.transaction</groupId>
-            <artifactId>jakarta.transaction-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-security-adapter</artifactId>
-            <version>21.1.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-adapter-core</artifactId>
-            <version>21.1.1</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
 
 </project>

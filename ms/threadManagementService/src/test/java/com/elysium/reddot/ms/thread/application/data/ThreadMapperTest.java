@@ -2,7 +2,7 @@ package com.elysium.reddot.ms.thread.application.data;
 
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
-import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadProcessorMapper;
+import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadDTOThreadModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ class ThreadApplicationMapperTest {
         ThreadModel threadModel = new ThreadModel(1L, "Test Name", "Test Label", "Test Description",1L,"userId");
 
         // when
-        ThreadDTO threadDTO = ThreadProcessorMapper.toDTO(threadModel);
+        ThreadDTO threadDTO = ThreadDTOThreadModel.toDTO(threadModel);
 
         // then
         assertEquals(threadModel.getId(), threadDTO.getId(), "The thread ID should match");
@@ -35,7 +35,7 @@ class ThreadApplicationMapperTest {
         ThreadDTO threadDTO = new ThreadDTO(1L, "Test Name", "Test Label", "Test Description",1l,"userID");
 
         // when
-        ThreadModel threadModel = ThreadProcessorMapper.toModel(threadDTO);
+        ThreadModel threadModel = ThreadDTOThreadModel.toModel(threadDTO);
 
         // then
         assertEquals(threadDTO.getId(), threadModel.getId(), "The thread ID should match");

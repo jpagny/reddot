@@ -12,6 +12,4 @@ public class ThreadProcessorHolder {
     private final GetThreadByIdProcessor getThreadByIdProcessor;
     private final CreateThreadProcessor createThreadProcessor;
     private final UpdateThreadProcessor updateThreadProcessor;
-    private final DeleteThreadProcessor deleteThreadProcessor;
-
 }

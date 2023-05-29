@@ -2,7 +2,6 @@ package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
-import com.elysium.reddot.ms.thread.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.thread.container.TestContainerSetup;
 import com.elysium.reddot.ms.thread.infrastructure.constant.ThreadRouteEnum;
 import com.elysium.reddot.ms.thread.infrastructure.data.dto.GlobalExceptionDTO;

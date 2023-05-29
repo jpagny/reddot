@@ -1,7 +1,5 @@
 package com.elysium.reddot.ms.thread.domain.service;
 
-import com.elysium.reddot.ms.thread.domain.exception.FieldEmptyException;
-import com.elysium.reddot.ms.thread.domain.exception.FieldWithSpaceException;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;

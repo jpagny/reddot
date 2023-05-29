@@ -2,8 +2,6 @@ package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
-import com.elysium.reddot.ms.thread.application.exception.type.ResourceAlreadyExistException;
-import com.elysium.reddot.ms.thread.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.thread.application.service.KeycloakService;
 import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
 import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
@@ -13,8 +11,7 @@ import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.except
 import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.keycloak.CheckTokenProcessor;
 import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.keycloak.KeycloakProcessorHolder;
 import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread.*;
-import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.route.ThreadRouteBuilder;
-import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadProcessorMapper;
+import com.elysium.reddot.ms.thread.infrastructure.mapper.ThreadDTOThreadModel;
 import com.elysium.reddot.ms.thread.infrastructure.outbound.rabbitmq.requester.BoardExistRequester;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -134,7 +131,7 @@ class ThreadRouteBuilderTest extends CamelTestSupport {
         ThreadModel thread1Model = new ThreadModel(1L, "name 1", "Name 1", "Thread 1", 1L, "userId");
         ThreadModel thread2Model = new ThreadModel(2L, "name 2", "Name 2", "Thread 2", 1L, "userId");
         List<ThreadModel> threadListModel = Arrays.asList(thread1Model, thread2Model);
-        List<ThreadDTO> expectedListThreads = ThreadProcessorMapper.toDTOList(threadListModel);
+        List<ThreadDTO> expectedListThreads = ThreadDTOThreadModel.toDTOList(threadListModel);
 
         String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
@@ -232,7 +229,7 @@ class ThreadRouteBuilderTest extends CamelTestSupport {
                 inputThreadModel.getDescription(),
                 inputThreadModel.getBoardId(),
                 inputThreadModel.getUserId());
-        ThreadDTO expectedThread = ThreadProcessorMapper.toDTO(createdThreadModel);
+        ThreadDTO expectedThread = ThreadDTOThreadModel.toDTO(createdThreadModel);
 
         String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
@@ -298,7 +295,7 @@ class ThreadRouteBuilderTest extends CamelTestSupport {
         ThreadDTO inputThreadDTO = new ThreadDTO(threadId, "newName", "newDescription", "newIcon", 1L, "userId");
         ThreadModel requestModel = new ThreadModel(threadId, "newName", "newDescription", "newIcon", 1L, "userId");
         ThreadModel updatedThread = new ThreadModel(threadId, "newName", "newDescription", "newIcon", 1L, "userId");
-        ThreadDTO expectedThread = ThreadProcessorMapper.toDTO(updatedThread);
+        ThreadDTO expectedThread = ThreadDTOThreadModel.toDTO(updatedThread);
 
         String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 

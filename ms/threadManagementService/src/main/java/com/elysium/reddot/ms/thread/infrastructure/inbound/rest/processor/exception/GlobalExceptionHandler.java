@@ -10,6 +10,10 @@ import org.apache.camel.Processor;
 import org.apache.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+/**
+ * The GlobalExceptionHandler class is a Camel Processor component that handles global exceptions.
+ * It processes the exception and sets the appropriate HTTP response code and response body.
+ */
 @Component
 @Slf4j
 public class GlobalExceptionHandler implements Processor {
