@@ -14,6 +14,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 /**
  * Component that listens to RabbitMQ messages related to topics.
  * It handles the checking of topic existence and sends a response back to the sender.
@@ -25,6 +27,7 @@ public class TopicRabbitMQListener {
 
     private final RabbitTemplate rabbitTemplate;
     private final TopicRabbitMQService topicRabbitMQService;
+    private final ObjectMapper objectMapper;
 
     /**
      * Listens to the QUEUE_TOPIC_EXIST queue and checks if a topic with the given ID exists.
@@ -34,11 +37,12 @@ public class TopicRabbitMQListener {
      * @throws JsonProcessingException if any error occurs during JSON processing
      */
     @RabbitListener(queues = RabbitMQConstant.QUEUE_TOPIC_EXIST)
-    public void checkTopicExists(Message message) throws JsonProcessingException {
+    public void checkTopicExists(Message message) throws IOException {
         log.debug("Received RabbitMQ message to check topic existence.");
 
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
-        Long topicId = (Long) messageConverter.fromMessage(message);
+        byte[] extractedMessage = (byte[]) messageConverter.fromMessage(message);
+        Long topicId = objectMapper.readValue(extractedMessage, Long.class);
 
         log.debug("Checking existence of topic with ID: {}", topicId);
 
