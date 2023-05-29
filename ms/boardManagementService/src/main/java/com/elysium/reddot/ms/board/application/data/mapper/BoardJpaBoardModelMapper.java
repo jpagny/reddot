@@ -1,11 +1,11 @@
-package com.elysium.reddot.ms.board.infrastructure.mapper;
+package com.elysium.reddot.ms.board.application.data.mapper;
 
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.entity.BoardJpaEntity;
 
-public class BoardPersistenceMapper {
+public class BoardJpaBoardModelMapper {
 
-    private BoardPersistenceMapper() {
+    private BoardJpaBoardModelMapper() {
     }
 
     public static BoardJpaEntity toEntity(BoardModel boardModel) {

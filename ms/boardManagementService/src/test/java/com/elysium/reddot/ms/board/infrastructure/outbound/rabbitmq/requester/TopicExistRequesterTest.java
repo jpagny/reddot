@@ -1,6 +1,5 @@
 package com.elysium.reddot.ms.board.infrastructure.outbound.rabbitmq.requester;
 
-import com.elysium.reddot.ms.board.application.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.board.infrastructure.constant.RabbitMQConstant;
 import com.elysium.reddot.ms.board.infrastructure.data.dto.TopicExistsResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -3,7 +3,7 @@ package com.elysium.reddot.ms.board.infrastructure.outbound.persistence;
 
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.domain.port.outbound.IBoardRepository;
-import com.elysium.reddot.ms.board.infrastructure.mapper.BoardPersistenceMapper;
+import com.elysium.reddot.ms.board.application.data.mapper.BoardJpaBoardModelMapper;
 import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.entity.BoardJpaEntity;
 import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.repository.BoardJpaRepository;
 import org.springframework.stereotype.Component;
@@ -21,42 +21,53 @@ public class BoardRepositoryAdapter implements IBoardRepository {
         this.boardJpaRepository = boardJpaRepository;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BoardModel createBoard(BoardModel boardModel) {
-        BoardJpaEntity boardEntity = BoardPersistenceMapper.toEntity(boardModel);
+        BoardJpaEntity boardEntity = BoardJpaBoardModelMapper.toEntity(boardModel);
         BoardJpaEntity savedBoard = boardJpaRepository.save(boardEntity);
-        return BoardPersistenceMapper.toModel(savedBoard);
+        return BoardJpaBoardModelMapper.toModel(savedBoard);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<BoardModel> findBoardById(Long id) {
         return boardJpaRepository.findById(id)
-                .map(BoardPersistenceMapper::toModel);
+                .map(BoardJpaBoardModelMapper::toModel);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<BoardModel> findBoardByName(String name) {
         return boardJpaRepository.findByName(name)
-                .map(BoardPersistenceMapper::toModel);
+                .map(BoardJpaBoardModelMapper::toModel);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<BoardModel> findAllBoards() {
         return boardJpaRepository.findAll()
                 .stream()
-                .map(BoardPersistenceMapper::toModel)
+                .map(BoardJpaBoardModelMapper::toModel)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BoardModel updateBoard(BoardModel boardModel) {
-        BoardJpaEntity boardEntity = BoardPersistenceMapper.toEntity(boardModel);
+        BoardJpaEntity boardEntity = BoardJpaBoardModelMapper.toEntity(boardModel);
         BoardJpaEntity updatedBoard = boardJpaRepository.save(boardEntity);
-        return BoardPersistenceMapper.toModel(updatedBoard);
+        return BoardJpaBoardModelMapper.toModel(updatedBoard);
     }
 
-    @Override
-    public void deleteBoard(Long id) {
-        boardJpaRepository.deleteById(id);
-    }
 }

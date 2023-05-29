@@ -7,6 +7,7 @@ import com.elysium.reddot.ms.topic.domain.model.TopicModel;
 import com.elysium.reddot.ms.topic.domain.port.inbound.ITopicManagementService;
 import com.elysium.reddot.ms.topic.domain.port.outbound.ITopicRepository;
 import com.elysium.reddot.ms.topic.domain.service.TopicDomainServiceImpl;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 /**
  * Implementation of the {@link ITopicManagementService} interface, providing methods for managing Topic objects.
  */
+@Api(tags = "Topic Management")
 @Service
 @Transactional
 @Slf4j

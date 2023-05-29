@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+/**
+ * Entity class representing a board in the database.
+ */
 @Entity
 @Table(name = "boards")
 @Data

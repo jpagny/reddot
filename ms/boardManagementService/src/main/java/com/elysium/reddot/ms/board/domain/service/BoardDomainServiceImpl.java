@@ -1,23 +1,36 @@
 package com.elysium.reddot.ms.board.domain.service;
 
 
-import com.elysium.reddot.ms.board.domain.exception.FieldEmptyException;
-import com.elysium.reddot.ms.board.domain.exception.FieldWithSpaceException;
+import com.elysium.reddot.ms.board.domain.exception.type.FieldEmptyException;
+import com.elysium.reddot.ms.board.domain.exception.type.FieldWithSpaceException;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 
+/**
+ * Implementation of the IBoardDomainService interface.
+ * This class provides methods for validating and updating BoardModel objects.
+ */
 public class BoardDomainServiceImpl implements IBoardDomainService {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void validateBoardForCreation(BoardModel boardModel) {
         validateName(boardModel.getName());
         validateLabel(boardModel.getLabel());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void validateBoardForUpdate(BoardModel boardModel) {
         validateLabel(boardModel.getLabel());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BoardModel updateExistingBoardWithUpdates(BoardModel existingTopic, BoardModel topicUpdates) {
         validateBoardForUpdate(topicUpdates);

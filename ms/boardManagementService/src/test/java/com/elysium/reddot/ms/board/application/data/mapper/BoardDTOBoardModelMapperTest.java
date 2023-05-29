@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BoardApplicationMapperTest {
+class BoardDTOBoardModelMapperTest {
 
     @Test
     @DisplayName("given boardModel when toDTO is called then returns BoardDTO")
@@ -16,7 +16,7 @@ class BoardApplicationMapperTest {
         BoardModel boardModel = new BoardModel(1L, "Test Name", "Test Label", "Test Description",1L);
 
         // when
-        BoardDTO boardDTO = BoardApplicationMapper.toDTO(boardModel);
+        BoardDTO boardDTO = BoardDTOBoardModelMapper.toDTO(boardModel);
 
         // then
         assertEquals(boardModel.getId(), boardDTO.getId(), "The board ID should match");
@@ -33,7 +33,7 @@ class BoardApplicationMapperTest {
         BoardDTO boardDTO = new BoardDTO(1L, "Test Name", "Test Label", "Test Description",1L);
 
         // when
-        BoardModel boardModel = BoardApplicationMapper.toModel(boardDTO);
+        BoardModel boardModel = BoardDTOBoardModelMapper.toModel(boardDTO);
 
         // then
         assertEquals(boardDTO.getId(), boardModel.getId(), "The board ID should match");

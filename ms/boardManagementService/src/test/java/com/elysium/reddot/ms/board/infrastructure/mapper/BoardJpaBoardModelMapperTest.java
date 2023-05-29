@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.board.infrastructure.mapper;
 
+import com.elysium.reddot.ms.board.application.data.mapper.BoardJpaBoardModelMapper;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.entity.BoardJpaEntity;
 import org.junit.jupiter.api.DisplayName;
@@ -7,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BoardPersistenceMapperTest {
+class BoardJpaBoardModelMapperTest {
 
     @Test
     @DisplayName("given boardModel when toEntity is called then returns boardJpaEntity")
@@ -16,7 +17,7 @@ class BoardPersistenceMapperTest {
         BoardModel boardModel = new BoardModel(1L, "Test Name", "Test Label", "Test Description",1L);
 
         // when
-        BoardJpaEntity boardJpaEntity = BoardPersistenceMapper.toEntity(boardModel);
+        BoardJpaEntity boardJpaEntity = BoardJpaBoardModelMapper.toEntity(boardModel);
 
         // then
         assertEquals(boardModel.getId(), boardJpaEntity.getId(), "The board ID should match");
@@ -36,7 +37,7 @@ class BoardPersistenceMapperTest {
         boardJpaEntity.setDescription("Test Description");
 
         // when
-        BoardModel boardModel = BoardPersistenceMapper.toModel(boardJpaEntity);
+        BoardModel boardModel = BoardJpaBoardModelMapper.toModel(boardJpaEntity);
 
         // then
         assertEquals(boardJpaEntity.getId(), boardModel.getId(), "The board ID should match");

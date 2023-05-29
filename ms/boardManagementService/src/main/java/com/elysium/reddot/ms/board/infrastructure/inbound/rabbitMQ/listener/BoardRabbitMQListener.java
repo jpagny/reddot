@@ -16,6 +16,9 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Listener class to handle messages from RabbitMQ related to board existence checks.
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -24,8 +27,17 @@ public class BoardRabbitMQListener {
     private final RabbitTemplate rabbitTemplate;
     private final BoardRabbitMQService boardRabbitMQService;
 
+    /**
+     * Listens to the QUEUE_BOARD_EXIST queue and checks if a board with the given ID exists.
+     * Sends a reply to the 'ReplyTo' header with the result of the check.
+     *
+     * @param message the incoming RabbitMQ message
+     * @throws JsonProcessingException if any error occurs during JSON processing
+     */
     @RabbitListener(queues = RabbitMQConstant.QUEUE_BOARD_EXIST)
     public void checkBoardExists(Message message) throws JsonProcessingException {
+        log.info("Received a message to check board existence: {}", message);
+
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
         byte[] bytes = (byte[]) messageConverter.fromMessage(message);
         String boardIdString = new String(bytes, StandardCharsets.UTF_8);
@@ -42,14 +54,19 @@ public class BoardRabbitMQListener {
         Message responseMessage = buildMessageResponse(jsonResponse, messageProperties);
 
         sendResponseToRabbit(message, responseMessage);
-        log.debug("Sent response message: {}", responseMessage);
+        log.info("Sent response message: {}", responseMessage);
     }
 
     private MessageProperties buildMessageProperties(Message message) {
+        log.debug("Building message properties for response message.");
+
         MessageProperties messageProperties = new MessageProperties();
         messageProperties.setReplyTo(message.getMessageProperties().getReplyTo());
         messageProperties.setCorrelationId(message.getMessageProperties().getCorrelationId());
         messageProperties.setContentType(MessageProperties.CONTENT_TYPE_JSON);
+
+        log.debug("Message properties built: {}", messageProperties);
+
         return messageProperties;
     }
 
@@ -63,6 +80,8 @@ public class BoardRabbitMQListener {
     }
 
     private void sendResponseToRabbit(Message message, Message responseMessage) {
+        log.debug("Sending response to RabbitMQ.");
+
         rabbitTemplate.send(
                 message.getMessageProperties().getReplyTo(),
                 responseMessage

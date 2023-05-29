@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.rabbitmq;
+package com.elysium.reddot.ms.topic.infrastructure.inbound.rabbitmq;
 
 import com.elysium.reddot.ms.topic.application.service.TopicRabbitMQService;
 import com.elysium.reddot.ms.topic.infrastructure.constant.RabbitMQConstant;
@@ -26,6 +26,13 @@ public class TopicRabbitMQListener {
     private final RabbitTemplate rabbitTemplate;
     private final TopicRabbitMQService topicRabbitMQService;
 
+    /**
+     * Listens to the QUEUE_TOPIC_EXIST queue and checks if a topic with the given ID exists.
+     * Sends a reply to the 'ReplyTo' header with the result of the check.
+     *
+     * @param message the incoming RabbitMQ message
+     * @throws JsonProcessingException if any error occurs during JSON processing
+     */
     @RabbitListener(queues = RabbitMQConstant.QUEUE_TOPIC_EXIST)
     public void checkTopicExists(Message message) throws JsonProcessingException {
         log.debug("Received RabbitMQ message to check topic existence.");
@@ -74,6 +81,7 @@ public class TopicRabbitMQListener {
 
     private void sendResponseToRabbit(Message message, Message responseMessage) {
         log.debug("Sending response to RabbitMQ.");
+
         rabbitTemplate.send(
                 message.getMessageProperties().getReplyTo(),
                 responseMessage

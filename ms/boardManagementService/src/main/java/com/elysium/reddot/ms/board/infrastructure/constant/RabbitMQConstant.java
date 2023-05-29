@@ -1,5 +1,8 @@
 package com.elysium.reddot.ms.board.infrastructure.constant;
 
+/**
+ * Utility class that defines constants for RabbitMQ exchanges, queues, and requests.
+ */
 public final class RabbitMQConstant {
 
     private RabbitMQConstant(){}

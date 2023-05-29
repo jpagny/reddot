@@ -5,14 +5,15 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * This class is a Data Transfer Object (DTO) for an API response.
  * It encapsulates the status, message, and data of a response.
  */
 @Getter
+@RequiredArgsConstructor
 @ApiModel(description = "Data Transfer Object representing an API response")
-@AllArgsConstructor
 public class ApiResponseDTO {
 
     /**

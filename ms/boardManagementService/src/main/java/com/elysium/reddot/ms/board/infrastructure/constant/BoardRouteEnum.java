@@ -1,5 +1,8 @@
 package com.elysium.reddot.ms.board.infrastructure.constant;
 
+/**
+ * Enum representing the various routes for board-related actions.
+ */
 public enum BoardRouteEnum {
 
     GET_ALL_BOARDS("direct:getAllBoards"),

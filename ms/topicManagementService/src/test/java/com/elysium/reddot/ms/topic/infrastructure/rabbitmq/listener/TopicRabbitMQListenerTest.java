@@ -1,7 +1,7 @@
 package com.elysium.reddot.ms.topic.infrastructure.rabbitmq.listener;
 
 import com.elysium.reddot.ms.topic.application.service.TopicRabbitMQService;
-import com.elysium.reddot.ms.topic.infrastructure.inbound.rest.rabbitmq.TopicRabbitMQListener;
+import com.elysium.reddot.ms.topic.infrastructure.inbound.rabbitmq.TopicRabbitMQListener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

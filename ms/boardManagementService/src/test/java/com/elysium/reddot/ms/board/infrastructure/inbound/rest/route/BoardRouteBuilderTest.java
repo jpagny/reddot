@@ -2,10 +2,7 @@ package com.elysium.reddot.ms.board.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
-import com.elysium.reddot.ms.board.application.exception.ResourceAlreadyExistException;
-import com.elysium.reddot.ms.board.application.exception.ResourceNotFoundException;
 import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
-import com.elysium.reddot.ms.board.application.service.KeycloakService;
 import com.elysium.reddot.ms.board.domain.model.BoardModel;
 import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteEnum;
 import com.elysium.reddot.ms.board.infrastructure.data.dto.GlobalExceptionDTO;
@@ -13,7 +10,6 @@ import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board.*
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.keycloak.CheckTokenProcessor;
 import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.keycloak.KeycloakProcessorHolder;
-import com.elysium.reddot.ms.board.infrastructure.mapper.BoardProcessorMapper;
 import com.elysium.reddot.ms.board.infrastructure.outbound.rabbitmq.requester.TopicExistRequester;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
