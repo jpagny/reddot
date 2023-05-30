@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.thread.infrastructure.utils;
+package com.elysium.reddot.ms.thread.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;

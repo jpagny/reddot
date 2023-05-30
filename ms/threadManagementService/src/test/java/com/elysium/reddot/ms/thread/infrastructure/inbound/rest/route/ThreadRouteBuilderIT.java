@@ -7,7 +7,7 @@ import com.elysium.reddot.ms.thread.container.TestContainerSetup;
 import com.elysium.reddot.ms.thread.infrastructure.constant.ThreadRouteEnum;
 import com.elysium.reddot.ms.thread.infrastructure.data.dto.GlobalExceptionDTO;
 import com.elysium.reddot.ms.thread.infrastructure.outbound.rabbitmq.requester.BoardExistRequester;
-import com.elysium.reddot.ms.thread.infrastructure.utils.KeycloakTestUtils;
+import com.elysium.reddot.ms.thread.utils.KeycloakTestUtils;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
@@ -55,7 +55,7 @@ class ThreadRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given threads exist when route getAllThreads is called then all threads retrieved")
-    void givenThreadsExist_whenRouteGetAllThreads_thenAllThreadsAreRetrieved() throws Exception {
+    void givenThreadsExist_whenRouteGetAllThreads_thenAllThreadsAreRetrieved() {
         // arrange
         ThreadDTO thread1 = new ThreadDTO(1L, "name_1", "Label 1", "Description 1", 1L, "bfcff13a-51c9-4e95-b362-639984413fb4");
         ThreadDTO thread2 = new ThreadDTO(2L, "name_2", "Label 2", "Description 2", 1L, "bfcff13a-51c9-4e95-b362-639984413fb4");
@@ -80,7 +80,7 @@ class ThreadRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given existing thread when route getThreadById is called with valid id then thread returned")
-    void givenExistingThread_whenRouteGetThreadByIdWithValidId_thenThreadReturned() throws Exception {
+    void givenExistingThread_whenRouteGetThreadByIdWithValidId_thenThreadReturned() {
         // given
         Long threadId = 1L;
         ThreadDTO thread = new ThreadDTO(threadId, "name_1", "Label 1", "Description 1", 1L, "bfcff13a-51c9-4e95-b362-639984413fb4");
@@ -105,7 +105,7 @@ class ThreadRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given non-existing thread id when route getThreadById then throw ResourceNotFoundExceptionHandler")
-    void givenNonExistingThreadId_whenRouteGetThreadById_thenThrowResourceNotFoundExceptionHandler() throws Exception {
+    void givenNonExistingThreadId_whenRouteGetThreadById_thenThrowResourceNotFoundExceptionHandler() {
         // given
         Long nonExistingId = 99L;
         Exchange exchange = new DefaultExchange(camelContext);
@@ -210,7 +210,7 @@ class ThreadRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given valid request when route updateThread is called then thread updated")
-    void givenValidRequest_whenRouteUpdateThread_thenThreadUpdated() throws Exception {
+    void givenValidRequest_whenRouteUpdateThread_thenThreadUpdated() {
         // given
         Long threadId = 1L;
         ThreadDTO request = new ThreadDTO(threadId, "name_1", "New label", "New description", 1L, "");
@@ -237,7 +237,7 @@ class ThreadRouteBuilderIT extends TestContainerSetup {
 
     @Test
     @DisplayName("given invalid request when route updateThread is called then throws ResourceNotFoundExceptionHandler")
-    void givenInvalidRequest_whenRouteUpdateThread_thenResourceThrowsNotFoundExceptionHandler() throws Exception {
+    void givenInvalidRequest_whenRouteUpdateThread_thenResourceThrowsNotFoundExceptionHandler() {
         // given
         Long nonExistingId = 99L;
         ThreadDTO request = new ThreadDTO(nonExistingId, "newName", "New label", "New Description", 1L, "userId");
@@ -282,7 +282,6 @@ class ThreadRouteBuilderIT extends TestContainerSetup {
         assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
     }
-
 
 
 }

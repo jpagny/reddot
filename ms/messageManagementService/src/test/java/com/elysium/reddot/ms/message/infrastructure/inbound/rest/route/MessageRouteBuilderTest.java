@@ -2,6 +2,10 @@ package com.elysium.reddot.ms.message.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.message.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
+import com.elysium.reddot.ms.message.application.data.mapper.MessageDTOMessageModelMapper;
+import com.elysium.reddot.ms.message.application.exception.type.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.message.application.exception.type.ResourceBadValueException;
+import com.elysium.reddot.ms.message.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.message.application.service.KeycloakService;
 import com.elysium.reddot.ms.message.application.service.MessageApplicationServiceImpl;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
@@ -9,8 +13,8 @@ import com.elysium.reddot.ms.message.infrastructure.constant.MessageRouteEnum;
 import com.elysium.reddot.ms.message.infrastructure.data.dto.GlobalExceptionDTO;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.message.*;
-import com.elysium.reddot.ms.message.application.data.mapper.MessageDTOMessageModelMapper;
 import com.elysium.reddot.ms.message.infrastructure.outbound.rabbitmq.requester.ThreadExistRequester;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -29,12 +33,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -70,77 +72,20 @@ class MessageRouteBuilderTest extends CamelTestSupport {
                 new GetAllMessagesProcessor(messageService),
                 new GetMessageByIdProcessor(messageService),
                 new CreateMessageProcessor(messageService, keycloakService, threadExistRequester, objectMapper),
-                new UpdateMessageProcessor(messageService)
+                new UpdateMessageProcessor(messageService, keycloakService, objectMapper)
         );
 
-        KeycloakProcessorHolder keycloakProcessorHolder = new KeycloakProcessorHolder(
-                new CheckTokenProcessor(keycloakService)
-        );
-
-        return new MessageRouteBuilder(globalExceptionHandler, messageProcessorHolder, keycloakProcessorHolder, objectMapper);
+        return new MessageRouteBuilder(globalExceptionHandler, messageProcessorHolder, objectMapper);
     }
-
-    @Test
-    @DisplayName("given the token is inactive, when getAllMessages route is processed, then TokenNotActiveException is returned")
-    void givenInactiveToken_whenRouteGetAllMessages_thenTokenNotActiveExceptionReturned() throws Exception {
-        // given
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":false}";
-
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
-
-        // expected
-        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("TokenNotActiveException",
-                "Your token is inactive.");
-
-        // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
-
-        // when
-        Exchange responseExchange = template.send(MessageRouteEnum.GET_ALL_MESSAGES.getRouteName(), exchange);
-        GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
-
-        // then
-        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
-        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-    }
-
-    @Test
-    @DisplayName("Given an active token without user role, when getAllMessages route is processed, then HasNotRoleException is returned")
-    void givenActiveTokenWithoutUserRole_whenRouteGetAllMessages_thenHasNotRoleExceptionReturned() throws Exception {
-        // given
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"bidon\"]},\"active\":true}";
-
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
-
-        // expected
-        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("HasNotRoleException",
-                "Having role user is required.");
-
-        // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
-
-        // when
-        Exchange responseExchange = template.send(MessageRouteEnum.GET_ALL_MESSAGES.getRouteName(), exchange);
-        GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
-
-        // then
-        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
-        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-    }
-
 
     @Test
     @DisplayName("given messages exist when route getAllMessages is called then all messages retrieved")
-    void givenMessagesExist_whenRouteGetAllMessages_thenAllMessagesRetrieved() throws IOException, URISyntaxException {
+    void givenMessagesExist_whenRouteGetAllMessages_thenAllMessagesRetrieved() throws IOException {
         // given
         MessageModel message1Model = new MessageModel("content", 1L, "userId");
         MessageModel message2Model = new MessageModel("content2", 1L, "userId");
         List<MessageModel> messageListModel = Arrays.asList(message1Model, message2Model);
         List<MessageDTO> expectedListMessages = MessageDTOMessageModelMapper.toDTOList(messageListModel);
-
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
@@ -150,7 +95,6 @@ class MessageRouteBuilderTest extends CamelTestSupport {
                 "All messages retrieved successfully", expectedListMessages);
 
         // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
         when(messageService.getAllMessages()).thenReturn(messageListModel);
 
         // when
@@ -166,13 +110,11 @@ class MessageRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given existing message when route getMessageById is called with valid id then message returned")
-    void givenExistingMessage_whenRouteGetMessageByIdWithValidId_thenMessageReturned() throws IOException, URISyntaxException {
+    void givenExistingMessage_whenRouteGetMessageByIdWithValidId_thenMessageReturned() throws IOException {
         // given
         Long messageId = 1L;
         MessageModel message = new MessageModel("content", 1L, "userId");
         MessageDTO expectedMessage = new MessageDTO("content", 1L, "userId");
-
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
@@ -183,7 +125,6 @@ class MessageRouteBuilderTest extends CamelTestSupport {
                 "Message with id 1 retrieved successfully", expectedMessage);
 
         // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
         when(messageService.getMessageById(messageId)).thenReturn(message);
 
         // when
@@ -198,10 +139,9 @@ class MessageRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given non-existing message id when route getMessageById is called then throw ResourceNotFoundExceptionHandler")
-    void givenNonExistingMessageId_whenRouteGetMessageById_thenThrowResourceNotFoundExceptionHandler() throws URISyntaxException, IOException {
+    void givenNonExistingMessageId_whenRouteGetMessageById_thenThrowResourceNotFoundExceptionHandler() throws JsonProcessingException {
         // given
         Long nonExistingId = 99L;
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
@@ -212,12 +152,12 @@ class MessageRouteBuilderTest extends CamelTestSupport {
                 "The message with ID 99 does not exist.");
 
         // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
         when(messageService.getMessageById(nonExistingId)).thenThrow(new ResourceNotFoundException("message", String.valueOf(nonExistingId)));
 
         // when
-        Exchange result = template.send(MessageRouteEnum.GET_MESSAGE_BY_ID.getRouteName(), exchange);
-        GlobalExceptionDTO actualResponse = result.getMessage().getBody(GlobalExceptionDTO.class);
+        Exchange responseExchange = template.send(MessageRouteEnum.GET_MESSAGE_BY_ID.getRouteName(), exchange);
+        String responseJson = responseExchange.getMessage().getBody(String.class);
+        GlobalExceptionDTO actualResponse = objectMapper.readValue(responseJson, GlobalExceptionDTO.class);
 
         // then
         assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
@@ -226,26 +166,24 @@ class MessageRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given valid message when route createMessage is called then message created")
-    void givenValidMessage_whenRouteCreateMessage_thenMessageCreated() throws IOException, URISyntaxException {
+    void givenValidMessage_whenRouteCreateMessage_thenMessageCreated() throws IOException {
         // given
         MessageDTO inputMessageDTO = new MessageDTO("content", 1L, "userId");
+        String inputMessageDTOJson = objectMapper.writeValueAsString(inputMessageDTO);
         MessageModel inputMessageModel = new MessageModel("content", 1L, "userId");
         MessageModel createdMessageModel = new MessageModel(inputMessageModel.getContent(), inputMessageModel.getThreadId(), inputMessageModel.getUserId());
         MessageDTO expectedMessage = MessageDTOMessageModelMapper.toDTO(createdMessageModel);
 
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
-
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        exchange.getIn().setBody(inputMessageDTO);
+        exchange.getIn().setBody(inputMessageDTOJson);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),
                 "Message with content " + expectedMessage.getContent() + " created successfully", expectedMessage);
 
         // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
         doNothing().when(threadExistRequester).verifyThreadIdExistsOrThrow(1L);
         when(messageService.createMessage(inputMessageModel)).thenReturn(createdMessageModel);
 
@@ -261,29 +199,28 @@ class MessageRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given message exists when route createMessage is called with creating same message then throws ResourceAlreadyExistExceptionHandler")
-    void givenMessageExists_whenRouteCreateMessageWithCreatingSameMessage_thenThrowsResourceAlreadyExistExceptionHandler() throws URISyntaxException, IOException {
+    void givenMessageExists_whenRouteCreateMessageWithCreatingSameMessage_thenThrowsResourceAlreadyExistExceptionHandler() throws JsonProcessingException {
         // given
         MessageDTO existingMessageDTO = new MessageDTO("content", 1L, "userId");
+        String existingMessageDTOJson = objectMapper.writeValueAsString(existingMessageDTO);
         MessageModel existingMessageModel = new MessageModel("content", 1L, "userId");
-
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
-        exchange.getIn().setBody(existingMessageDTO);
+        exchange.getIn().setBody(existingMessageDTOJson);
         exchange.getIn().setHeader(Exchange.HTTP_METHOD, "POST");
 
         // expected
         GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceAlreadyExistException",
-                "The message with name 'name' already exists.");
+                "The message with name 'name' already exists with board id 1.");
 
         // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
-        when(messageService.createMessage(existingMessageModel)).thenThrow(new ResourceAlreadyExistException("message", "name", "name"));
+        when(messageService.createMessage(existingMessageModel)).thenThrow(new ResourceAlreadyExistException("message", "name", "name", 1L));
 
         // when
         Exchange responseExchange = template.send(MessageRouteEnum.CREATE_MESSAGE.getRouteName(), exchange);
-        GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
+        String responseJson = responseExchange.getMessage().getBody(String.class);
+        GlobalExceptionDTO actualResponse = objectMapper.readValue(responseJson, GlobalExceptionDTO.class);
 
         // then
         assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
@@ -292,30 +229,29 @@ class MessageRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given invalid message when route createMessage is called then throw ResourceBadValueException")
-    void givenInvalidMessage_whenRouteCreateMessage_thenMessageCreated() throws IOException, URISyntaxException {
+    void givenInvalidMessage_whenRouteCreateMessage_thenMessageCreated() throws IOException {
         // given
         MessageDTO inputMessageDTO = new MessageDTO(null, 1L, "userId");
+        String inputMessageDTOJson = objectMapper.writeValueAsString(inputMessageDTO);
         MessageModel messageModelWithBadValue = MessageDTOMessageModelMapper.toModel(inputMessageDTO);
-
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        exchange.getIn().setBody(inputMessageDTO);
+        exchange.getIn().setBody(inputMessageDTOJson);
 
         // expected
         GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceBadValueException",
                 "The message has bad value : content.");
 
         // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
         when(messageService.createMessage(messageModelWithBadValue)).thenThrow(new ResourceBadValueException("message", "content"));
         doNothing().when(threadExistRequester).verifyThreadIdExistsOrThrow(1L);
 
         // when
         Exchange responseExchange = template.send(MessageRouteEnum.CREATE_MESSAGE.getRouteName(), exchange);
-        GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
+        String responseJson = responseExchange.getMessage().getBody(String.class);
+        GlobalExceptionDTO actualResponse = objectMapper.readValue(responseJson, GlobalExceptionDTO.class);
 
         // then
         assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
@@ -325,27 +261,25 @@ class MessageRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given valid request when route updateMessage is called then message is updated")
-    void givenValidRequest_whenRouteUpdateMessageIsCalled_thenMessageIsUpdated() throws IOException, URISyntaxException {
+    void givenValidRequest_whenRouteUpdateMessageIsCalled_thenMessageIsUpdated() throws IOException {
         // given
         Long messageId = 1L;
         MessageDTO inputMessageDTO = new MessageDTO("content", 1L, "userId");
+        String inputMessageDTOJson = objectMapper.writeValueAsString(inputMessageDTO);
         MessageModel requestModel = new MessageModel("content", 1L, "userId");
         MessageModel updatedMessage = new MessageModel("content", 1L, "userId");
         MessageDTO expectedMessage = MessageDTOMessageModelMapper.toDTO(updatedMessage);
 
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
-
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
         exchange.getIn().setHeader("id", messageId);
-        exchange.getIn().setBody(inputMessageDTO);
+        exchange.getIn().setBody(inputMessageDTOJson);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "Message with content " + updatedMessage.getContent() + " updated successfully", expectedMessage);
 
         // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
         when(messageService.updateMessage(messageId, requestModel)).thenReturn(updatedMessage);
 
         // when
@@ -360,29 +294,28 @@ class MessageRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given invalid request when route updateMessage is called then throws ResourceNotFoundExceptionHandler")
-    void givenInvalidRequest_whenRouteUpdateMessage_thenThrowsResourceNotFoundExceptionHandler() throws URISyntaxException, IOException {
+    void givenInvalidRequest_whenRouteUpdateMessage_thenThrowsResourceNotFoundExceptionHandler() throws JsonProcessingException {
         // given
         Long nonExistingId = 99L;
         MessageDTO inputRequestDTO = new MessageDTO("content", 1L, "userId");
+        String inputMessageDTOJson = objectMapper.writeValueAsString(inputRequestDTO);
         MessageModel request = new MessageModel("content", 1L, "userId");
-
-        String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Authorization", "Bearer myFakeToken");
         exchange.getIn().setHeader("id", nonExistingId);
-        exchange.getIn().setBody(inputRequestDTO);
+        exchange.getIn().setBody(inputMessageDTOJson);
 
         GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceNotFoundException",
                 "The message with ID 99 does not exist.");
 
         // mock
-        when(keycloakService.callTokenIntrospectionEndpoint(any(String.class))).thenReturn(headerAfterCheckToken);
         when(messageService.updateMessage(nonExistingId, request)).thenThrow(new ResourceNotFoundException("message", String.valueOf(nonExistingId)));
 
         // when
         Exchange responseExchange = template.send(MessageRouteEnum.UPDATE_MESSAGE.getRouteName(), exchange);
-        GlobalExceptionDTO actualResponse = responseExchange.getMessage().getBody(GlobalExceptionDTO.class);
+        String responseJson = responseExchange.getMessage().getBody(String.class);
+        GlobalExceptionDTO actualResponse = objectMapper.readValue(responseJson, GlobalExceptionDTO.class);
 
         // then
         assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());

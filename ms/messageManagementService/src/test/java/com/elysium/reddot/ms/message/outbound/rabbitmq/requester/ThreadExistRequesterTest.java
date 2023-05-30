@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.message.outbound.rabbitmq.requester;
 
+import com.elysium.reddot.ms.message.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.message.infrastructure.constant.RabbitMQConstant;
 import com.elysium.reddot.ms.message.infrastructure.data.rabbitmq.received.response.ThreadExistsResponseDTO;
 import com.elysium.reddot.ms.message.infrastructure.outbound.rabbitmq.requester.ThreadExistRequester;
@@ -39,7 +40,6 @@ class ThreadExistRequesterTest {
         // given
         Long threadId = 123L;
         ThreadExistsResponseDTO response = new ThreadExistsResponseDTO();
-        response.setThreadId(threadId);
         response.setExists(true);
 
         // mock
@@ -62,7 +62,6 @@ class ThreadExistRequesterTest {
         // given
         Long threadId = 123L;
         ThreadExistsResponseDTO response = new ThreadExistsResponseDTO();
-        response.setThreadId(threadId);
         response.setExists(false);
 
         // mock

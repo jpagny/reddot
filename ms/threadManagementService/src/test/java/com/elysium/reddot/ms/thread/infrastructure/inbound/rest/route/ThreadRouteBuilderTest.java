@@ -2,6 +2,7 @@ package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
+import com.elysium.reddot.ms.thread.application.data.mapper.ThreadDTOThreadModel;
 import com.elysium.reddot.ms.thread.application.exception.type.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.thread.application.exception.type.ResourceNotFoundException;
 import com.elysium.reddot.ms.thread.application.service.KeycloakService;
@@ -11,7 +12,6 @@ import com.elysium.reddot.ms.thread.infrastructure.constant.ThreadRouteEnum;
 import com.elysium.reddot.ms.thread.infrastructure.data.dto.GlobalExceptionDTO;
 import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
 import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread.*;
-import com.elysium.reddot.ms.thread.application.data.mapper.ThreadDTOThreadModel;
 import com.elysium.reddot.ms.thread.infrastructure.outbound.rabbitmq.requester.BoardExistRequester;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -27,8 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -69,7 +67,7 @@ class ThreadRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given threads exist when route getAllThreads is called then all threads retrieved")
-    void givenThreadsExist_whenRouteGetAllThreads_thenAllThreadsRetrieved() throws URISyntaxException, IOException {
+    void givenThreadsExist_whenRouteGetAllThreads_thenAllThreadsRetrieved() {
         // given
         ThreadModel thread1Model = new ThreadModel(1L, "name 1", "Name 1", "Thread 1", 1L, "userId");
         ThreadModel thread2Model = new ThreadModel(2L, "name 2", "Name 2", "Thread 2", 1L, "userId");
@@ -99,7 +97,7 @@ class ThreadRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given existing thread when route getThreadById is called with valid id then thread returned")
-    void givenExistingThread_whenRouteGetThreadByIdWithValidId_thenThreadReturned() throws URISyntaxException, IOException {
+    void givenExistingThread_whenRouteGetThreadByIdWithValidId_thenThreadReturned() {
         // given
         Long threadId = 1L;
         ThreadModel thread = new ThreadModel(threadId, "name 1", "Name 1", "Thread 1", 1L, "userId");
@@ -128,7 +126,7 @@ class ThreadRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given non-existing thread id when route getThreadById is called then throw ResourceNotFoundExceptionHandler")
-    void givenNonExistingThreadId_whenRouteGetThreadById_thenThrowResourceNotFoundExceptionHandler() throws URISyntaxException, IOException {
+    void givenNonExistingThreadId_whenRouteGetThreadById_thenThrowResourceNotFoundExceptionHandler() {
         // given
         Long nonExistingId = 99L;
 
@@ -154,7 +152,7 @@ class ThreadRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given valid thread when route createThread is called then thread created")
-    void givenValidThread_whenRouteCreateThread_thenThreadCreated() throws URISyntaxException, IOException {
+    void givenValidThread_whenRouteCreateThread_thenThreadCreated() {
         // given
         ThreadDTO inputThreadDTO = new ThreadDTO(null, "name", "Name", "Description", 1L, "userId");
         ThreadModel inputThreadModel = new ThreadModel(null, "name", "Name", "Description", 1L, "userId");
@@ -219,7 +217,7 @@ class ThreadRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given valid request when route updateThread is called then thread is updated")
-    void givenValidRequest_whenRouteUpdateThreadIsCalled_thenThreadIsUpdated() throws URISyntaxException, IOException {
+    void givenValidRequest_whenRouteUpdateThreadIsCalled_thenThreadIsUpdated() {
         // given
         Long threadId = 1L;
         ThreadDTO inputThreadDTO = new ThreadDTO(threadId, "newName", "newDescription", "newIcon", 1L, "userId");
@@ -251,7 +249,7 @@ class ThreadRouteBuilderTest extends CamelTestSupport {
 
     @Test
     @DisplayName("given invalid request when route updateThread is called then throws ResourceNotFoundExceptionHandler")
-    void givenInvalidRequest_whenRouteUpdateThread_thenThrowsResourceNotFoundExceptionHandler() throws URISyntaxException, IOException {
+    void givenInvalidRequest_whenRouteUpdateThread_thenThrowsResourceNotFoundExceptionHandler() {
         // given
         Long nonExistingId = 99L;
         ThreadDTO inputRequestDTO = new ThreadDTO(nonExistingId, "newName", "newDescription", "newIcon", 1L, "userId");
@@ -276,9 +274,6 @@ class ThreadRouteBuilderTest extends CamelTestSupport {
         assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
     }
-
-
-
 
 
 }

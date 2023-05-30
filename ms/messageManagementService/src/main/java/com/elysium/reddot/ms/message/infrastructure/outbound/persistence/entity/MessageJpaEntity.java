@@ -19,13 +19,18 @@ public class MessageJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String content;
+
     @Column(name = "thread_id")
     private Long threadId;
+
     @Column(name = "user_id")
     private String userId;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }

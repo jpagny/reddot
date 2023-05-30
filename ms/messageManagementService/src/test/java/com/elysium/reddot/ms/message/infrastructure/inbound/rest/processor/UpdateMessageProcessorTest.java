@@ -2,10 +2,15 @@ package com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.message.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
+import com.elysium.reddot.ms.message.application.data.mapper.MessageDTOMessageModelMapper;
+import com.elysium.reddot.ms.message.application.service.KeycloakService;
 import com.elysium.reddot.ms.message.application.service.MessageApplicationServiceImpl;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.message.UpdateMessageProcessor;
-import com.elysium.reddot.ms.message.application.data.mapper.MessageDTOMessageModelMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -18,6 +23,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
+import javax.naming.AuthenticationException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -29,20 +36,32 @@ class UpdateMessageProcessorTest {
     @Mock
     private MessageApplicationServiceImpl messageService;
 
+    @Mock
+    private KeycloakService keycloakService;
+
+    private ObjectMapper objectMapper;
+
     private CamelContext camelContext;
 
     @BeforeEach
     void setUp() {
+
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+
         camelContext = new DefaultCamelContext();
-        updateMessageProcessor = new UpdateMessageProcessor(messageService);
+        updateMessageProcessor = new UpdateMessageProcessor(messageService, keycloakService, objectMapper);
     }
 
     @Test
     @DisplayName("given valid message when updateMessage is called then message updated successfully")
-    void givenValidMessage_whenUpdateMessage_thenMessageIsUpdatedSuccessfully() {
+    void givenValidMessage_whenUpdateMessage_thenMessageIsUpdatedSuccessfully() throws AuthenticationException, JsonProcessingException {
         // given
         Long messageId = 1L;
         MessageDTO updatedMessageDTO = new MessageDTO("contentUpdated", 1L, "userId");
+        String updatedMessageDTOJson = objectMapper.writeValueAsString(updatedMessageDTO);
+
         MessageModel updatedMessageModel = new MessageModel("contentUpdated", 1L, "userId");
         MessageDTO expectedMessage = MessageDTOMessageModelMapper.toDTO(updatedMessageModel);
 
@@ -52,9 +71,10 @@ class UpdateMessageProcessorTest {
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("CamelHttpUri", "/messages/" + messageId);
         exchange.getIn().setHeader("id", messageId);
-        exchange.getIn().setBody(updatedMessageDTO);
+        exchange.getIn().setBody(updatedMessageDTOJson);
 
         // mock
+        when(keycloakService.getUserId()).thenReturn("userId");
         when(messageService.updateMessage(messageId, updatedMessageModel)).thenReturn(updatedMessageModel);
 
         // when
