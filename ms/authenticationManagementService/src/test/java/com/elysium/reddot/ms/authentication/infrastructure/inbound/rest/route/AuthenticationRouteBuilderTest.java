@@ -11,16 +11,20 @@ import com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.processo
 import com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.processor.LoginProcessor;
 import com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.processor.LogoutProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.keycloak.adapters.springsecurity.KeycloakAuthenticationException;
 import org.keycloak.representations.AccessTokenResponse;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static io.smallrye.common.constraint.Assert.assertNotNull;
+import static io.smallrye.common.constraint.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -120,6 +124,28 @@ public class AuthenticationRouteBuilderTest extends CamelTestSupport {
         assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
         assertEquals(expectedApiResponse.getData(), actualResponse.getData());
     }
+
+    @Test
+    @DisplayName("Given a KeycloakAuthenticationException, when handleAuthFailure is invoked, then throws Exception")
+    void givenKeycloakAuthenticationException_whenHandleAuthFailureInvoked_thenThrowsException() throws Exception {
+        // Given
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new KeycloakAuthenticationException("Authentication failed"));
+
+        // expected
+        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("Exception",
+                "org.keycloak.adapters.springsecurity.KeycloakAuthenticationException: Authentication failed");
+
+        // When
+        Exchange responseExchange = template.send("direct:handleAuthFailure", exchange);
+        GlobalExceptionDTO actualResponse = responseExchange.getIn().getBody(GlobalExceptionDTO.class);
+
+        // then
+        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
+        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
+        assertEquals(500, responseExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
+    }
+
 
 
 }

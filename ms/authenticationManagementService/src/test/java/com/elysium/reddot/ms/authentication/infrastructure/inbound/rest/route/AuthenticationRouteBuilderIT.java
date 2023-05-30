@@ -14,12 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@TestPropertySource(locations = "classpath:application-test.properties")
 public class AuthenticationRouteBuilderIT extends TestContainerSetup {
 
     @Autowired

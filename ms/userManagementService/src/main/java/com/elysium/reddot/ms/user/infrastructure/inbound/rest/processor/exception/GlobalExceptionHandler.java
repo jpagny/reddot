@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.user.infrastructure.exception.processor;
+package com.elysium.reddot.ms.user.infrastructure.inbound.rest.processor.exception;
 
 import com.elysium.reddot.ms.user.domain.exception.type.BadValueException;
 import com.elysium.reddot.ms.user.infrastructure.data.exception.GlobalExceptionDTO;
@@ -8,14 +8,22 @@ import org.apache.camel.Processor;
 import org.apache.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotAllowedException;
-import javax.ws.rs.NotFoundException;
-
+/**
+ * This is a global exception handler that implements Camel's Processor interface.
+ * It is annotated as a Spring component (@Component) and uses the Slf4j logger.
+ * <p>
+ * The handler processes all exceptions and returns a GlobalExceptionDTO
+ * object along with an appropriate HTTP status code.
+ */
 @Component
 @Slf4j
 public class GlobalExceptionHandler implements Processor {
 
+    /**
+     * Processes the exception and prepares the HTTP response.
+     *
+     * @param exchange the Camel exchange object that contains the exception.
+     */
     @Override
     public void process(Exchange exchange) {
         log.debug("Processing global exception...");

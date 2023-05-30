@@ -1,4 +1,4 @@
-package com.elysium.reddot.ms.user.infrastructure.inbound.rest.processor;
+package com.elysium.reddot.ms.user.infrastructure.inbound.rest.processor.user;
 
 import com.elysium.reddot.ms.user.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.user.application.data.dto.UserDTO;

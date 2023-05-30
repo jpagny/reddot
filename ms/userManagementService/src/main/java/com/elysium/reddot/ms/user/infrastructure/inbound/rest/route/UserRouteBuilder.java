@@ -2,8 +2,8 @@ package com.elysium.reddot.ms.user.infrastructure.inbound.rest.route;
 
 import com.elysium.reddot.ms.user.application.data.dto.UserDTO;
 import com.elysium.reddot.ms.user.infrastructure.constant.UserRouteEnum;
-import com.elysium.reddot.ms.user.infrastructure.exception.processor.GlobalExceptionHandler;
-import com.elysium.reddot.ms.user.infrastructure.inbound.rest.processor.UserProcessorHolder;
+import com.elysium.reddot.ms.user.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
+import com.elysium.reddot.ms.user.infrastructure.inbound.rest.processor.user.UserProcessorHolder;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;

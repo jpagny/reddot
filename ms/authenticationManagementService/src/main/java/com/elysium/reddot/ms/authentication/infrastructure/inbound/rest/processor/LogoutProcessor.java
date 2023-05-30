@@ -32,7 +32,7 @@ public class LogoutProcessor implements Processor {
         String inputToken = exchange.getIn().getHeader("Authorization", String.class);
         log.debug("Received input token: {}", inputToken);
 
-        ResponseEntity response = authenticationApplicationService.logout(inputToken);
+        ResponseEntity<String> response = authenticationApplicationService.logout(inputToken);
 
         ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(),
                 "You have been logged out successfully.", response);

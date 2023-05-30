@@ -26,7 +26,6 @@ public class AuthenticationRouteBuilder extends RouteBuilder {
                 .handled(true)
                 .process(globalExceptionHandler);
 
-
         restConfiguration()
                 .component("servlet")
                 .bindingMode(RestBindingMode.json)
@@ -55,9 +54,6 @@ public class AuthenticationRouteBuilder extends RouteBuilder {
                     System.out.println("KeycloakAuthenticationException " + exchange.getIn().getBody().toString());
                     throw new Exception(exchange.getIn().getBody(KeycloakAuthenticationException.class));
                 });
-
-
-
 
     }
 }

@@ -31,6 +31,7 @@ public class AuthenticationApplicationService {
     private String authServerUrl;
 
     private final KeycloakFactory keycloakFactory;
+    private final RestTemplate restTemplate;
 
     /**
      * Retrieves an access token for the given username and password.
@@ -78,7 +79,6 @@ public class AuthenticationApplicationService {
         headers.add("Authorization", "Bearer " + token);
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(logoutUrl, HttpMethod.POST, request, String.class);
 
         if (!response.getStatusCode().is2xxSuccessful()) {

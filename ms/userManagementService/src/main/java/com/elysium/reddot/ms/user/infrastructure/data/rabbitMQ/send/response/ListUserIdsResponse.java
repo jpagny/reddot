@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Data Transfer Object (DTO) for carrying a list of User IDs.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

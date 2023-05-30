@@ -5,6 +5,7 @@ import com.elysium.reddot.ms.user.application.data.dto.UserDTO;
 import com.elysium.reddot.ms.user.application.data.mapper.UserDTOUserModelMapper;
 import com.elysium.reddot.ms.user.application.service.UserApplicationServiceImpl;
 import com.elysium.reddot.ms.user.domain.model.UserModel;
+import com.elysium.reddot.ms.user.infrastructure.inbound.rest.processor.user.CreateUserProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
