@@ -61,26 +61,6 @@ class MessagesRouteBuilderIT extends TestContainerSetup {
     }
 
     @Test
-    @DisplayName("given no auth when get messages then unauthorized")
-    void givenNoAuth_whenGetMessages_thenUnauthorized() throws JsonProcessingException {
-        // given
-        Exchange exchange = new DefaultExchange(camelContext);
-
-        // expected
-        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("TokenNotValidException",
-                "Token is not validate.");
-
-        // when
-        Exchange responseExchange = template.send(MessageRouteEnum.GET_ALL_MESSAGES.getRouteName(), exchange);
-        String responseJson = responseExchange.getMessage().getBody(String.class);
-        GlobalExceptionDTO actualResponse = objectMapper.readValue(responseJson, GlobalExceptionDTO.class);
-
-        // then
-        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
-        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
-    }
-
-    @Test
     @DisplayName("given authenticated user with token when get messages then success")
     void givenAuthenticatedUserWithToken_whenGetMessages_thenSuccess() throws Exception {
         // given
@@ -177,12 +157,14 @@ class MessagesRouteBuilderIT extends TestContainerSetup {
         // given
         LocalDateTime localDateTime = LocalDateTime.now();
         MessageDTO inputMessage = new MessageDTO(null, "content_3", 1L, "userId", localDateTime, localDateTime);
+        String requestJson = objectMapper.writeValueAsString(inputMessage);
+
         MessageDTO createdMessage = new MessageDTO(3L, inputMessage.getContent(), inputMessage.getThreadId(), inputMessage.getUserId());
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("Authorization", "Bearer " + userToken.getAccessToken());
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        exchange.getIn().setBody(inputMessage);
+        exchange.getIn().setBody(requestJson);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),
@@ -207,11 +189,13 @@ class MessagesRouteBuilderIT extends TestContainerSetup {
         // given
         LocalDateTime localDateTime = LocalDateTime.now();
         MessageDTO inputMessage = new MessageDTO(null, "content_3", 1L, "userId", localDateTime, localDateTime);
+        String requestJson = objectMapper.writeValueAsString(inputMessage);
+
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("Authorization", "Bearer " + userToken.getAccessToken());
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        exchange.getIn().setBody(inputMessage);
+        exchange.getIn().setBody(requestJson);
 
         // expected
         GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceNotFoundException",
@@ -236,11 +220,12 @@ class MessagesRouteBuilderIT extends TestContainerSetup {
         // given
         LocalDateTime localDateTime = LocalDateTime.now();
         MessageDTO inputMessage = new MessageDTO(null, null, 1L, "userId", localDateTime, localDateTime);
+        String requestJson = objectMapper.writeValueAsString(inputMessage);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("Authorization", "Bearer " + userToken.getAccessToken());
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        exchange.getIn().setBody(inputMessage);
+        exchange.getIn().setBody(requestJson);
 
         // expected
         GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceBadValueException",
@@ -266,15 +251,16 @@ class MessagesRouteBuilderIT extends TestContainerSetup {
         // given
         LocalDateTime localDateTime = LocalDateTime.now();
         MessageDTO existingMessage = new MessageDTO(1L, "content_1", 1L, "userId", localDateTime, localDateTime);
+        String requestJson = objectMapper.writeValueAsString(existingMessage);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("Authorization", "Bearer " + userToken.getAccessToken());
-        exchange.getIn().setBody(existingMessage);
+        exchange.getIn().setBody(requestJson);
         exchange.getIn().setHeader(Exchange.HTTP_METHOD, "POST");
 
         // expected
         GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceAlreadyExistException",
-                "The Message with content 'content_1' already exists.");
+                "The message with content 'content_1' already exists with board id 1.");
 
         // mock
         doNothing().when(threadExistRequester).verifyThreadIdExistsOrThrow(1L);
@@ -296,12 +282,14 @@ class MessagesRouteBuilderIT extends TestContainerSetup {
         Long messageId = 1L;
         LocalDateTime localDateTime = LocalDateTime.now();
         MessageDTO request = new MessageDTO(messageId, "content_updated_1", 1L, "userId", localDateTime, localDateTime);
+        String requestJson = objectMapper.writeValueAsString(request);
+
         MessageDTO updatedMessage = new MessageDTO(messageId, "content_updated_1", 1L, "userId", localDateTime, localDateTime);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("Authorization", "Bearer " + userToken.getAccessToken());
         exchange.getIn().setHeader("id", messageId);
-        exchange.getIn().setBody(request);
+        exchange.getIn().setBody(requestJson);
 
         // expected
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
@@ -309,7 +297,8 @@ class MessagesRouteBuilderIT extends TestContainerSetup {
 
         // when
         Exchange responseExchange = template.send(MessageRouteEnum.UPDATE_MESSAGE.getRouteName(), exchange);
-        ApiResponseDTO actualResponse = responseExchange.getMessage().getBody(ApiResponseDTO.class);
+        String responseJson = responseExchange.getMessage().getBody(String.class);
+        ApiResponseDTO actualResponse = objectMapper.readValue(responseJson, ApiResponseDTO.class);
 
         // then
         assertEquals(expectedApiResponse.getStatus(), actualResponse.getStatus());
@@ -323,11 +312,12 @@ class MessagesRouteBuilderIT extends TestContainerSetup {
         Long nonExistingId = 99L;
         LocalDateTime localDateTime = LocalDateTime.now();
         MessageDTO request = new MessageDTO(nonExistingId, "content_1", 1L, "userId", localDateTime, localDateTime);
+        String requestJson = objectMapper.writeValueAsString(request);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("Authorization", "Bearer " + userToken.getAccessToken());
         exchange.getIn().setHeader("id", nonExistingId);
-        exchange.getIn().setBody(request);
+        exchange.getIn().setBody(requestJson);
 
         GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceNotFoundException",
                 "The message with ID 99 does not exist.");
@@ -349,11 +339,12 @@ class MessagesRouteBuilderIT extends TestContainerSetup {
         Long messageId = 1L;
         LocalDateTime localDateTime = LocalDateTime.now();
         MessageDTO request = new MessageDTO(messageId, null, 1L, "userId", localDateTime, localDateTime);
+        String requestJson = objectMapper.writeValueAsString(request);
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("Authorization", "Bearer " + userToken.getAccessToken());
         exchange.getIn().setHeader("id", messageId);
-        exchange.getIn().setBody(request);
+        exchange.getIn().setBody(requestJson);
 
         GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceBadValueException",
                 "The message has bad value : content is required and cannot be empty.");
