@@ -2,11 +2,15 @@ package com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor
 
 import com.elysium.reddot.ms.replymessage.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.replymessage.application.data.dto.ReplyMessageDTO;
+import com.elysium.reddot.ms.replymessage.application.service.KeycloakService;
 import com.elysium.reddot.ms.replymessage.application.service.ReplyMessageApplicationServiceImpl;
 import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.replymessage.CreateReplyMessageProcessor;
 import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageModelReplyMessageDTOMapper;
 import com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitmq.requester.MessageExistRequester;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -35,7 +39,12 @@ class CreateReplyMessageProcessorTest {
     private CreateReplyMessageProcessor createReplyMessageProcessor;
 
     @Mock
-    private ReplyMessageApplicationServiceImpl replyMessageApplicationService;
+    private ReplyMessageApplicationServiceImpl replyMessageService;
+
+    @Mock
+    private KeycloakService keycloakService;
+
+    private ObjectMapper objectMapper;
 
     @Mock
     private MessageExistRequester messageExistRequester;
@@ -44,7 +53,13 @@ class CreateReplyMessageProcessorTest {
 
     @BeforeEach
     void setUp() {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+
         camelContext = new DefaultCamelContext();
+        createReplyMessageProcessor = new CreateReplyMessageProcessor(replyMessageService, keycloakService, messageExistRequester, objectMapper);
+
     }
 
     @Test
@@ -52,6 +67,8 @@ class CreateReplyMessageProcessorTest {
     void givenValidReplyMessage_whenCreateReplyMessage_thenReplyMessageCreatedSuccessfully() throws IOException, AuthenticationException {
         // given
         ReplyMessageDTO messageToCreateDTO = new ReplyMessageDTO("content", 1L, "userId");
+        String updatedMessageDTOJson = objectMapper.writeValueAsString(messageToCreateDTO);
+
         ReplyMessageModel messageToCreateModel = new ReplyMessageModel("content", 1L, "userId");
         ReplyMessageModel createdMessageModel = new ReplyMessageModel(1L, "content", 1L, "Message description", LocalDateTime.now(), LocalDateTime.now());
         ReplyMessageDTO expectedMessage = ReplyMessageModelReplyMessageDTOMapper.toDTO(createdMessageModel);
@@ -61,10 +78,10 @@ class CreateReplyMessageProcessorTest {
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("CamelHttpUri", "/repliesMessage");
-        exchange.getIn().setBody(messageToCreateDTO);
+        exchange.getIn().setBody(updatedMessageDTOJson);
 
         // mock
-        when(replyMessageApplicationService.createReplyMessage(messageToCreateModel)).thenReturn(createdMessageModel);
+        when(replyMessageService.createReplyMessage(messageToCreateModel)).thenReturn(createdMessageModel);
         doNothing().when(messageExistRequester).verifyMessageIdExistsOrThrow(1L);
 
         // when

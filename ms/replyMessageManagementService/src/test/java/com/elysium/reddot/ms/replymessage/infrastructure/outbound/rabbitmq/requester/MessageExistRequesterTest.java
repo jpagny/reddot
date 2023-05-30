@@ -39,7 +39,6 @@ class MessageExistRequesterTest {
         // given
         Long parentMessageId = 123L;
         MessageExistsResponseDTO response = new MessageExistsResponseDTO();
-        response.setParentMessageID(parentMessageId);
         response.setExists(true);
 
         // mock
@@ -62,7 +61,6 @@ class MessageExistRequesterTest {
         // given
         Long parentMessageId = 123L;
         MessageExistsResponseDTO response = new MessageExistsResponseDTO();
-        response.setParentMessageID(parentMessageId);
         response.setExists(false);
 
         // mock
