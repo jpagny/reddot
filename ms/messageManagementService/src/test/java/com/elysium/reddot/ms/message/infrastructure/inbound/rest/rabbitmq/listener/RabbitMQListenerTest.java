@@ -38,6 +38,7 @@ class RabbitMQListenerTest {
     void givenValidMessage_whenCheckBoardExists_thenSendReplyMessage() throws JsonProcessingException {
         // given
         Long messageId = 123L;
+        String messageIdString = "123";
         boolean exists = true;
 
         // mock
@@ -46,7 +47,7 @@ class RabbitMQListenerTest {
         MessageProperties messageProperties = mock(MessageProperties.class);
 
         when(rabbitTemplate.getMessageConverter()).thenReturn(messageConverter);
-        when(messageConverter.fromMessage(any())).thenReturn(messageId);
+        when(messageConverter.fromMessage(any())).thenReturn(messageIdString);
         when(messageRabbitMQService.checkMessageIdExists(messageId)).thenReturn(exists);
         when(message.getMessageProperties()).thenReturn(messageProperties);
         when(messageProperties.getReplyTo()).thenReturn("replyTo");

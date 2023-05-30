@@ -6,6 +6,11 @@ import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -29,16 +34,28 @@ class MessageDomainServiceTest {
         assertThrows(FieldEmptyException.class, () -> messageDomainService.validateMessageForCreation(messageModel));
     }
 
-    @Test
-    @DisplayName("given a blank content when updating a message then an exception is thrown")
-    void givenBlankContent_whenUpdatingMessage_thenExceptionIsThrown() {
+    void givenBlankContentOrEmptyUserId_whenUpdatingReplyMessage_thenFieldEmptyExceptionIsThrown(String content, Long threadId, String userId) {
         // given
-        MessageModel messageModel = new MessageModel("", 1L, "userId");
+        MessageModel messageModel = new MessageModel(content, threadId, userId);
         MessageModel messageModelExisting = new MessageModel("content", 1L, "userId");
 
-
         // when && throw
-        assertThrows(FieldEmptyException.class, () -> messageDomainService.validateMessageForUpdate(messageModel,messageModelExisting));
+        assertThrows(FieldEmptyException.class, () -> messageDomainService.validateMessageForUpdate(messageModel, messageModelExisting));
+    }
+
+    static Stream<Arguments> blankContentOrEmptyUserIdProvider() {
+        return Stream.of(
+                Arguments.of("", 1L, "userId"),
+                Arguments.of("content", 1L, ""),
+                Arguments.of("", 1L, "")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("blankContentOrEmptyUserIdProvider")
+    @DisplayName("given a blank content or empty userId when updating a reply message, then a FieldEmptyException is thrown")
+    void testBlankContentOrEmptyUserId(String content, Long parentMessageId, String userId) {
+        givenBlankContentOrEmptyUserId_whenUpdatingReplyMessage_thenFieldEmptyExceptionIsThrown(content, parentMessageId, userId);
     }
 
     @Test

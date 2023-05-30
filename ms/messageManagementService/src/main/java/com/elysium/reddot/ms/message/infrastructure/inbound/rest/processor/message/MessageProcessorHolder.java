@@ -1,6 +1,5 @@
 package com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.message;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

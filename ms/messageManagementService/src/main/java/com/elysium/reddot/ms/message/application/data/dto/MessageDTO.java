@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -47,21 +46,6 @@ public class MessageDTO {
         this.content = content;
         this.threadId = threadId;
         this.userId = userId;
-    }
-
-    /**
-     * Constructor for creating a new MessageDTO with a given content and threadId.
-     */
-    public MessageDTO(String content, Long threadId) {
-        this.content = content;
-        this.threadId = threadId;
-    }
-
-    /**
-     * Constructor for creating a new MessageDTO with a given content.
-     */
-    public MessageDTO(String content) {
-        this.content = content;
     }
 
     /**
