@@ -15,6 +15,9 @@ public class ReplyMessageModel {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    public ReplyMessageModel(){
+    }
+
     /**
      * Constructor creating a full reply message object.
      *

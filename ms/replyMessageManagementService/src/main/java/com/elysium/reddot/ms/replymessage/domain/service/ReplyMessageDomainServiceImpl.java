@@ -11,6 +11,8 @@ import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
  */
 public class ReplyMessageDomainServiceImpl implements IReplyMessageDomainService {
 
+    private static final String USER_ID_LABEL = "userId";
+
     /**
      * {@inheritDoc}
      */
@@ -41,17 +43,17 @@ public class ReplyMessageDomainServiceImpl implements IReplyMessageDomainService
 
     private void validateUserFromCreation(String userFromMessageToCreate) {
         if (isBlank(userFromMessageToCreate)) {
-            throw new FieldEmptyException("userId");
+            throw new FieldEmptyException(USER_ID_LABEL);
         }
     }
 
     private void validateUserFromUpdate(String userFromMessageToCreate, String userFromMessageExisting) {
         if (isBlank(userFromMessageToCreate)) {
-            throw new FieldEmptyException("userId");
+            throw new FieldEmptyException(USER_ID_LABEL);
         }
 
         if (isBlank(userFromMessageExisting)) {
-            throw new FieldEmptyException("userId");
+            throw new FieldEmptyException(USER_ID_LABEL);
         }
 
         if (!userFromMessageToCreate.equals(userFromMessageExisting)) {
