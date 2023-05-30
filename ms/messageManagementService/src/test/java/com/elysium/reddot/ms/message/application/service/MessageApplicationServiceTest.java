@@ -110,8 +110,10 @@ class MessageApplicationServiceTest {
         Long id = 1L;
         MessageModel messageModel = new MessageModel();
         messageModel.setContent("Content");
+        messageModel.setUserId("userId");
         MessageModel updatedMessageModel = new MessageModel();
         updatedMessageModel.setContent("Updated Content");
+        updatedMessageModel.setUserId("userId");
 
         when(messageRepository.findMessageById(id)).thenReturn(Optional.of(messageModel));
         when(messageRepository.updateMessage(any(MessageModel.class))).thenReturn(updatedMessageModel);

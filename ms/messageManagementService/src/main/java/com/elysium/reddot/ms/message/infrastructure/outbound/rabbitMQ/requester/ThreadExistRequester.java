@@ -52,7 +52,7 @@ public class ThreadExistRequester {
         byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_THREAD_MESSAGE,
                 RabbitMQConstant.REQUEST_THREAD_EXIST,
-                threadId
+                String.valueOf(threadId)
         );
 
         assert replyBytes != null;

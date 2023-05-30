@@ -2,11 +2,15 @@ package com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor;
 
 import com.elysium.reddot.ms.message.application.data.dto.ApiResponseDTO;
 import com.elysium.reddot.ms.message.application.data.dto.MessageDTO;
+import com.elysium.reddot.ms.message.application.data.mapper.MessageDTOMessageModelMapper;
+import com.elysium.reddot.ms.message.application.service.KeycloakService;
 import com.elysium.reddot.ms.message.application.service.MessageApplicationServiceImpl;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import com.elysium.reddot.ms.message.infrastructure.inbound.rest.processor.message.CreateMessageProcessor;
-import com.elysium.reddot.ms.message.application.data.mapper.MessageDTOMessageModelMapper;
 import com.elysium.reddot.ms.message.infrastructure.outbound.rabbitmq.requester.ThreadExistRequester;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -15,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -31,20 +34,30 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class CreateMessageProcessorTest {
 
-    @InjectMocks
     private CreateMessageProcessor createMessageProcessor;
 
     @Mock
     private MessageApplicationServiceImpl messageApplicationService;
 
     @Mock
+    private KeycloakService keycloakService;
+
+    @Mock
     private ThreadExistRequester threadExistRequester;
+
+    private ObjectMapper objectMapper;
 
     private CamelContext camelContext;
 
     @BeforeEach
     void setUp() {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+
         camelContext = new DefaultCamelContext();
+        createMessageProcessor = new CreateMessageProcessor(messageApplicationService, keycloakService, threadExistRequester, objectMapper);
+
     }
 
     @Test
@@ -52,6 +65,8 @@ class CreateMessageProcessorTest {
     void givenValidMessage_whenCreateMessage_thenMessageCreatedSuccessfully() throws IOException, AuthenticationException {
         // given
         MessageDTO messageToCreateDTO = new MessageDTO("content", 1L, "userId");
+        String messageToCreateDTOJson = objectMapper.writeValueAsString(messageToCreateDTO);
+
         MessageModel messageToCreateModel = new MessageModel("content", 1L, "userId");
         MessageModel createdMessageModel = new MessageModel(1L, "content", 1L, "Message description", LocalDateTime.now(), LocalDateTime.now());
         MessageDTO expectedMessage = MessageDTOMessageModelMapper.toDTO(createdMessageModel);
@@ -61,7 +76,7 @@ class CreateMessageProcessorTest {
 
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("CamelHttpUri", "/messages");
-        exchange.getIn().setBody(messageToCreateDTO);
+        exchange.getIn().setBody(messageToCreateDTOJson);
 
         // mock
         when(messageApplicationService.createMessage(messageToCreateModel)).thenReturn(createdMessageModel);

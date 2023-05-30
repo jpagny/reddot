@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.message.domain.service;
 
+import com.elysium.reddot.ms.message.domain.exception.DifferentUserException;
 import com.elysium.reddot.ms.message.domain.exception.FieldEmptyException;
 import com.elysium.reddot.ms.message.domain.model.MessageModel;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,11 +33,24 @@ class MessageDomainServiceTest {
     @DisplayName("given a blank content when updating a message then an exception is thrown")
     void givenBlankContent_whenUpdatingMessage_thenExceptionIsThrown() {
         // given
-        MessageModel messageModel = new MessageModel();
-        messageModel.setContent("");
+        MessageModel messageModel = new MessageModel("", 1L, "userId");
+        MessageModel messageModelExisting = new MessageModel("content", 1L, "userId");
+
 
         // when && throw
-        assertThrows(FieldEmptyException.class, () -> messageDomainService.validateMessageForUpdate(messageModel,null));
+        assertThrows(FieldEmptyException.class, () -> messageDomainService.validateMessageForUpdate(messageModel,messageModelExisting));
+    }
+
+    @Test
+    @DisplayName("given different users when updating a message then an exception is thrown")
+    void givenDifferentUser_whenUpdatingMessage_thenExceptionIsThrown() {
+        // given
+        MessageModel messageModel = new MessageModel("content", 1L, "userId1");
+        MessageModel messageModelExisting = new MessageModel("content", 1L, "userId2");
+
+
+        // when && throw
+        assertThrows(DifferentUserException.class, () -> messageDomainService.validateMessageForUpdate(messageModel,messageModelExisting));
     }
 
 

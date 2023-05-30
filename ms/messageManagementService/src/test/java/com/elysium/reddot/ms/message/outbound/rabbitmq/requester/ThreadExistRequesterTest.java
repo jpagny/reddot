@@ -39,6 +39,7 @@ class ThreadExistRequesterTest {
     void givenTopicIdExists_whenVerifyTopicIdExistsOrThrow_thenNoException() throws Exception {
         // given
         Long threadId = 123L;
+        String threadIdString = "123";
         ThreadExistsResponseDTO response = new ThreadExistsResponseDTO();
         response.setExists(true);
 
@@ -46,7 +47,7 @@ class ThreadExistRequesterTest {
         when(rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_THREAD_MESSAGE,
                 RabbitMQConstant.REQUEST_THREAD_EXIST,
-                threadId
+                threadIdString
         )).thenReturn(objectMapper.writeValueAsBytes(response));
 
         // when
@@ -61,6 +62,7 @@ class ThreadExistRequesterTest {
     void givenTopicIdDoesNotExist_whenVerifyTopicIdExistsOrThrow_thenException() throws IOException {
         // given
         Long threadId = 123L;
+        String threadIdString = "123";
         ThreadExistsResponseDTO response = new ThreadExistsResponseDTO();
         response.setExists(false);
 
@@ -68,7 +70,7 @@ class ThreadExistRequesterTest {
         when(rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_THREAD_MESSAGE,
                 RabbitMQConstant.REQUEST_THREAD_EXIST,
-                threadId
+                threadIdString
         )).thenReturn(objectMapper.writeValueAsBytes(response));
 
         // when and then

@@ -43,10 +43,18 @@ public class ThreadRabbitMQListener {
 
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
         Object rawMessage = messageConverter.fromMessage(message);
+        String rawString = "";
 
-        byte[] byteArray = (byte[]) rawMessage;
-        String rawString = new String(byteArray, StandardCharsets.UTF_8);
-        log.debug("Raw byte array as string: {}", rawString);
+        if (rawMessage instanceof byte[]) {
+            byte[] byteArray = (byte[]) rawMessage;
+            rawString = new String(byteArray, StandardCharsets.UTF_8);
+            log.debug("Raw byte array as string: {}", rawString);
+
+        } else if (rawMessage instanceof String) {
+            rawString = (String) rawMessage;
+            log.debug("Object as string: {}", rawString);
+
+        }
 
         Long threadId = Long.parseLong(rawString);
 

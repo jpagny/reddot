@@ -35,7 +35,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
 @SpringBootTest
-@ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class MessagesRouteBuilderIT extends TestContainerSetup {
 
@@ -348,6 +347,34 @@ class MessagesRouteBuilderIT extends TestContainerSetup {
 
         GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("ResourceBadValueException",
                 "The message has bad value : content is required and cannot be empty.");
+
+        // when
+        Exchange responseExchange = template.send(MessageRouteEnum.UPDATE_MESSAGE.getRouteName(), exchange);
+        String responseJson = responseExchange.getMessage().getBody(String.class);
+        GlobalExceptionDTO actualResponse = objectMapper.readValue(responseJson, GlobalExceptionDTO.class);
+
+        // then
+        assertEquals(expectedApiResponse.getExceptionClass(), actualResponse.getExceptionClass());
+        assertEquals(expectedApiResponse.getMessage(), actualResponse.getMessage());
+    }
+
+    @Test
+    @DisplayName("given different user request when route updateMessage is called then throw IsNotOwnerMessageException")
+    void givenDifferentUserRequest_whenRouteUpdateMessage_thenThrowIsNotOwnerMessageException() throws Exception {
+        // given
+        Long messageId = 3L;
+        LocalDateTime localDateTime = LocalDateTime.now();
+        MessageDTO request = new MessageDTO(messageId, "content_updated_1", 1L, "", localDateTime, localDateTime);
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("Authorization", "Bearer " + userToken.getAccessToken());
+        exchange.getIn().setHeader("id", messageId);
+        exchange.getIn().setBody(requestJson);
+
+        // expected
+        GlobalExceptionDTO expectedApiResponse = new GlobalExceptionDTO("IsNotOwnerMessageException",
+                "You are not owner this message. You can't update this message");
 
         // when
         Exchange responseExchange = template.send(MessageRouteEnum.UPDATE_MESSAGE.getRouteName(), exchange);
