@@ -1,5 +1,9 @@
 package com.elysium.reddot.ms.replymessage.infrastructure.constant;
 
+/**
+ * Enumeration for Reply Message routes.
+ * Each route represents a direct exchange routing key used for RabbitMQ message routing.
+ */
 public enum ReplyMessageRouteEnum {
 
     GET_ALL_REPLIES_MESSAGE("direct:getAllRepliesMessage"),

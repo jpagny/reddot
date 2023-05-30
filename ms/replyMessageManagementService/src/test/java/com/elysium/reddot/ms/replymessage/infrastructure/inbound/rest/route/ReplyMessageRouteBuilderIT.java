@@ -6,7 +6,7 @@ import com.elysium.reddot.ms.replymessage.container.TestContainerSetup;
 import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import com.elysium.reddot.ms.replymessage.infrastructure.constant.ReplyMessageRouteEnum;
 import com.elysium.reddot.ms.replymessage.infrastructure.data.exception.GlobalExceptionDTO;
-import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageProcessorMapper;
+import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageModelReplyMessageDTOMapper;
 import com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitmq.requester.MessageExistRequester;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -66,7 +66,7 @@ class ReplyMessageRouteBuilderIT extends TestContainerSetup {
         ReplyMessageModel replyMessage1Model = new ReplyMessageModel("content", 1L, "userId");
         ReplyMessageModel replyMessage2Model = new ReplyMessageModel("content2", 1L, "userId");
         List<ReplyMessageModel> replyMessageListModel = Arrays.asList(replyMessage1Model, replyMessage2Model);
-        List<ReplyMessageDTO> expectedListReplyMessages = ReplyMessageProcessorMapper.toDTOList(replyMessageListModel);
+        List<ReplyMessageDTO> expectedListReplyMessages = ReplyMessageModelReplyMessageDTOMapper.toDTOList(replyMessageListModel);
 
         String token = obtainAccessToken("user1", "test");
         Exchange exchange = new DefaultExchange(camelContext);
@@ -144,7 +144,7 @@ class ReplyMessageRouteBuilderIT extends TestContainerSetup {
         ReplyMessageDTO inputReplyMessageDTO = new ReplyMessageDTO("content", 1L, "userId");
         ReplyMessageModel inputReplyMessageModel = new ReplyMessageModel("content", 1L, "userId");
         ReplyMessageModel createdReplyMessageModel = new ReplyMessageModel(inputReplyMessageModel.getContent(), inputReplyMessageModel.getParentMessageID(), inputReplyMessageModel.getUserId());
-        ReplyMessageDTO expectedReplyMessage = ReplyMessageProcessorMapper.toDTO(createdReplyMessageModel);
+        ReplyMessageDTO expectedReplyMessage = ReplyMessageModelReplyMessageDTOMapper.toDTO(createdReplyMessageModel);
 
         String token = obtainAccessToken("user1", "test");
         Exchange exchange = new DefaultExchange(camelContext);
@@ -204,7 +204,7 @@ class ReplyMessageRouteBuilderIT extends TestContainerSetup {
         Long replyMessageId = 1L;
         ReplyMessageDTO inputReplyMessageDTO = new ReplyMessageDTO("content", 1L, "userId");
         ReplyMessageModel updatedReplyMessage = new ReplyMessageModel("content", 1L, "userId");
-        ReplyMessageDTO expectedReplyMessage = ReplyMessageProcessorMapper.toDTO(updatedReplyMessage);
+        ReplyMessageDTO expectedReplyMessage = ReplyMessageModelReplyMessageDTOMapper.toDTO(updatedReplyMessage);
 
         String token = obtainAccessToken("user1", "test");
         Exchange exchange = new DefaultExchange(camelContext);

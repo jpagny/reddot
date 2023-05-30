@@ -5,7 +5,7 @@ import com.elysium.reddot.ms.replymessage.application.data.dto.ReplyMessageDTO;
 import com.elysium.reddot.ms.replymessage.application.service.ReplyMessageApplicationServiceImpl;
 import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.replymessage.UpdateReplyMessageProcessor;
-import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageProcessorMapper;
+import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageModelReplyMessageDTOMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -44,7 +44,7 @@ class UpdateReplyMessageProcessorTest {
         Long replyReplyMessageId = 1L;
         ReplyMessageDTO updatedReplyMessageDTO = new ReplyMessageDTO("contentUpdated", 1L, "userId");
         ReplyMessageModel updatedReplyMessageModel = new ReplyMessageModel("contentUpdated", 1L, "userId");
-        ReplyMessageDTO expectedReplyMessage = ReplyMessageProcessorMapper.toDTO(updatedReplyMessageModel);
+        ReplyMessageDTO expectedReplyMessage = ReplyMessageModelReplyMessageDTOMapper.toDTO(updatedReplyMessageModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.OK.value(),
                 "Reply message updated successfully", expectedReplyMessage);

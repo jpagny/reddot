@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
+/**
+ * Holder class for the reply message processors.
+ */
 @AllArgsConstructor
 @Getter
 @Component

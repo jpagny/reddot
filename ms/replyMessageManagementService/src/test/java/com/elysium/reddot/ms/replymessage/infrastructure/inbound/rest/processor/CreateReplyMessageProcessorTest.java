@@ -5,7 +5,7 @@ import com.elysium.reddot.ms.replymessage.application.data.dto.ReplyMessageDTO;
 import com.elysium.reddot.ms.replymessage.application.service.ReplyMessageApplicationServiceImpl;
 import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.replymessage.CreateReplyMessageProcessor;
-import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageProcessorMapper;
+import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageModelReplyMessageDTOMapper;
 import com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitmq.requester.MessageExistRequester;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -54,7 +54,7 @@ class CreateReplyMessageProcessorTest {
         ReplyMessageDTO messageToCreateDTO = new ReplyMessageDTO("content", 1L, "userId");
         ReplyMessageModel messageToCreateModel = new ReplyMessageModel("content", 1L, "userId");
         ReplyMessageModel createdMessageModel = new ReplyMessageModel(1L, "content", 1L, "Message description", LocalDateTime.now(), LocalDateTime.now());
-        ReplyMessageDTO expectedMessage = ReplyMessageProcessorMapper.toDTO(createdMessageModel);
+        ReplyMessageDTO expectedMessage = ReplyMessageModelReplyMessageDTOMapper.toDTO(createdMessageModel);
 
         ApiResponseDTO expectedApiResponse = new ApiResponseDTO(HttpStatus.CREATED.value(),
                 "Reply message with content " + createdMessageModel.getContent() + " created successfully", expectedMessage);

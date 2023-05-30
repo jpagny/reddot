@@ -1,6 +1,6 @@
 package com.elysium.reddot.ms.replymessage.application.service;
 
-import com.elysium.reddot.ms.replymessage.application.exception.type.IsNotOwnerException;
+import com.elysium.reddot.ms.replymessage.application.exception.type.IsNotOwnerMessageException;
 import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceAlreadyExistException;
 import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceBadValueException;
 import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceNotFoundException;
@@ -35,6 +35,9 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
     private final IReplyMessageRepository replyMessageRepository;
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ReplyMessageModel getReplyMessageById(Long id) {
         log.debug("Fetching replyMessage with id {}", id);
@@ -49,6 +52,9 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
         return foundReplyMessageModel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<ReplyMessageModel> getAllRepliesMessage() {
         log.info("Fetching all replyMessages from database...");
@@ -58,6 +64,9 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
                 .collect(Collectors.toList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ReplyMessageModel createReplyMessage(ReplyMessageModel replyMessageToCreateModel) {
 
@@ -70,7 +79,7 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
 
         if (existingReplyMessage.isPresent()) {
             throw new ResourceAlreadyExistException(RESOURCE_NAME_REPLY_MESSAGE, "content",
-                    replyMessageToCreateModel.getContent());
+                    replyMessageToCreateModel.getContent(), replyMessageToCreateModel.getParentMessageID());
         }
 
         replyMessageToCreateModel.setCreatedAt(LocalDateTime.now());
@@ -83,7 +92,7 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
             // check nested replies limit
             int countTotalRepliedForThisMessage = replyMessageRepository
                     .countRepliesByMessageId(replyMessageToCreateModel.getParentMessageID());
-            log.debug("ICII TOTAL : " + countTotalRepliedForThisMessage);
+            log.debug("count total replies : " + countTotalRepliedForThisMessage);
             replyMessageDomainService.verifyNestedRepliesLimit(countTotalRepliedForThisMessage, maxNestedReplies);
 
             // other check ...
@@ -102,7 +111,9 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
         return createdReplyMessageModel;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ReplyMessageModel updateReplyMessage(Long id, ReplyMessageModel replyMessageToUpdateModel) {
 
@@ -120,7 +131,7 @@ public class ReplyMessageApplicationServiceImpl implements IReplyMessageManageme
 
         } catch (DifferentUserException exception) {
             log.error(exception.getMessage());
-            throw new IsNotOwnerException(RESOURCE_NAME_REPLY_MESSAGE);
+            throw new IsNotOwnerMessageException();
 
         } catch (Exception exception) {
             throw new ResourceBadValueException(RESOURCE_NAME_REPLY_MESSAGE, exception.getMessage());

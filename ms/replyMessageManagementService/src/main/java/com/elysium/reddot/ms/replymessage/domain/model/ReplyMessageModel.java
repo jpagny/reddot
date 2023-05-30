@@ -3,6 +3,9 @@ package com.elysium.reddot.ms.replymessage.domain.model;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Represents a reply message in the application.
+ */
 public class ReplyMessageModel {
 
     private Long id;
@@ -12,7 +15,16 @@ public class ReplyMessageModel {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-
+    /**
+     * Constructor creating a full reply message object.
+     *
+     * @param id the unique identifier of the message
+     * @param content the text content of the message
+     * @param parentMessageID the identifier of the message this is a reply to
+     * @param userId the identifier of the user who created the message
+     * @param createdAt the time when the message was created
+     * @param updatedAt the time when the message was last updated
+     */
     public ReplyMessageModel(Long id, String content, Long parentMessageID, String userId, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.content = content;
@@ -22,6 +34,13 @@ public class ReplyMessageModel {
         this.setUpdatedAt(updatedAt);
     }
 
+    /**
+     * Constructor creating a reply message object without an id or timestamps.
+     *
+     * @param content the text content of the message
+     * @param parentMessageID the identifier of the message this is a reply to
+     * @param userId the identifier of the user who created the message
+     */
     public ReplyMessageModel(String content, Long parentMessageID, String userId) {
         this.content = content;
         this.parentMessageID = parentMessageID;

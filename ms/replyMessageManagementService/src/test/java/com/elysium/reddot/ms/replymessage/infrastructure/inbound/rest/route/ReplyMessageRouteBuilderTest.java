@@ -11,7 +11,7 @@ import com.elysium.reddot.ms.replymessage.infrastructure.constant.ReplyMessageRo
 import com.elysium.reddot.ms.replymessage.infrastructure.data.exception.GlobalExceptionDTO;
 import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
 import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.replymessage.*;
-import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageProcessorMapper;
+import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageModelReplyMessageDTOMapper;
 import com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitmq.requester.MessageExistRequester;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -136,7 +136,7 @@ class ReplyMessageRouteBuilderTest extends CamelTestSupport {
         ReplyMessageModel replyMessage1Model = new ReplyMessageModel("content", 1L, "userId");
         ReplyMessageModel replyMessage2Model = new ReplyMessageModel("content2", 1L, "userId");
         List<ReplyMessageModel> replyMessageListModel = Arrays.asList(replyMessage1Model, replyMessage2Model);
-        List<ReplyMessageDTO> expectedListReplyMessages = ReplyMessageProcessorMapper.toDTOList(replyMessageListModel);
+        List<ReplyMessageDTO> expectedListReplyMessages = ReplyMessageModelReplyMessageDTOMapper.toDTOList(replyMessageListModel);
 
         String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
@@ -229,7 +229,7 @@ class ReplyMessageRouteBuilderTest extends CamelTestSupport {
         ReplyMessageDTO inputReplyMessageDTO = new ReplyMessageDTO("content", 1L, "userId");
         ReplyMessageModel inputReplyMessageModel = new ReplyMessageModel("content", 1L, "userId");
         ReplyMessageModel createdReplyMessageModel = new ReplyMessageModel(inputReplyMessageModel.getContent(), inputReplyMessageModel.getParentMessageID(), inputReplyMessageModel.getUserId());
-        ReplyMessageDTO expectedReplyMessage = ReplyMessageProcessorMapper.toDTO(createdReplyMessageModel);
+        ReplyMessageDTO expectedReplyMessage = ReplyMessageModelReplyMessageDTOMapper.toDTO(createdReplyMessageModel);
 
         String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 
@@ -296,7 +296,7 @@ class ReplyMessageRouteBuilderTest extends CamelTestSupport {
         ReplyMessageDTO inputReplyMessageDTO = new ReplyMessageDTO("content", 1L, "userId");
         ReplyMessageModel requestModel = new ReplyMessageModel("content", 1L, "userId");
         ReplyMessageModel updatedReplyMessage = new ReplyMessageModel("content", 1L, "userId");
-        ReplyMessageDTO expectedReplyMessage = ReplyMessageProcessorMapper.toDTO(updatedReplyMessage);
+        ReplyMessageDTO expectedReplyMessage = ReplyMessageModelReplyMessageDTOMapper.toDTO(updatedReplyMessage);
 
         String headerAfterCheckToken = "{\"realm_access\":{\"roles\":[\"default-roles-reddot\",\"user\"]},\"active\":true}";
 

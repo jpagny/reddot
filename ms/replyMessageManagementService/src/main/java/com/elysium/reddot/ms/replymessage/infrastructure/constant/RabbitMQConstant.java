@@ -1,5 +1,9 @@
 package com.elysium.reddot.ms.replymessage.infrastructure.constant;
 
+/**
+ * Constants class for RabbitMQ configurations.
+ * This class provides constant values for exchanges, queues, and request bindings used in RabbitMQ.
+ */
 public final class RabbitMQConstant {
 
     private RabbitMQConstant() {

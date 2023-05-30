@@ -10,6 +10,9 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration class for RabbitMQ. Sets up exchanges, queues, and bindings for the application.
+ */
 @Configuration
 public class RabbitMQConfig {
 

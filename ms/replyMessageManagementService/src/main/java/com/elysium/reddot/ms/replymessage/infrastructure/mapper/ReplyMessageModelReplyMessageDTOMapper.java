@@ -7,11 +7,17 @@ import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ReplyMessageProcessorMapper {
+public class ReplyMessageModelReplyMessageDTOMapper {
 
-    private ReplyMessageProcessorMapper() {
+    private ReplyMessageModelReplyMessageDTOMapper() {
     }
 
+    /**
+     * Maps a ReplyMessageModel to a ReplyMessageDTO.
+     *
+     * @param replyMessageModel the ReplyMessageModel to be mapped
+     * @return the mapped ReplyMessageDTO
+     */
     public static ReplyMessageDTO toDTO(ReplyMessageModel replyMessageModel) {
         ReplyMessageDTO replyMessageDTO = new ReplyMessageDTO();
         replyMessageDTO.setId(replyMessageModel.getId());
@@ -23,12 +29,24 @@ public class ReplyMessageProcessorMapper {
         return replyMessageDTO;
     }
 
+    /**
+     * Maps a list of ReplyMessageModel to a list of ReplyMessageDTO.
+     *
+     * @param replyMessageModels the list of ReplyMessageModel to be mapped
+     * @return the mapped list of ReplyMessageDTO
+     */
     public static List<ReplyMessageDTO> toDTOList(List<ReplyMessageModel> replyMessageModels) {
         return replyMessageModels.stream()
-                .map(ReplyMessageProcessorMapper::toDTO)
+                .map(ReplyMessageModelReplyMessageDTOMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Maps a ReplyMessageDTO to a ReplyMessageModel.
+     *
+     * @param replyMessageDTO the ReplyMessageDTO to be mapped
+     * @return the mapped ReplyMessageModel
+     */
     public static ReplyMessageModel toModel(ReplyMessageDTO replyMessageDTO) {
         return new ReplyMessageModel(
                 replyMessageDTO.getId(),

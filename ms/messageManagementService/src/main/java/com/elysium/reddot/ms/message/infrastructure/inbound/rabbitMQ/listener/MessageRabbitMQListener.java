@@ -17,6 +17,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * A component that listens to RabbitMQ messages related to messages and performs corresponding actions.
  */
@@ -39,8 +41,21 @@ public class MessageRabbitMQListener {
         log.debug("Received RabbitMQ message to check message existence.");
 
         MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
-        Long messageId = (Long) messageConverter.fromMessage(message);
-        log.debug("Received message ID: {}", messageId);
+        Object rawMessage = messageConverter.fromMessage(message);
+        String rawString = "";
+
+        if (rawMessage instanceof byte[]) {
+            byte[] byteArray = (byte[]) rawMessage;
+            rawString = new String(byteArray, StandardCharsets.UTF_8);
+            log.debug("Raw byte array as string: {}", rawString);
+
+        } else if (rawMessage instanceof String) {
+            rawString = (String) rawMessage;
+            log.debug("Object as string: {}", rawString);
+
+        }
+
+        Long messageId = Long.parseLong(rawString);
 
         boolean exists = messageRabbitMQService.checkMessageIdExists(messageId);
         log.debug("Message existence check result: {}", exists);

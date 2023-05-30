@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Request object for counting the number of reply messages created by a user between two dates.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

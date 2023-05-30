@@ -5,14 +5,24 @@ import com.elysium.reddot.ms.replymessage.domain.exception.FieldEmptyException;
 import com.elysium.reddot.ms.replymessage.domain.exception.LimitExceededException;
 import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
 
+/**
+ * Implementation of the IReplyMessageDomainService interface.
+ * Provides domain operations for reply messages, including validation and business rule enforcement.
+ */
 public class ReplyMessageDomainServiceImpl implements IReplyMessageDomainService {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void validateReplyMessageForCreation(ReplyMessageModel replyMessageModel) {
         validateUserFromCreation(replyMessageModel.getUserId());
         validateContent(replyMessageModel.getContent());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void verifyNestedRepliesLimit(int countRepliesMessage, int maxNestedReplies) {
         if (countRepliesMessage >= maxNestedReplies) {
@@ -20,6 +30,9 @@ public class ReplyMessageDomainServiceImpl implements IReplyMessageDomainService
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void validateReplyMessageForUpdate(ReplyMessageModel replyMessageModel, ReplyMessageModel replyMessageExisting) {
         validateUserFromUpdate(replyMessageModel.getUserId(), replyMessageExisting.getUserId());

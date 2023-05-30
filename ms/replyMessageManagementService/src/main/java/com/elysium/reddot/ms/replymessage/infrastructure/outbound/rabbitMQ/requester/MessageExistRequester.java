@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * The MessageExistRequester class is responsible for requesting the existence of a message from RabbitMQ.
+ * It sends a request message to the message/reply_message exchange and waits for a response.
+ */
 @Component
 @Slf4j
 public class MessageExistRequester {
@@ -22,6 +26,13 @@ public class MessageExistRequester {
         this.objectMapper = new ObjectMapper();
     }
 
+    /**
+     * Verifies if a message with the given ID exists in the system. If the message does not exist, a ResourceNotFoundException is thrown.
+     *
+     * @param messageId the ID of the message to verify
+     * @throws IOException               if there is an error while processing the response message
+     * @throws ResourceNotFoundException if the message with the given ID does not exist
+     */
     public void verifyMessageIdExistsOrThrow(Long messageId) throws IOException {
         MessageExistsResponseDTO response = getMessageExistsResponse(messageId);
 

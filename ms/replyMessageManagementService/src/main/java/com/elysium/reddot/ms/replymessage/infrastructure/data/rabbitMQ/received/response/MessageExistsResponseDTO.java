@@ -2,9 +2,10 @@ package com.elysium.reddot.ms.replymessage.infrastructure.data.rabbitmq.received
 
 import lombok.Data;
 
+/**
+ * Data Transfer Object (DTO) for the response indicating whether a message exists.
+ */
 @Data
 public class MessageExistsResponseDTO {
-    private static final long serialVersionUID = 1L;
-    private Long parentMessageID;
     private boolean exists;
 }
