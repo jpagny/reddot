@@ -77,18 +77,21 @@ public class CalculateDailyUserMessagesStatisticJob extends QuartzJobBean {
         for (String userId : users) {
             Integer countMessages = mapCountMessagesByUser.get(userId);
             Integer countRepliesMessage = mapCountRepliesMessageByUser.get(userId);
-            int totalMessage = countRepliesMessage + countRepliesMessage;
+            int totalMessage = countMessages + countRepliesMessage;
 
-            log.debug("Processing user {} - countMessages: {}, countRepliesMessage: {}", userId, countMessages, countRepliesMessage);
+            log.debug("Processing user {} - countMessages: {}, countRepliesMessage: {}, total: {}", userId, countMessages, countRepliesMessage, totalMessage);
 
-            if ( totalMessage > 0) {
-                insertIntoDatabase(userId, countMessages, countRepliesMessage);
-
-            } else if ( totalMessage < 0){
+            if (countMessages < 0 || countRepliesMessage < 0) {
                 log.debug("There is a problem with the connection between microservices. Unable to fetch information.");
 
             } else {
-                log.debug("This user {} has not sent any messages between this period.", userId);
+
+                if (totalMessage > 0) {
+                    insertIntoDatabase(userId, countMessages, countRepliesMessage);
+
+                } else {
+                    log.debug("This user {} has not sent any messages / replies message between this period.", userId);
+                }
             }
 
         }

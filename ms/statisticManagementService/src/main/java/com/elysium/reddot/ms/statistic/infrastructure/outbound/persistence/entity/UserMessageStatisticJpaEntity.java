@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * An entity class representing the UserMessageStatisticJpaEntity entity mapped to the "user_message_stats" table in the database.
@@ -20,7 +21,7 @@ public class UserMessageStatisticJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(columnDefinition = "DATE")
+    @Column(columnDefinition = "DATETIME")
     private LocalDate date;
     private Integer countMessages;
     private String userId;

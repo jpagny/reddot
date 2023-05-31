@@ -3,6 +3,7 @@ package com.elysium.reddot.ms.statistic.domain.port.outbound;
 import com.elysium.reddot.ms.statistic.domain.model.UserMessageStatisticModel;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * This interface represents a repository for managing UserMessageStatisticModel.

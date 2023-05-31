@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * An implementation of the UserMessageStatisticRepository that acts as an adapter to the UserMessageStatisticJpaEntity repository.
@@ -29,7 +30,6 @@ public class UserMessageStatisticRepositoryAdapter implements UserMessageStatist
     @Override
     public void createUserMessageStatistic(UserMessageStatisticModel userMessageStatisticModel) {
         UserMessageStatisticJpaEntity userMessageStatisticJpaEntity = UserMessageStatisticPersistenceMapper.toEntity(userMessageStatisticModel);
-        log.debug("Save ici : " + userMessageStatisticJpaEntity.toString());
         userMessageStatisticRepository.save(userMessageStatisticJpaEntity);
     }
 
@@ -43,7 +43,7 @@ public class UserMessageStatisticRepositoryAdapter implements UserMessageStatist
      */
     @Override
     public Integer getCountMessagesByTypeAndUserIdAndDate(String type, String userId, LocalDate date) {
-        Date sqlDate = Date.valueOf(date);
+        Date sqlDate = Date.valueOf(String.valueOf(date));
         return userMessageStatisticRepository.getCountMessagesByTypeAndUserIdAndDate(type, userId, sqlDate);
     }
 
