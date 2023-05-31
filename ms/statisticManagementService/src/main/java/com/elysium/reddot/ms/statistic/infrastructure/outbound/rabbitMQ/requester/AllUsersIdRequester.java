@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.statistic.infrastructure.outbound.rabbitMQ.requester;
 
+import com.elysium.reddot.ms.statistic.infrastructure.constant.RabbitMQConstant;
 import com.elysium.reddot.ms.statistic.infrastructure.data.rabbitMQ.received.response.ListUserIdsResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,6 @@ import java.util.List;
 public class AllUsersIdRequester {
 
     private final RabbitTemplate rabbitTemplate;
-
-    public static final String STATISTIC_EXCHANGE = "statisticUserExchange";
-    public static final String STATISTIC_ALL_USERS_REQUEST_ROUTING_KEY = "user.all.request";
 
     /**
      * Fetches all user IDs from the statistics service.
@@ -50,8 +48,8 @@ public class AllUsersIdRequester {
         try {
 
             byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
-                    STATISTIC_EXCHANGE,
-                    STATISTIC_ALL_USERS_REQUEST_ROUTING_KEY,
+                    RabbitMQConstant.EXCHANGE_STATISTIC_USER,
+                    RabbitMQConstant.REQUEST_FETCH_ALL_USERS,
                     "hello"
             );
 

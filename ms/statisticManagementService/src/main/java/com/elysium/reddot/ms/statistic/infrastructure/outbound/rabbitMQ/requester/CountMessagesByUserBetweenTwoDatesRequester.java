@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.statistic.infrastructure.outbound.rabbitMQ.requester;
 
+import com.elysium.reddot.ms.statistic.infrastructure.constant.RabbitMQConstant;
 import com.elysium.reddot.ms.statistic.infrastructure.data.rabbitMQ.received.response.CountMessagesByUserBetweenTwoDatesResponse;
 import com.elysium.reddot.ms.statistic.infrastructure.data.rabbitMQ.request.CountMessagesByUserBetweenTwoDatesRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,9 +24,6 @@ public class CountMessagesByUserBetweenTwoDatesRequester {
     private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper;
 
-    public static final String STATISTIC_EXCHANGE = "statisticMessageExchange";
-    public static final String STATISTIC_COUNT_MESSAGE_BY_USER_BETWEEN_TWO_DATES_REQUEST_ROUTING_KEY = "count.message.user.dates.request";
-
     public Integer fetchCountMessageByUserBetweenTwoDate(String userId, LocalDateTime onStart, LocalDateTime onEnd) {
         log.debug("Fetching count of messages by user between two dates for user: {}, start: {}, end: {}", userId, onStart, onEnd);
 
@@ -44,15 +42,16 @@ public class CountMessagesByUserBetweenTwoDatesRequester {
 
         log.debug("Request JSON: {}", requestJson);
 
+        assert requestJson != null;
         byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
-                STATISTIC_EXCHANGE,
-                STATISTIC_COUNT_MESSAGE_BY_USER_BETWEEN_TWO_DATES_REQUEST_ROUTING_KEY,
+                RabbitMQConstant.EXCHANGE_STATISTIC_MESSAGE,
+                RabbitMQConstant.REQUEST_COUNT_MESSAGES_BY_USER_IN_RANGE_DATES_QUEUE,
                 requestJson
         );
 
         if (replyBytes == null) {
             log.error("Received no response.");
-            return null;
+            return new CountMessagesByUserBetweenTwoDatesResponse(-1);
         }
 
         log.debug("Received a response. Converting to CountMessagesByUserBetweenTwoDatesResponse object.");

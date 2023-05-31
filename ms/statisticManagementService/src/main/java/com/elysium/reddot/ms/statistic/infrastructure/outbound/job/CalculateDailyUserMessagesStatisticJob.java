@@ -48,7 +48,9 @@ public class CalculateDailyUserMessagesStatisticJob extends QuartzJobBean {
         List<String> allUsers = fetchAllUsers();
         log.debug("Fetched {} users.", allUsers.size());
 
-        processUsers(allUsers);
+        if (!allUsers.isEmpty()) {
+            processUsers(allUsers);
+        }
 
         log.debug("Finished executing job to calculate daily user message statistics.");
     }
@@ -59,6 +61,7 @@ public class CalculateDailyUserMessagesStatisticJob extends QuartzJobBean {
     }
 
     private void processUsers(List<String> users) {
+
         log.debug("Executing job to calculate daily user message statistics.");
 
         CompletableFuture<Void> allMessageFutures = CompletableFuture.allOf(users.stream()
@@ -74,10 +77,20 @@ public class CalculateDailyUserMessagesStatisticJob extends QuartzJobBean {
         for (String userId : users) {
             Integer countMessages = mapCountMessagesByUser.get(userId);
             Integer countRepliesMessage = mapCountRepliesMessageByUser.get(userId);
+            int totalMessage = countRepliesMessage + countRepliesMessage;
 
             log.debug("Processing user {} - countMessages: {}, countRepliesMessage: {}", userId, countMessages, countRepliesMessage);
 
-            insertIntoDatabase(userId, countMessages, countRepliesMessage);
+            if ( totalMessage > 0) {
+                insertIntoDatabase(userId, countMessages, countRepliesMessage);
+
+            } else if ( totalMessage < 0){
+                log.debug("There is a problem with the connection between microservices. Unable to fetch information.");
+
+            } else {
+                log.debug("This user {} has not sent any messages between this period.", userId);
+            }
+
         }
 
         log.debug("Finished processing users.");

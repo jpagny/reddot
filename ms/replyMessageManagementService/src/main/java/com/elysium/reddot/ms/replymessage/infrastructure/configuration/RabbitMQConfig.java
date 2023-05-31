@@ -38,7 +38,7 @@ public class RabbitMQConfig {
         // STATISTIC / REPLY_MESSAGE
 
         // Create message / reply_message exchange
-        TopicExchange statisticReplyMessageMessageExchange = new TopicExchange(RabbitMQConstant.EXCHANGE_STATISTIC_MESSAGE);
+        TopicExchange statisticReplyMessageMessageExchange = new TopicExchange(RabbitMQConstant.EXCHANGE_STATISTIC_REPLYMESSAGE);
         rabbitAdmin.declareExchange(statisticReplyMessageMessageExchange);
 
         // Create queue

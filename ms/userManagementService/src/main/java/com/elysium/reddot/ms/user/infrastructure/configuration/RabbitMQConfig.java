@@ -18,20 +18,14 @@ public class RabbitMQConfig {
 
         RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
 
-        // ### build exchange between statisticManagementService module and userManagementService module
-
         TopicExchange statisticUserExchange = new TopicExchange(RabbitMQConstant.EXCHANGE_STATISTIC_USER);
         rabbitAdmin.declareExchange(statisticUserExchange);
 
         Queue listAllUsersQueue = new Queue(RabbitMQConstant.QUEUE_FETCH_ALL_USERS);
         rabbitAdmin.declareQueue(listAllUsersQueue);
 
-        Binding listUserRequestBinding = BindingBuilder
-                .bind(listAllUsersQueue)
-                .to(statisticUserExchange)
-                .with(RabbitMQConstant.REQUEST_FETCH_ALL_USERS);
+        Binding listUserRequestBinding = BindingBuilder.bind(listAllUsersQueue).to(statisticUserExchange).with(RabbitMQConstant.REQUEST_FETCH_ALL_USERS);
         rabbitAdmin.declareBinding(listUserRequestBinding);
-
         return rabbitAdmin;
     }
 

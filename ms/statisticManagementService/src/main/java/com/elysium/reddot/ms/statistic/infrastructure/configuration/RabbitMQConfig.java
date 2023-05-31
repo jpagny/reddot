@@ -1,5 +1,6 @@
 package com.elysium.reddot.ms.statistic.infrastructure.configuration;
 
+import com.elysium.reddot.ms.statistic.infrastructure.constant.RabbitMQConstant;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -16,45 +17,39 @@ public class RabbitMQConfig {
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
         RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
 
-        // STATISTIC / USER
+        // ### STATISTIC / USER
 
-        TopicExchange statisticUserExchange = new TopicExchange("statisticUserExchange");
+        TopicExchange statisticUserExchange = new TopicExchange(RabbitMQConstant.EXCHANGE_STATISTIC_USER);
         rabbitAdmin.declareExchange(statisticUserExchange);
 
-        Queue listAllUsersQueue = new Queue("user.all.queue");
+        Queue listAllUsersQueue = new Queue(RabbitMQConstant.QUEUE_FETCH_ALL_USERS);
         rabbitAdmin.declareQueue(listAllUsersQueue);
 
-        Binding listUserRequestBinding = BindingBuilder.bind(listAllUsersQueue).to(statisticUserExchange).with("user.all.request");
+        Binding listUserRequestBinding = BindingBuilder.bind(listAllUsersQueue).to(statisticUserExchange).with(RabbitMQConstant.REQUEST_FETCH_ALL_USERS);
         rabbitAdmin.declareBinding(listUserRequestBinding);
 
 
-        // STATISTIC / MESSAGE
+        // ### STATISTIC / MESSAGE
 
-        // Create message / reply_message exchange
-        TopicExchange statisticMessageMessageExchange = new TopicExchange("statisticMessageExchange");
+        TopicExchange statisticMessageMessageExchange = new TopicExchange(RabbitMQConstant.EXCHANGE_STATISTIC_MESSAGE);
         rabbitAdmin.declareExchange(statisticMessageMessageExchange);
 
-        // Create queue
-        Queue countMessageByUserRangeDate = new Queue("count.message.user.dates.queue");
+        Queue countMessageByUserRangeDate = new Queue(RabbitMQConstant.QUEUE_COUNT_MESSAGES_BY_USER_IN_RANGE_DATES_QUEUE);
         rabbitAdmin.declareQueue(countMessageByUserRangeDate);
 
-        // Create binding between queue and exchange for requests
-        Binding statisticRequestBinding = BindingBuilder.bind(countMessageByUserRangeDate).to(statisticMessageMessageExchange).with("count.message.user.dates.request");
+        Binding statisticRequestBinding = BindingBuilder.bind(countMessageByUserRangeDate).to(statisticMessageMessageExchange).with(RabbitMQConstant.REQUEST_COUNT_MESSAGES_BY_USER_IN_RANGE_DATES_QUEUE);
         rabbitAdmin.declareBinding(statisticRequestBinding);
 
 
         // STATISTIC / REPLY_MESSAGE
 
-        // Create message / reply_message exchange
-        TopicExchange statisticReplyMessageMessageExchange = new TopicExchange("statisticReplyMessageExchange");
+        TopicExchange statisticReplyMessageMessageExchange = new TopicExchange(RabbitMQConstant.EXCHANGE_STATISTIC_REPLYMESSAGE);
         rabbitAdmin.declareExchange(statisticReplyMessageMessageExchange);
 
-        // Create queue
-        Queue countReplyMessageByUserRangeDate = new Queue("count.replyMessage.user.dates.queue");
+        Queue countReplyMessageByUserRangeDate = new Queue(RabbitMQConstant.QUEUE_COUNT_REPLIES_MESSAGES_BY_USER_IN_RANGE_DATES_QUEUE);
         rabbitAdmin.declareQueue(countReplyMessageByUserRangeDate);
 
-        // Create binding between queue and exchange for requests
-        Binding statisticReplyRequestBinding = BindingBuilder.bind(countReplyMessageByUserRangeDate).to(statisticReplyMessageMessageExchange).with("count.replyMessage.user.dates.request");
+        Binding statisticReplyRequestBinding = BindingBuilder.bind(countReplyMessageByUserRangeDate).to(statisticReplyMessageMessageExchange).with(RabbitMQConstant.REQUEST_COUNT_REPLIES_MESSAGE_BY_USER_IN_RANGE_DATES_QUEUE);
         rabbitAdmin.declareBinding(statisticReplyRequestBinding);
 
         return rabbitAdmin;
