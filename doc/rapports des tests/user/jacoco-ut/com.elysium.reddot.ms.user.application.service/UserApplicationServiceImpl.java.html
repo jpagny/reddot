@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserApplicationServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">userManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.user.application.service</a> &gt; <span class="el_source">UserApplicationServiceImpl.java</span></div><h1>UserApplicationServiceImpl.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.user.application.service;
+
+import com.elysium.reddot.ms.user.application.data.mapper.UserModelUserRepresentationMapper;
+import com.elysium.reddot.ms.user.infrastructure.exception.type.KeycloakApiException;
+import com.elysium.reddot.ms.user.domain.model.UserModel;
+import com.elysium.reddot.ms.user.domain.port.inbound.IUserManagementService;
+import com.elysium.reddot.ms.user.domain.service.IUserDomainService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import javax.ws.rs.core.Response;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+
+@Service
+@RequiredArgsConstructor
+<span class="fc" id="L26">@Slf4j</span>
+public class UserApplicationServiceImpl implements IUserManagementService {
+
+    private final IUserDomainService userDomainService;
+    private final Keycloak keycloak;
+
+    @Value(&quot;${spring.profiles.active:prod}&quot;)
+    private String activeProfile;
+
+    @Value(&quot;${keycloak.realm}&quot;)
+    private String keycloakRealm;
+
+    private UsersResource getUsersResource() {
+<span class="fc" id="L39">        RealmResource realmResource = keycloak.realm(keycloakRealm);</span>
+<span class="fc" id="L40">        return realmResource.users();</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UserModel createUser(UserModel userModel) {
+
+<span class="fc" id="L49">        log.debug(&quot;Creating new user with userName '{}', email '{}&quot;,</span>
+<span class="fc" id="L50">                userModel.getUsername(),</span>
+<span class="fc" id="L51">                userModel.getEmail()</span>
+        );
+
+<span class="fc" id="L54">        userDomainService.validateUserForCreation(userModel);</span>
+
+<span class="fc" id="L56">        UserRepresentation userRepresentation = UserModelUserRepresentationMapper.toUserRepresentation(userModel);</span>
+
+<span class="fc" id="L58">        CredentialRepresentation credential = new CredentialRepresentation();</span>
+<span class="fc" id="L59">        credential.setType(CredentialRepresentation.PASSWORD);</span>
+<span class="fc" id="L60">        credential.setValue(userModel.getPassword());</span>
+<span class="fc" id="L61">        credential.setTemporary(false);</span>
+
+<span class="fc" id="L63">        userRepresentation.setCredentials(Collections.singletonList(credential));</span>
+
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">        if (activeProfile.matches(&quot;(dev|demo)&quot;)) {</span>
+<span class="fc" id="L66">            userRepresentation.setEnabled(true);</span>
+<span class="fc" id="L67">            userRepresentation.setEmailVerified(true);</span>
+        }
+
+<span class="fc" id="L70">        try (Response response = getUsersResource().create(userRepresentation)) {</span>
+
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {</span>
+<span class="fc" id="L73">                String userId = extractUserIdFromResponse(response);</span>
+<span class="fc" id="L74">                UserResource userResource = getUsersResource().get(userId);</span>
+<span class="fc" id="L75">                UserRepresentation userRepresentationCreated = userResource.toRepresentation();</span>
+
+<span class="fc" id="L77">                UserModel userModelCreated = UserModelUserRepresentationMapper.toUserModel(userRepresentationCreated);</span>
+
+<span class="fc" id="L79">                log.info(&quot;Successfully created user with userName '{}', email '{}&quot;,</span>
+<span class="fc" id="L80">                        userModelCreated.getUsername(),</span>
+<span class="fc" id="L81">                        userModelCreated.getEmail()</span>
+                );
+
+<span class="fc" id="L84">                return userModelCreated;</span>
+
+            } else {
+<span class="fc" id="L87">                throw new KeycloakApiException(response);</span>
+
+            }
+        }
+    }
+
+
+    /**
+     * Extracts the user ID from the given Response object.
+     * The user ID is extracted from the path of the response's location.
+     *
+     * @param response the Response object from which to extract the user ID
+     * @return the extracted user ID
+     */
+    private String extractUserIdFromResponse(Response response) {
+<span class="fc" id="L102">        Path path = Paths.get(response.getLocation().getPath());</span>
+<span class="fc" id="L103">        return path.getFileName().toString();</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

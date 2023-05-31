@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReplyMessageModelReplyMessageDTOMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">replyMessageManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.replymessage.infrastructure.mapper</a> &gt; <span class="el_source">ReplyMessageModelReplyMessageDTOMapper.java</span></div><h1>ReplyMessageModelReplyMessageDTOMapper.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.replymessage.infrastructure.mapper;
+
+
+import com.elysium.reddot.ms.replymessage.application.data.dto.ReplyMessageDTO;
+import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class ReplyMessageModelReplyMessageDTOMapper {
+
+    private ReplyMessageModelReplyMessageDTOMapper() {
+    }
+
+    /**
+     * Maps a ReplyMessageModel to a ReplyMessageDTO.
+     *
+     * @param replyMessageModel the ReplyMessageModel to be mapped
+     * @return the mapped ReplyMessageDTO
+     */
+    public static ReplyMessageDTO toDTO(ReplyMessageModel replyMessageModel) {
+<span class="fc" id="L22">        ReplyMessageDTO replyMessageDTO = new ReplyMessageDTO();</span>
+<span class="fc" id="L23">        replyMessageDTO.setId(replyMessageModel.getId());</span>
+<span class="fc" id="L24">        replyMessageDTO.setContent(replyMessageModel.getContent());</span>
+<span class="fc" id="L25">        replyMessageDTO.setParentMessageID(replyMessageModel.getParentMessageID());</span>
+<span class="fc" id="L26">        replyMessageDTO.setUserId(replyMessageModel.getUserId());</span>
+<span class="fc" id="L27">        replyMessageDTO.setCreatedAt(replyMessageModel.getCreatedAt());</span>
+<span class="fc" id="L28">        replyMessageDTO.setUpdatedAt(replyMessageModel.getUpdatedAt());</span>
+<span class="fc" id="L29">        return replyMessageDTO;</span>
+    }
+
+    /**
+     * Maps a list of ReplyMessageModel to a list of ReplyMessageDTO.
+     *
+     * @param replyMessageModels the list of ReplyMessageModel to be mapped
+     * @return the mapped list of ReplyMessageDTO
+     */
+    public static List&lt;ReplyMessageDTO&gt; toDTOList(List&lt;ReplyMessageModel&gt; replyMessageModels) {
+<span class="fc" id="L39">        return replyMessageModels.stream()</span>
+<span class="fc" id="L40">                .map(ReplyMessageModelReplyMessageDTOMapper::toDTO)</span>
+<span class="fc" id="L41">                .collect(Collectors.toList());</span>
+    }
+
+    /**
+     * Maps a ReplyMessageDTO to a ReplyMessageModel.
+     *
+     * @param replyMessageDTO the ReplyMessageDTO to be mapped
+     * @return the mapped ReplyMessageModel
+     */
+    public static ReplyMessageModel toModel(ReplyMessageDTO replyMessageDTO) {
+<span class="fc" id="L51">        return new ReplyMessageModel(</span>
+<span class="fc" id="L52">                replyMessageDTO.getId(),</span>
+<span class="fc" id="L53">                replyMessageDTO.getContent(),</span>
+<span class="fc" id="L54">                replyMessageDTO.getParentMessageID(),</span>
+<span class="fc" id="L55">                replyMessageDTO.getUserId(),</span>
+<span class="fc" id="L56">                replyMessageDTO.getCreatedAt(),</span>
+<span class="fc" id="L57">                replyMessageDTO.getUpdatedAt()</span>
+        );
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

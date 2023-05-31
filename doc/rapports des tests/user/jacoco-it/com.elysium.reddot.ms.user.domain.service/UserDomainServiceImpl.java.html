@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserDomainServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">userManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.user.domain.service</a> &gt; <span class="el_source">UserDomainServiceImpl.java</span></div><h1>UserDomainServiceImpl.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.user.domain.service;
+
+import com.elysium.reddot.ms.user.domain.exception.type.BadValueException;
+import com.elysium.reddot.ms.user.domain.model.UserModel;
+
+import java.util.regex.Pattern;
+
+/**
+ * Implementation of the User Domain Service.
+ */
+<span class="fc" id="L11">public class UserDomainServiceImpl implements IUserDomainService {</span>
+
+    private static final int PASSWORD_MIN_LENGTH = 8;
+    private static final String EMAIL_LABEL = &quot;email&quot;;
+    private static final String PASSWORD_LABEL = &quot;password&quot;;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validateUserForCreation(UserModel userModel) {
+<span class="fc" id="L22">        checkUserName(userModel.getUsername());</span>
+<span class="fc" id="L23">        checkEmail(userModel.getEmail());</span>
+<span class="fc" id="L24">        checkValidPassword(userModel.getPassword());</span>
+<span class="fc" id="L25">    }</span>
+
+    /**
+     * Checks if the given username is valid.
+     *
+     * @param username the username to check
+     * @throws BadValueException if the username is not valid
+     */
+    private void checkUserName(String username) {
+<span class="fc" id="L34">        isNotEmptyElseThrow(&quot;username&quot;, username);</span>
+        // another rule
+<span class="fc" id="L36">    }</span>
+
+    /**
+     * Checks if the given email is valid.
+     *
+     * @param email the email to check
+     * @throws BadValueException if the email is not valid
+     */
+    private void checkEmail(String email) {
+<span class="fc" id="L45">        isNotEmptyElseThrow(EMAIL_LABEL, email);</span>
+<span class="fc" id="L46">        hasOneAtSignElseThrow(email);</span>
+        // another rule
+<span class="fc" id="L48">    }</span>
+
+    /**
+     * Checks if the given password is valid.
+     *
+     * @param password the password to check
+     * @throws BadValueException if the password is not valid
+     */
+    private void checkValidPassword(String password) {
+<span class="fc" id="L57">        hasMinimumLengthOfElseThrow(password);</span>
+<span class="fc" id="L58">        hasOneUpperCaseElseThrow(password);</span>
+<span class="fc" id="L59">        hasOneDigitElseThrow(password);</span>
+<span class="fc" id="L60">        hasOneSpecialCharacterElseThrow(password);</span>
+<span class="fc" id="L61">    }</span>
+
+    /**
+     * Checks if the given field is not empty.
+     *
+     * @param field the name of the field to check
+     * @param value the value of the field to check
+     * @throws BadValueException if the field is empty
+     */
+    private void isNotEmptyElseThrow(String field, String value) {
+<span class="fc bfc" id="L71" title="All 6 branches covered.">        if (value == null || value.isEmpty() || value.isBlank()) {</span>
+<span class="fc" id="L72">            throw new BadValueException(field, &quot;is required and cannot be empty&quot;);</span>
+        }
+<span class="fc" id="L74">    }</span>
+
+    /**
+     * Checks if the given email contains at least one '@' sign.
+     *
+     * @param email the email to check
+     * @throws BadValueException if the email does not contain an '@' sign
+     */
+    private void hasOneAtSignElseThrow(String email) {
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (!Pattern.compile(&quot;^[^@]+@[^@]+$&quot;).matcher(email).matches()) {</span>
+<span class="fc" id="L84">            throw new BadValueException(EMAIL_LABEL, &quot;must have exactly one '@' sign&quot;);</span>
+        }
+<span class="fc" id="L86">    }</span>
+
+    /**
+     * Checks if the given password has a minimum length.
+     *
+     * @param password the password to check
+     * @throws BadValueException if the password is shorter than the minimum length
+     */
+    private void hasMinimumLengthOfElseThrow(String password) {
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        if (password.length() &lt; PASSWORD_MIN_LENGTH) {</span>
+<span class="fc" id="L96">            throw new BadValueException(PASSWORD_LABEL, &quot;must have a minimum length &quot;</span>
+                    + PASSWORD_MIN_LENGTH
+<span class="fc" id="L98">                    + &quot;. Password has &quot; + password.length());</span>
+        }
+<span class="fc" id="L100">    }</span>
+
+    /**
+     * Checks if the given password contains at least one uppercase letter.
+     *
+     * @param password the password to check
+     * @throws BadValueException if the password does not contain an uppercase letter
+     */
+    private void hasOneUpperCaseElseThrow(String password) {
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (!Pattern.compile(&quot;[A-Z]&quot;).matcher(password).find()) {</span>
+<span class="fc" id="L110">            throw new BadValueException(PASSWORD_LABEL, &quot;must have a least one uppercase letter&quot;);</span>
+        }
+<span class="fc" id="L112">    }</span>
+
+    /**
+     * Checks if the given password contains at least one digit.
+     *
+     * @param password the password to check
+     * @throws BadValueException if the password does not contain a digit
+     */
+    private void hasOneDigitElseThrow(String password) {
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        if (!Pattern.compile(&quot;\\d&quot;).matcher(password).find()) {</span>
+<span class="fc" id="L122">            throw new BadValueException(PASSWORD_LABEL, &quot;must have a least one digit&quot;);</span>
+        }
+<span class="fc" id="L124">    }</span>
+
+    /**
+     * Checks if the given password contains at least one special character.
+     *
+     * @param password the password to check
+     * @throws BadValueException if the password does not contain a special character
+     */
+    private void hasOneSpecialCharacterElseThrow(String password) {
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        if (!Pattern.compile(&quot;[!@#$%^&amp;()\\-+=|&lt;&gt;?{}\\[\\]~]&quot;).matcher(password).find()) {</span>
+<span class="fc" id="L134">            throw new BadValueException(PASSWORD_LABEL, &quot;must have a least one special character&quot;);</span>
+        }
+<span class="fc" id="L136">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

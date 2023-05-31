@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReplyMessageDTO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">replyMessageManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.replymessage.application.data.dto</a> &gt; <span class="el_source">ReplyMessageDTO.java</span></div><h1>ReplyMessageDTO.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.replymessage.application.data.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+/**
+ * Data Transfer Object (DTO) for reply message data.
+ * This is used to expose a standard and consistent structure for reply messages in API responses and requests.
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ReplyMessageDTO {
+
+
+    @ApiModelProperty(&quot;The unique identifier of the reply message.&quot;)
+    private Long id;
+
+    @ApiModelProperty(&quot;The content of the reply message.&quot;)
+    private String content;
+
+    @ApiModelProperty(&quot;The unique identifier of the parent message this is a reply to.&quot;)
+    private Long parentMessageID;
+
+    @ApiModelProperty(&quot;The unique identifier of the user who posted the reply message.&quot;)
+    private String userId;
+
+    @ApiModelProperty(&quot;The date and time when the reply message was created.&quot;)
+    @JsonFormat(pattern = &quot;yyyy-MM-dd HH:mm:ss&quot;)
+    private LocalDateTime createdAt;
+
+    @ApiModelProperty(&quot;The date and time when the reply message was last updated.&quot;)
+    @JsonFormat(pattern = &quot;yyyy-MM-dd HH:mm:ss&quot;)
+    private LocalDateTime updatedAt;
+
+    /**
+     * Constructs a ReplyMessageDTO with only content, parent message ID, and user ID specified.
+     * This can be used when creating a new reply message.
+     *
+     * @param content the content of the reply message
+     * @param parentMessageID the unique identifier of the parent message this is a reply to
+     * @param userId the unique identifier of the user who is posting the reply message
+     */
+<span class="fc" id="L49">    public ReplyMessageDTO(String content, Long parentMessageID, String userId){</span>
+<span class="fc" id="L50">        this.content = content;</span>
+<span class="fc" id="L51">        this.parentMessageID = parentMessageID;</span>
+<span class="fc" id="L52">        this.userId = userId;</span>
+<span class="fc" id="L53">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

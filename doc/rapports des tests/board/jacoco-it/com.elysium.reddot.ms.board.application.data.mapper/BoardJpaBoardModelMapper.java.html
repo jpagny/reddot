@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BoardJpaBoardModelMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">boardManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.board.application.data.mapper</a> &gt; <span class="el_source">BoardJpaBoardModelMapper.java</span></div><h1>BoardJpaBoardModelMapper.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.board.application.data.mapper;
+
+import com.elysium.reddot.ms.board.domain.model.BoardModel;
+import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.entity.BoardJpaEntity;
+
+public class BoardJpaBoardModelMapper {
+
+    private BoardJpaBoardModelMapper() {
+    }
+
+    public static BoardJpaEntity toEntity(BoardModel boardModel) {
+<span class="fc" id="L12">        BoardJpaEntity boardJpaEntity = new BoardJpaEntity();</span>
+<span class="fc" id="L13">        boardJpaEntity.setId(boardModel.getId());</span>
+<span class="fc" id="L14">        boardJpaEntity.setName(boardModel.getName());</span>
+<span class="fc" id="L15">        boardJpaEntity.setLabel(boardModel.getLabel());</span>
+<span class="fc" id="L16">        boardJpaEntity.setDescription(boardModel.getDescription());</span>
+<span class="fc" id="L17">        boardJpaEntity.setTopicId(boardModel.getTopicId());</span>
+<span class="fc" id="L18">        return boardJpaEntity;</span>
+    }
+
+    public static BoardModel toModel(BoardJpaEntity boardJpaEntity) {
+<span class="fc" id="L22">        return new BoardModel(</span>
+<span class="fc" id="L23">                boardJpaEntity.getId(),</span>
+<span class="fc" id="L24">                boardJpaEntity.getName(),</span>
+<span class="fc" id="L25">                boardJpaEntity.getLabel(),</span>
+<span class="fc" id="L26">                boardJpaEntity.getDescription(),</span>
+<span class="fc" id="L27">                boardJpaEntity.getTopicId()</span>
+        );
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

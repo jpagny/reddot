@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TopicRepositoryAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">topicManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.topic.infrastructure.outbound.persistence</a> &gt; <span class="el_source">TopicRepositoryAdapter.java</span></div><h1>TopicRepositoryAdapter.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.topic.infrastructure.outbound.persistence;
+
+
+import com.elysium.reddot.ms.topic.application.data.mapper.TopicJpaTopicModelMapper;
+import com.elysium.reddot.ms.topic.domain.model.TopicModel;
+import com.elysium.reddot.ms.topic.domain.port.outbound.ITopicRepository;
+import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.entity.TopicJpaEntity;
+import com.elysium.reddot.ms.topic.infrastructure.outbound.persistence.repository.TopicJpaRepository;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+/**
+ * Component that adapts the TopicJpaRepository to the ITopicRepository interface.
+ */
+@Component
+public class TopicRepositoryAdapter implements ITopicRepository {
+
+    private final TopicJpaRepository topicJpaRepository;
+
+<span class="fc" id="L23">    public TopicRepositoryAdapter(TopicJpaRepository topicJpaRepository) {</span>
+<span class="fc" id="L24">        this.topicJpaRepository = topicJpaRepository;</span>
+<span class="fc" id="L25">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TopicModel createTopic(TopicModel topicModel) {
+<span class="fc" id="L32">        TopicJpaEntity topicEntity = TopicJpaTopicModelMapper.toEntity(topicModel);</span>
+<span class="fc" id="L33">        TopicJpaEntity savedTopic = topicJpaRepository.save(topicEntity);</span>
+<span class="fc" id="L34">        return TopicJpaTopicModelMapper.toModel(savedTopic);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional&lt;TopicModel&gt; findTopicById(Long id) {
+<span class="fc" id="L42">        return topicJpaRepository.findById(id)</span>
+<span class="fc" id="L43">                .map(TopicJpaTopicModelMapper::toModel);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional&lt;TopicModel&gt; findTopicByName(String name) {
+<span class="fc" id="L51">        return topicJpaRepository.findByName(name)</span>
+<span class="fc" id="L52">                .map(TopicJpaTopicModelMapper::toModel);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List&lt;TopicModel&gt; findAllTopics() {
+<span class="fc" id="L60">        return topicJpaRepository.findAll()</span>
+<span class="fc" id="L61">                .stream()</span>
+<span class="fc" id="L62">                .map(TopicJpaTopicModelMapper::toModel)</span>
+<span class="fc" id="L63">                .collect(Collectors.toList());</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TopicModel updateTopic(TopicModel topicModel) {
+<span class="fc" id="L71">        TopicJpaEntity topicEntity = TopicJpaTopicModelMapper.toEntity(topicModel);</span>
+<span class="fc" id="L72">        TopicJpaEntity updatedTopic = topicJpaRepository.save(topicEntity);</span>
+<span class="fc" id="L73">        return TopicJpaTopicModelMapper.toModel(updatedTopic);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

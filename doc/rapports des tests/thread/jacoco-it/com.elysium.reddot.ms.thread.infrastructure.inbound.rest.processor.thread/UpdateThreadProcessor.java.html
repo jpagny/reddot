@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UpdateThreadProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">threadManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread</a> &gt; <span class="el_source">UpdateThreadProcessor.java</span></div><h1>UpdateThreadProcessor.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread;
+
+import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
+import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
+import com.elysium.reddot.ms.thread.application.service.KeycloakService;
+import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
+import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
+import com.elysium.reddot.ms.thread.application.data.mapper.ThreadDTOThreadModel;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+
+import javax.naming.AuthenticationException;
+
+/**
+ * The UpdateThreadProcessor class is a Camel Processor component that handles the update of a thread.
+ * It updates the thread using the ThreadApplicationServiceImpl and sets the response body with the updated thread.
+ */
+@Component
+@AllArgsConstructor
+<span class="fc" id="L24">@Slf4j</span>
+public class UpdateThreadProcessor implements Processor {
+
+    private final ThreadApplicationServiceImpl threadService;
+    private final KeycloakService keycloakService;
+
+    @Override
+    public void process(Exchange exchange) throws AuthenticationException {
+<span class="fc" id="L32">        log.debug(&quot;Processing update thread request...&quot;);</span>
+
+<span class="fc" id="L34">        Long inputId = exchange.getIn().getHeader(&quot;id&quot;, Long.class);</span>
+<span class="fc" id="L35">        ThreadDTO inputThreadDTO = exchange.getIn().getBody(ThreadDTO.class);</span>
+<span class="fc" id="L36">        log.debug(&quot;Received input ID: {}&quot;, inputId);</span>
+<span class="fc" id="L37">        log.debug(&quot;Received input ThreadDTO: {}&quot;, inputThreadDTO);</span>
+
+        // add user id
+<span class="fc" id="L40">        String userId = keycloakService.getUserId();</span>
+<span class="fc" id="L41">        inputThreadDTO.setUserId(userId);</span>
+<span class="fc" id="L42">        log.debug(&quot;Adding userId: {}&quot;, inputThreadDTO);</span>
+
+<span class="fc" id="L44">        ThreadModel threadToUpdateModel = ThreadDTOThreadModel.toModel(inputThreadDTO);</span>
+
+<span class="fc" id="L46">        ThreadModel updatedThreadModel = threadService.updateThread(inputId, threadToUpdateModel);</span>
+<span class="fc" id="L47">        log.debug(&quot;Updated thread: {}&quot;, updatedThreadModel);</span>
+
+<span class="fc" id="L49">        ThreadDTO updatedThreadDTO = ThreadDTOThreadModel.toDTO(updatedThreadModel);</span>
+<span class="fc" id="L50">        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(), &quot;Thread with name &quot; + updatedThreadDTO.getName() + &quot; updated successfully&quot;, updatedThreadDTO);</span>
+
+<span class="fc" id="L52">        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());</span>
+<span class="fc" id="L53">        exchange.getMessage().setBody(apiResponseDTO);</span>
+
+<span class="fc" id="L55">        log.debug(&quot;Update thread request processed successfully.&quot;);</span>
+<span class="fc" id="L56">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

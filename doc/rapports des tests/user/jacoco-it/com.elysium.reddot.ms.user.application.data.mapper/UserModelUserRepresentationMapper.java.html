@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserModelUserRepresentationMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">userManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.user.application.data.mapper</a> &gt; <span class="el_source">UserModelUserRepresentationMapper.java</span></div><h1>UserModelUserRepresentationMapper.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.user.application.data.mapper;
+
+import com.elysium.reddot.ms.user.domain.model.UserModel;
+import org.keycloak.representations.idm.UserRepresentation;
+
+/**
+ * Mapper class for converting between UserModel and UserRepresentation.
+ */
+public class UserModelUserRepresentationMapper {
+
+    private UserModelUserRepresentationMapper(){}
+
+    /**
+     * Converts a UserRepresentation to a UserModel.
+     *
+     * @param userRepresentation the UserRepresentation to convert
+     * @return a UserModel with the same properties as the provided UserRepresentation
+     */
+    public static UserModel toUserModel(UserRepresentation userRepresentation) {
+<span class="fc" id="L20">        return new UserModel(</span>
+<span class="fc" id="L21">                userRepresentation.getId(),</span>
+<span class="fc" id="L22">                userRepresentation.getUsername(),</span>
+<span class="fc" id="L23">                userRepresentation.getEmail(),</span>
+<span class="fc" id="L24">                userRepresentation.isEmailVerified(),</span>
+                &quot;xxx&quot;
+        );
+
+    }
+
+    /**
+     * Converts a UserModel to a UserRepresentation.
+     *
+     * @param userModel the UserModel to convert
+     * @return a UserRepresentation with the same properties as the provided UserModel
+     */
+    public static UserRepresentation toUserRepresentation(UserModel userModel){
+<span class="fc" id="L37">        UserRepresentation userRepresentation = new UserRepresentation();</span>
+<span class="fc" id="L38">        userRepresentation.setId(userModel.getId());</span>
+<span class="fc" id="L39">        userRepresentation.setUsername(userModel.getUsername());</span>
+<span class="fc" id="L40">        userRepresentation.setEmail(userModel.getEmail());</span>
+<span class="fc" id="L41">        userRepresentation.setEmailVerified(userModel.isEmailVerified());</span>
+
+<span class="fc" id="L43">        return userRepresentation;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

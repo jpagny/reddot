@@ -130,8 +130,8 @@ public class CalculateDailyUserMessagesStatisticJob extends QuartzJobBean {
         log.debug("Calculating the start and end LocalDateTime objects for the previous day's time period.");
 
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime start = now.minusDays(7).withHour(0).withMinute(0).withSecond(0);
-        LocalDateTime end = now.plusDays(1).withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime start = now.minusDays(1).withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime end = now.withHour(0).withMinute(0).withSecond(0);
 
         log.debug("Yesterday's period: Start: {}, End: {}", start, end);
 

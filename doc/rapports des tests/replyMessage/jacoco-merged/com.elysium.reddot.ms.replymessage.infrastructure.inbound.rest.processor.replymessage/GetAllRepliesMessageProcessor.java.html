@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GetAllRepliesMessageProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">replyMessageManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.replymessage</a> &gt; <span class="el_source">GetAllRepliesMessageProcessor.java</span></div><h1>GetAllRepliesMessageProcessor.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.replymessage;
+
+import com.elysium.reddot.ms.replymessage.application.data.dto.ApiResponseDTO;
+import com.elysium.reddot.ms.replymessage.application.data.dto.ReplyMessageDTO;
+import com.elysium.reddot.ms.replymessage.application.service.ReplyMessageApplicationServiceImpl;
+import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
+import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageModelReplyMessageDTOMapper;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+@Component
+@AllArgsConstructor
+<span class="fc" id="L19">@Slf4j</span>
+public class GetAllRepliesMessageProcessor implements Processor {
+
+    private final ReplyMessageApplicationServiceImpl replyReplyMessageService;
+
+    /**
+     * Processes the retrieval of all reply messages.
+     *
+     * @param exchange the Camel exchange object
+     */
+    @Override
+    public void process(Exchange exchange) {
+<span class="fc" id="L31">        log.debug(&quot;Processing get all reply messages...&quot;);</span>
+
+<span class="fc" id="L33">        List&lt;ReplyMessageModel&gt; listReplyMessagesModel = replyReplyMessageService.getAllRepliesMessage();</span>
+<span class="fc" id="L34">        log.debug(&quot;Retrieved {} reply messages&quot;, listReplyMessagesModel.size());</span>
+
+<span class="fc" id="L36">        List&lt;ReplyMessageDTO&gt; listReplyMessagesDTO = ReplyMessageModelReplyMessageDTOMapper.toDTOList(listReplyMessagesModel);</span>
+<span class="fc" id="L37">        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(),</span>
+                &quot;All replies message retrieved successfully&quot;, listReplyMessagesDTO);
+<span class="fc" id="L39">        log.debug(&quot;Created API response DTO: {}&quot;, apiResponseDTO);</span>
+
+
+<span class="fc" id="L42">        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());</span>
+<span class="fc" id="L43">        exchange.getMessage().setBody(apiResponseDTO);</span>
+
+<span class="fc" id="L45">        log.debug(&quot;Set get all reply messages response: {}&quot;, apiResponseDTO);</span>
+<span class="fc" id="L46">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

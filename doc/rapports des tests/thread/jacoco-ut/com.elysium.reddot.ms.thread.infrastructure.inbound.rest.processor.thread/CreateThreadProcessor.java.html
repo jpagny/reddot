@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateThreadProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">threadManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread</a> &gt; <span class="el_source">CreateThreadProcessor.java</span></div><h1>CreateThreadProcessor.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread;
+
+import com.elysium.reddot.ms.thread.application.data.dto.ApiResponseDTO;
+import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
+import com.elysium.reddot.ms.thread.application.service.KeycloakService;
+import com.elysium.reddot.ms.thread.application.service.ThreadApplicationServiceImpl;
+import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
+import com.elysium.reddot.ms.thread.application.data.mapper.ThreadDTOThreadModel;
+import com.elysium.reddot.ms.thread.infrastructure.outbound.rabbitmq.requester.BoardExistRequester;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+
+import javax.naming.AuthenticationException;
+import java.io.IOException;
+
+/**
+ * The CreateThreadProcessor class is a Camel Processor component that handles the creation of a thread.
+ * It verifies the existence of the board ID and creates the thread using the ThreadApplicationServiceImpl.
+ */
+@Component
+@AllArgsConstructor
+<span class="fc" id="L26">@Slf4j</span>
+public class CreateThreadProcessor implements Processor {
+
+    private final ThreadApplicationServiceImpl threadApplicationService;
+    private final KeycloakService keycloakService;
+    private final BoardExistRequester boardExistRequester;
+
+    @Override
+    public void process(Exchange exchange) throws IOException, AuthenticationException {
+<span class="fc" id="L35">        log.debug(&quot;Processing create thread request...&quot;);</span>
+
+<span class="fc" id="L37">        ThreadDTO inputThreadDTO = exchange.getIn().getBody(ThreadDTO.class);</span>
+<span class="fc" id="L38">        log.debug(&quot;Received input ThreadDTO: {}&quot;, inputThreadDTO);</span>
+
+        // add user id
+<span class="fc" id="L41">        String userId = keycloakService.getUserId();</span>
+<span class="fc" id="L42">        inputThreadDTO.setUserId(userId);</span>
+<span class="fc" id="L43">        log.debug(&quot;Adding userId: {}&quot;, inputThreadDTO);</span>
+
+<span class="fc" id="L45">        ThreadModel threadModel = ThreadDTOThreadModel.toModel(inputThreadDTO);</span>
+
+<span class="fc" id="L47">        log.debug(&quot;Verifying existence of board ID: {}&quot;, threadModel.getBoardId());</span>
+<span class="fc" id="L48">        boardExistRequester.verifyBoardIdExistsOrThrow(threadModel.getBoardId());</span>
+
+<span class="fc" id="L50">        createThreadAndSetResponse(exchange, threadModel);</span>
+
+<span class="fc" id="L52">        log.debug(&quot;Create thread request processed successfully.&quot;);</span>
+<span class="fc" id="L53">    }</span>
+
+    private void createThreadAndSetResponse(Exchange exchange, ThreadModel threadModel) {
+<span class="fc" id="L56">        log.debug(&quot;Creating thread using ThreadApplicationService...&quot;);</span>
+
+<span class="fc" id="L58">        ThreadModel createdThreadModel = threadApplicationService.createThread(threadModel);</span>
+
+<span class="fc" id="L60">        ThreadDTO createdThreadDTO = ThreadDTOThreadModel.toDTO(createdThreadModel);</span>
+<span class="fc" id="L61">        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.CREATED.value(),</span>
+<span class="fc" id="L62">                &quot;Thread with name &quot; + createdThreadModel.getName() + &quot; created successfully&quot;, createdThreadDTO);</span>
+
+<span class="fc" id="L64">        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.CREATED.value());</span>
+<span class="fc" id="L65">        exchange.getMessage().setBody(apiResponseDTO);</span>
+
+<span class="fc" id="L67">        log.debug(&quot;Created thread: {}&quot;, createdThreadDTO);</span>
+<span class="fc" id="L68">        log.debug(&quot;Set HTTP response code to {}&quot;, HttpStatus.CREATED.value());</span>
+<span class="fc" id="L69">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

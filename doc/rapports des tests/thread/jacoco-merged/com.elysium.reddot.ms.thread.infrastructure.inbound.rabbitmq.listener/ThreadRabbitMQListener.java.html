@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThreadRabbitMQListener.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">threadManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.thread.infrastructure.inbound.rabbitmq.listener</a> &gt; <span class="el_source">ThreadRabbitMQListener.java</span></div><h1>ThreadRabbitMQListener.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.thread.infrastructure.inbound.rabbitmq.listener;
+
+import com.elysium.reddot.ms.thread.application.service.ThreadRabbitMQService;
+import com.elysium.reddot.ms.thread.infrastructure.constant.RabbitMQConstant;
+import com.elysium.reddot.ms.thread.infrastructure.data.dto.BoardExistsResponseDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.stereotype.Component;
+
+import java.nio.charset.StandardCharsets;
+
+/**
+ * Listener class to handle messages from RabbitMQ related to thread existence checks.
+ */
+@Component
+<span class="fc" id="L22">@Slf4j</span>
+public class ThreadRabbitMQListener {
+
+    private final RabbitTemplate rabbitTemplate;
+    private final ThreadRabbitMQService threadRabbitMQService;
+
+<span class="fc" id="L28">    public ThreadRabbitMQListener(RabbitTemplate rabbitTemplate, ThreadRabbitMQService threadRabbitMQService) {</span>
+<span class="fc" id="L29">        this.rabbitTemplate = rabbitTemplate;</span>
+<span class="fc" id="L30">        this.threadRabbitMQService = threadRabbitMQService;</span>
+<span class="fc" id="L31">    }</span>
+
+    /**
+     * Listens to the QUEUE_THREAD_EXIST queue and checks if a thread with the given ID exists.
+     * Sends a reply to the 'ReplyTo' header with the result of the check.
+     *
+     * @param message the incoming RabbitMQ message
+     * @throws JsonProcessingException if any error occurs during JSON processing
+     */
+    @RabbitListener(queues = RabbitMQConstant.QUEUE_THREAD_EXIST)
+    public void checkThreadExists(Message message) throws JsonProcessingException {
+<span class="fc" id="L42">        log.debug(&quot;Received RabbitMQ message to check thread existence.&quot;);</span>
+
+<span class="fc" id="L44">        MessageConverter messageConverter = rabbitTemplate.getMessageConverter();</span>
+<span class="fc" id="L45">        Object rawMessage = messageConverter.fromMessage(message);</span>
+<span class="fc" id="L46">        String rawString = &quot;&quot;;</span>
+
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        if (rawMessage instanceof byte[]) {</span>
+<span class="fc" id="L49">            byte[] byteArray = (byte[]) rawMessage;</span>
+<span class="fc" id="L50">            rawString = new String(byteArray, StandardCharsets.UTF_8);</span>
+<span class="fc" id="L51">            log.debug(&quot;Raw byte array as string: {}&quot;, rawString);</span>
+
+<span class="pc bnc" id="L53" title="All 2 branches missed.">        } else if (rawMessage instanceof String) {</span>
+<span class="nc" id="L54">            rawString = (String) rawMessage;</span>
+<span class="nc" id="L55">            log.debug(&quot;Object as string: {}&quot;, rawString);</span>
+
+        }
+
+<span class="fc" id="L59">        Long threadId = Long.parseLong(rawString);</span>
+
+<span class="fc" id="L61">        log.debug(&quot;Checking existence of thread with ID: {}&quot;, threadId);</span>
+
+<span class="fc" id="L63">        boolean exists = threadRabbitMQService.checkThreadIdExists(threadId);</span>
+
+<span class="fc" id="L65">        log.debug(&quot;Board existence check result: {}&quot;, exists);</span>
+
+<span class="fc" id="L67">        BoardExistsResponseDTO response = new BoardExistsResponseDTO();</span>
+<span class="fc" id="L68">        response.setExists(exists);</span>
+
+<span class="fc" id="L70">        MessageProperties messageProperties = buildMessageProperties(message);</span>
+<span class="fc" id="L71">        String jsonResponse = buildJsonResponse(response);</span>
+<span class="fc" id="L72">        Message responseMessage = buildMessageResponse(jsonResponse, messageProperties);</span>
+
+<span class="fc" id="L74">        sendResponseToRabbit(message, responseMessage);</span>
+<span class="fc" id="L75">        log.debug(&quot;Sent response for thread existence check.&quot;);</span>
+<span class="fc" id="L76">    }</span>
+
+    private MessageProperties buildMessageProperties(Message message) {
+<span class="fc" id="L79">        log.debug(&quot;Building message properties for response message.&quot;);</span>
+
+<span class="fc" id="L81">        MessageProperties messageProperties = new MessageProperties();</span>
+<span class="fc" id="L82">        messageProperties.setReplyTo(message.getMessageProperties().getReplyTo());</span>
+<span class="fc" id="L83">        messageProperties.setCorrelationId(message.getMessageProperties().getCorrelationId());</span>
+<span class="fc" id="L84">        messageProperties.setContentType(MessageProperties.CONTENT_TYPE_JSON);</span>
+
+<span class="fc" id="L86">        log.debug(&quot;Message properties built: {}&quot;, messageProperties);</span>
+
+<span class="fc" id="L88">        return messageProperties;</span>
+    }
+
+    private String buildJsonResponse(Object response) throws JsonProcessingException {
+<span class="fc" id="L92">        ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L93">        return objectMapper.writeValueAsString(response);</span>
+    }
+
+    private Message buildMessageResponse(String jsonResponse, MessageProperties messageProperties) {
+<span class="fc" id="L97">        return new Message(jsonResponse.getBytes(), messageProperties);</span>
+    }
+
+    private void sendResponseToRabbit(Message message, Message responseMessage) {
+<span class="fc" id="L101">        log.debug(&quot;Sending response to RabbitMQ.&quot;);</span>
+
+<span class="fc" id="L103">        rabbitTemplate.send(</span>
+<span class="fc" id="L104">                message.getMessageProperties().getReplyTo(),</span>
+                responseMessage
+        );
+<span class="fc" id="L107">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

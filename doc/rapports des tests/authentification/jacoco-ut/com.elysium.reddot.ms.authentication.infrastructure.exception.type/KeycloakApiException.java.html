@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>KeycloakApiException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">authenticationManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.authentication.infrastructure.exception.type</a> &gt; <span class="el_source">KeycloakApiException.java</span></div><h1>KeycloakApiException.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.authentication.infrastructure.exception.type;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+
+import javax.ws.rs.core.Response;
+
+@Getter
+public class KeycloakApiException extends RuntimeException {
+
+    private final int status;
+    private final Response response;
+<span class="fc" id="L15">    private static final ObjectMapper objectMapper = new ObjectMapper();</span>
+
+    public KeycloakApiException(Response response) {
+<span class="fc" id="L18">        super(String.format(&quot;Error Keycloak API : %s&quot;,</span>
+<span class="fc" id="L19">                getResponseBody(response)));</span>
+<span class="fc" id="L20">        this.status = response.getStatus();</span>
+<span class="fc" id="L21">        this.response = response;</span>
+<span class="fc" id="L22">    }</span>
+
+    private static String getResponseBody(Response response) {
+
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        if (response.hasEntity()) {</span>
+            String errorMessage;
+<span class="nc" id="L28">            String responseBody = response.readEntity(String.class);</span>
+
+            try {
+<span class="nc" id="L31">                JsonNode jsonNode = objectMapper.readTree(responseBody);</span>
+
+<span class="nc bnc" id="L33" title="All 4 branches missed.">                if (jsonNode.has(&quot;error&quot;) &amp;&amp; jsonNode.has(&quot;error_description&quot;)) {</span>
+<span class="nc" id="L34">                    errorMessage = jsonNode.get(&quot;error&quot;).asText() + &quot; -&gt; &quot; + jsonNode.get(&quot;error_description&quot;).asText();</span>
+
+                } else {
+<span class="nc" id="L37">                    errorMessage = &quot;Error message not found in response body&quot;;</span>
+
+                }
+
+<span class="nc" id="L41">                return errorMessage;</span>
+
+<span class="nc" id="L43">            } catch (JsonProcessingException e) {</span>
+<span class="nc" id="L44">                return String.format(&quot;Failed to parse JSON response: %s&quot;, e.getMessage());</span>
+
+<span class="nc" id="L46">            } catch (Exception e) {</span>
+<span class="nc" id="L47">                return String.format(&quot;Unexpected exception: %s&quot;, e.getMessage());</span>
+
+            }
+        }
+
+<span class="fc" id="L52">        return &quot;No response body available&quot;;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

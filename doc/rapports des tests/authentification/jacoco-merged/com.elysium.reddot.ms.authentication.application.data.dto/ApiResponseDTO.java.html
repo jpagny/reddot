@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApiResponseDTO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">authenticationManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.authentication.application.data.dto</a> &gt; <span class="el_source">ApiResponseDTO.java</span></div><h1>ApiResponseDTO.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.authentication.application.data.dto;
+
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+
+/**
+ * Data Transfer Object (DTO) for carrying API response data.
+ * It includes a status code, a message, and the actual data of the response.
+ */
+@Getter
+@ApiModel(description = &quot;Data Transfer Object for carrying API response data.&quot;)
+public class ApiResponseDTO {
+
+    @ApiModelProperty(notes = &quot;The status code of the response.&quot;)
+    private final int status;
+
+    @ApiModelProperty(notes = &quot;The message of the response.&quot;)
+    private final String message;
+
+    @ApiModelProperty(notes = &quot;The actual data of the response.&quot;)
+    private final Object data;
+
+    /**
+     * Constructs a new ApiResponseDTO with status, message, and data.
+     *
+     * @param status The status code of the response.
+     * @param message The message of the response.
+     * @param data The actual data of the response.
+     */
+<span class="fc" id="L32">    public ApiResponseDTO(int status, String message, Object data) {</span>
+<span class="fc" id="L33">        this.status = status;</span>
+<span class="fc" id="L34">        this.message = message;</span>
+<span class="fc" id="L35">        this.data = data;</span>
+<span class="fc" id="L36">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

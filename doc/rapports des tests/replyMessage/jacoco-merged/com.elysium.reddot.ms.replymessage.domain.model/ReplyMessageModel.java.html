@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReplyMessageModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">replyMessageManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.replymessage.domain.model</a> &gt; <span class="el_source">ReplyMessageModel.java</span></div><h1>ReplyMessageModel.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.replymessage.domain.model;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+/**
+ * Represents a reply message in the application.
+ */
+public class ReplyMessageModel {
+
+    private Long id;
+    private String content;
+    private Long parentMessageID;
+    private String userId;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+<span class="fc" id="L18">    public ReplyMessageModel(){</span>
+<span class="fc" id="L19">    }</span>
+
+    /**
+     * Constructor creating a full reply message object.
+     *
+     * @param id the unique identifier of the message
+     * @param content the text content of the message
+     * @param parentMessageID the identifier of the message this is a reply to
+     * @param userId the identifier of the user who created the message
+     * @param createdAt the time when the message was created
+     * @param updatedAt the time when the message was last updated
+     */
+<span class="fc" id="L31">    public ReplyMessageModel(Long id, String content, Long parentMessageID, String userId, LocalDateTime createdAt, LocalDateTime updatedAt) {</span>
+<span class="fc" id="L32">        this.id = id;</span>
+<span class="fc" id="L33">        this.content = content;</span>
+<span class="fc" id="L34">        this.parentMessageID = parentMessageID;</span>
+<span class="fc" id="L35">        this.userId = userId;</span>
+<span class="fc" id="L36">        this.setCreatedAt(createdAt);</span>
+<span class="fc" id="L37">        this.setUpdatedAt(updatedAt);</span>
+<span class="fc" id="L38">    }</span>
+
+    /**
+     * Constructor creating a reply message object without an id or timestamps.
+     *
+     * @param content the text content of the message
+     * @param parentMessageID the identifier of the message this is a reply to
+     * @param userId the identifier of the user who created the message
+     */
+<span class="fc" id="L47">    public ReplyMessageModel(String content, Long parentMessageID, String userId) {</span>
+<span class="fc" id="L48">        this.content = content;</span>
+<span class="fc" id="L49">        this.parentMessageID = parentMessageID;</span>
+<span class="fc" id="L50">        this.userId = userId;</span>
+<span class="fc" id="L51">    }</span>
+
+    public Long getId() {
+<span class="fc" id="L54">        return id;</span>
+    }
+
+    public void setId(Long id){
+<span class="fc" id="L58">        this.id = id;</span>
+<span class="fc" id="L59">    }</span>
+
+    public String getContent() {
+<span class="fc" id="L62">        return content;</span>
+    }
+
+    public void setContent(String content) {
+<span class="fc" id="L66">        this.content = content;</span>
+<span class="fc" id="L67">    }</span>
+
+    public Long getParentMessageID() {
+<span class="fc" id="L70">        return parentMessageID;</span>
+    }
+
+    public void setMessageId(Long parentMessageID) {
+<span class="fc" id="L74">        this.parentMessageID = parentMessageID;</span>
+<span class="fc" id="L75">    }</span>
+
+    public String getUserId() {
+<span class="fc" id="L78">        return userId;</span>
+    }
+
+    public void setUserId(String userId) {
+<span class="nc" id="L82">        this.userId = userId;</span>
+<span class="nc" id="L83">    }</span>
+
+    public LocalDateTime getCreatedAt() {
+<span class="fc" id="L86">        return createdAt;</span>
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+<span class="fc" id="L90">        this.createdAt = createdAt;</span>
+<span class="fc" id="L91">    }</span>
+
+    public LocalDateTime getUpdatedAt() {
+<span class="fc" id="L94">        return updatedAt;</span>
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+<span class="fc" id="L98">        this.updatedAt = updatedAt;</span>
+<span class="fc" id="L99">    }</span>
+
+
+    @Override
+    public boolean equals(Object o) {
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        if (this == o) return true;</span>
+<span class="pc bpc" id="L105" title="2 of 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+
+<span class="fc" id="L107">        ReplyMessageModel messageModel = (ReplyMessageModel) o;</span>
+
+<span class="fc" id="L109">        return Objects.equals(id, messageModel.id);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        return id != null ? id.hashCode() : 0;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L119">        return &quot;ReplyMessage{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, content='&quot; + content + '\'' +
+                &quot;, userId='&quot; + userId + '\'' +
+                &quot;, parentMessageID='&quot; + parentMessageID + '\'' +
+                '}';
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

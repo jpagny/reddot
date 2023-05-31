@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThreadDTOThreadModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">threadManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.thread.application.data.mapper</a> &gt; <span class="el_source">ThreadDTOThreadModel.java</span></div><h1>ThreadDTOThreadModel.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.thread.application.data.mapper;
+
+import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
+import com.elysium.reddot.ms.thread.domain.model.ThreadModel;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * The ThreadDTOThreadModel class provides static methods to map between ThreadModel and ThreadDTO objects.
+ * It converts a ThreadModel object to a ThreadDTO object and vice versa.
+ */
+public class ThreadDTOThreadModel {
+
+    private ThreadDTOThreadModel() {
+    }
+
+    /**
+     * Converts a ThreadModel object to a ThreadDTO object.
+     *
+     * @param threadModel The ThreadModel object to be converted.
+     * @return The corresponding ThreadDTO object.
+     */
+    public static ThreadDTO toDTO(ThreadModel threadModel) {
+<span class="fc" id="L25">        ThreadDTO threadDTO = new ThreadDTO();</span>
+<span class="fc" id="L26">        threadDTO.setId(threadModel.getId());</span>
+<span class="fc" id="L27">        threadDTO.setLabel(threadModel.getLabel());</span>
+<span class="fc" id="L28">        threadDTO.setName(threadModel.getName());</span>
+<span class="fc" id="L29">        threadDTO.setDescription(threadModel.getDescription());</span>
+<span class="fc" id="L30">        threadDTO.setBoardId(threadModel.getBoardId());</span>
+<span class="fc" id="L31">        threadDTO.setUserId(threadModel.getUserId());</span>
+<span class="fc" id="L32">        return threadDTO;</span>
+    }
+
+    /**
+     * Converts a list of ThreadModel objects to a list of ThreadDTO objects.
+     *
+     * @param threadModels The list of ThreadModel objects to be converted.
+     * @return The corresponding list of ThreadDTO objects.
+     */
+    public static List&lt;ThreadDTO&gt; toDTOList(List&lt;ThreadModel&gt; threadModels) {
+<span class="fc" id="L42">        return threadModels.stream()</span>
+<span class="fc" id="L43">                .map(ThreadDTOThreadModel::toDTO)</span>
+<span class="fc" id="L44">                .collect(Collectors.toList());</span>
+    }
+
+    /**
+     * Converts a ThreadDTO object to a ThreadModel object.
+     *
+     * @param threadDTO The ThreadDTO object to be converted.
+     * @return The corresponding ThreadModel object.
+     */
+    public static ThreadModel toModel(ThreadDTO threadDTO) {
+<span class="fc" id="L54">        return new ThreadModel(</span>
+<span class="fc" id="L55">                threadDTO.getId(),</span>
+<span class="fc" id="L56">                threadDTO.getName(),</span>
+<span class="fc" id="L57">                threadDTO.getLabel(),</span>
+<span class="fc" id="L58">                threadDTO.getDescription(),</span>
+<span class="fc" id="L59">                threadDTO.getBoardId(),</span>
+<span class="fc" id="L60">                threadDTO.getUserId()</span>
+        );
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

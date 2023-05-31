@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StatisticRabbitMQListener.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">userManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.user.infrastructure.inbound.rabbitmq.listener</a> &gt; <span class="el_source">StatisticRabbitMQListener.java</span></div><h1>StatisticRabbitMQListener.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.user.infrastructure.inbound.rabbitmq.listener;
+
+import com.elysium.reddot.ms.user.application.service.UserRabbitMQService;
+import com.elysium.reddot.ms.user.infrastructure.constant.RabbitMQConstant;
+import com.elysium.reddot.ms.user.infrastructure.data.rabbitmq.send.response.ListUserIdsResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+/**
+ * Listener for processing statistic messages received from RabbitMQ.
+ */
+@Component
+@RequiredArgsConstructor
+<span class="fc" id="L23">@Slf4j</span>
+public class StatisticRabbitMQListener {
+
+    private final RabbitTemplate rabbitTemplate;
+    private final UserRabbitMQService userRabbitMQService;
+
+    /**
+     * Retrieves all user IDs and sends the response via RabbitMQ.
+     *
+     * @param message the incoming message triggering the retrieval of user IDs
+     * @throws JsonProcessingException if an error occurs during JSON processing
+     */
+    @RabbitListener(queues = RabbitMQConstant.QUEUE_FETCH_ALL_USERS)
+    public void getAllUserIds(Message message) throws JsonProcessingException {
+<span class="fc" id="L37">        log.debug(&quot;Received message: {}&quot;, message);</span>
+
+<span class="fc" id="L39">        List&lt;String&gt; listUserIds = userRabbitMQService.getAllUsers();</span>
+
+<span class="fc" id="L41">        log.debug(&quot;Retrieved user IDs: {}&quot;, listUserIds);</span>
+
+<span class="fc" id="L43">        ListUserIdsResponse response = new ListUserIdsResponse(listUserIds);</span>
+
+<span class="fc" id="L45">        MessageProperties messageProperties = buildMessageProperties(message);</span>
+<span class="fc" id="L46">        String jsonResponse = buildJsonResponse(response);</span>
+<span class="fc" id="L47">        Message responseMessage = buildMessageResponse(jsonResponse, messageProperties);</span>
+        
+<span class="fc" id="L49">        sendResponseToRabbit(message, responseMessage);</span>
+
+<span class="fc" id="L51">        log.debug(&quot;Sent response message: {}&quot;, responseMessage);</span>
+<span class="fc" id="L52">    }</span>
+
+    /**
+     * Builds the message properties for the response message based on the original message.
+     *
+     * @param message the original message containing the replyTo and correlationId properties
+     * @return the message properties for the response message
+     */
+    private MessageProperties buildMessageProperties(Message message) {
+<span class="fc" id="L61">        log.debug(&quot;Building message properties&quot;);</span>
+
+<span class="fc" id="L63">        MessageProperties messageProperties = new MessageProperties();</span>
+<span class="fc" id="L64">        messageProperties.setReplyTo(message.getMessageProperties().getReplyTo());</span>
+<span class="fc" id="L65">        messageProperties.setCorrelationId(message.getMessageProperties().getCorrelationId());</span>
+<span class="fc" id="L66">        messageProperties.setContentType(MessageProperties.CONTENT_TYPE_JSON);</span>
+
+<span class="fc" id="L68">        log.debug(&quot;Message properties built: {}&quot;, messageProperties);</span>
+
+<span class="fc" id="L70">        return messageProperties;</span>
+    }
+
+    /**
+     * Builds a JSON response string from the provided response object.
+     *
+     * @param response the response object to be converted to JSON
+     * @return the JSON response as a string
+     * @throws JsonProcessingException if an error occurs during JSON processing
+     */
+    private String buildJsonResponse(Object response) throws JsonProcessingException {
+<span class="fc" id="L81">        log.debug(&quot;Building JSON response&quot;);</span>
+
+<span class="fc" id="L83">        ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L84">        String jsonResponse = objectMapper.writeValueAsString(response);</span>
+
+<span class="fc" id="L86">        log.debug(&quot;JSON response built: {}&quot;, jsonResponse);</span>
+<span class="fc" id="L87">        return jsonResponse;</span>
+    }
+
+    /**
+     * Builds a response Message object with the provided JSON response and message properties.
+     *
+     * @param jsonResponse      the JSON response as a String
+     * @param messageProperties the message properties for the response
+     * @return the response Message object
+     */
+    private Message buildMessageResponse(String jsonResponse, MessageProperties messageProperties) {
+<span class="fc" id="L98">        log.debug(&quot;Building response message&quot;);</span>
+
+<span class="fc" id="L100">        Message responseMessage = new Message(jsonResponse.getBytes(), messageProperties);</span>
+
+<span class="fc" id="L102">        log.debug(&quot;Response message built: {}&quot;, responseMessage);</span>
+<span class="fc" id="L103">        return responseMessage;</span>
+    }
+
+    /**
+     * Sends the response message to RabbitMQ.
+     *
+     * @param message         the original message containing the replyTo destination
+     * @param responseMessage the response message to be sent
+     */
+    private void sendResponseToRabbit(Message message, Message responseMessage) {
+<span class="fc" id="L113">        log.debug(&quot;Sending response message to RabbitMQ&quot;);</span>
+<span class="fc" id="L114">        log.debug(&quot;ReplyTo: {}&quot;, message.getMessageProperties().getReplyTo());</span>
+<span class="fc" id="L115">        log.debug(&quot;Response Message: {}&quot;, responseMessage);</span>
+
+<span class="fc" id="L117">        rabbitTemplate.send(</span>
+<span class="fc" id="L118">                message.getMessageProperties().getReplyTo(),</span>
+                responseMessage
+        );
+
+<span class="fc" id="L122">        log.debug(&quot;Response message sent to RabbitMQ&quot;);</span>
+<span class="fc" id="L123">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

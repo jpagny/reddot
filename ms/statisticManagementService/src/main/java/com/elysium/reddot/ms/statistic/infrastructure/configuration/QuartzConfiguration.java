@@ -30,7 +30,8 @@ public class QuartzConfiguration {
         return TriggerBuilder.newTrigger()
                 .forJob(userMessageStatisticJobDetail())
                 .withIdentity("userMessageStatisticTrigger")
-                .withSchedule(SimpleScheduleBuilder.repeatMinutelyForever())
+                //.withSchedule(cronSchedule("0 0 0 * * ?"))
+                .withSchedule(SimpleScheduleBuilder.repeatMinutelyForever(10))
                 .build();
     }
 

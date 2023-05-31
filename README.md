@@ -121,11 +121,23 @@ Voici la commande pour démarrer l'application :
 
 `docker-compose up -d`
 
+**Remarque** : Il faudrait attendre environ 30 secondes après avoir démarré tous les conteneurs pour que Eureka et Gateway puissent communiquer entre eux. Veuillez prendre cela en compte
 
 ## Les jeux de tests
 
 Il existe de nombreux jeux de tests pour l'application. Pour faciliter leur utilisation, j'ai préféré exporter ma configuration Postman. Voici le fichier contenant ma configuration de tests Postman : [lien vers le fichier](doc/reddot.postman_collection.json). Vous pouvez importer ce fichier dans Postman pour accéder à l'ensemble des jeux de tests prédéfinis.
 
+**Des informations supplémentaires :**
+Pour le microservice topic et board : seuls les administrateurs peuvent créer ou mettre à jour.
+
+Pour les statistiques : la consigne demande d'enregistrer le nombre de messages par utilisateur par jour. Je me suis demandé si les réponses doivent être incluses dans les messages. Après réflexion, j'ai décidé de créer 3 types de statistiques : messages / réponses / total. Il peut être intéressant de connaître le nombre de réponses envoyées. Voici les différents types à entrer dans l'URL :
+TYPE_COUNT_MESSAGES_BY_USER_DAILY
+TYPE_COUNT_REPLIES_MESSAGE_BY_USER_DAILY
+TYPE_COUNT_TOTAL_MESSAGES_BY_USER_DAILY
+
+J'ai également activé Quartz qui permet de vérifier le nombre de messages toutes les 10 minutes pour effectuer des tests. Si vous préférez remettre cela à minuit chaque jour, il suffit de décommenter la ligne suivante : //.withSchedule(cronSchedule("0 0 0 * * ?"))"
+
+Tous les rapports des tests et les captures d'écran du SonarQube se trouvent dans le dossier doc/.
 
 ## Mes remarques 
 Le plus grand inconvénient que j'ai identifié dans ce projet est l'absence de DevOps. Je n'ai pas mis en place de processus de DevOps car l'architecture microservices n'est pas adaptée aux dépôts GitHub. Avec cette architecture, chaque microservice devrait avoir son propre dépôt et son propre processus de déploiement. Cela signifierait que je devrais créer sept dépôts distincts dans mon compte personnel, ce qui ne me convient pas vraiment. Pour ce type d'architecture, je pense que le meilleur outil de gestion de dépôt serait **Bitbucket**, car il permet de créer facilement des projets dans le même compte et d'avoir plusieurs "sous-dépôts". Cela permettrait de séparer mes projets personnels du test technique. 
