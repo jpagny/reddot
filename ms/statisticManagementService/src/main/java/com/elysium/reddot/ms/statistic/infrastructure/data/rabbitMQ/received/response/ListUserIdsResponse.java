@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 
+/**
+ * A Data Transfer Object (DTO) class that represents a response containing a list of user IDs.
+ **/
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

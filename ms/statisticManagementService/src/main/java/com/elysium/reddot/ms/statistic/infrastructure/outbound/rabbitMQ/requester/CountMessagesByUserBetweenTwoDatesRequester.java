@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+/**
+ * A component class for requesting the count of messages by user between two dates from a statistics service.
+ */
 @RequiredArgsConstructor
 @Component
 @Slf4j
@@ -24,25 +27,43 @@ public class CountMessagesByUserBetweenTwoDatesRequester {
     public static final String STATISTIC_COUNT_MESSAGE_BY_USER_BETWEEN_TWO_DATES_REQUEST_ROUTING_KEY = "count.message.user.dates.request";
 
     public Integer fetchCountMessageByUserBetweenTwoDate(String userId, LocalDateTime onStart, LocalDateTime onEnd) {
+        log.debug("Fetching count of messages by user between two dates for user: {}, start: {}, end: {}", userId, onStart, onEnd);
+
         CountMessagesByUserBetweenTwoDatesResponse response = getCountMessages(userId, onStart, onEnd);
+
+        log.debug("Received count of messages: {}", response.getCountMessagesTotal());
+
         return response.getCountMessagesTotal();
     }
 
     private CountMessagesByUserBetweenTwoDatesResponse getCountMessages(String userId, LocalDateTime onStart, LocalDateTime onEnd) {
+        log.debug("Sending a request to fetch the count of messages by user between two dates.");
+
         CountMessagesByUserBetweenTwoDatesRequest request = new CountMessagesByUserBetweenTwoDatesRequest(userId, onStart, onEnd);
         String requestJson = buildJsonResponse(request);
+
+        log.debug("Request JSON: {}", requestJson);
+
         byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
                 STATISTIC_EXCHANGE,
                 STATISTIC_COUNT_MESSAGE_BY_USER_BETWEEN_TWO_DATES_REQUEST_ROUTING_KEY,
                 requestJson
         );
+
+        if (replyBytes == null) {
+            log.error("Received no response.");
+            return null;
+        }
+
+        log.debug("Received a response. Converting to CountMessagesByUserBetweenTwoDatesResponse object.");
+
         try {
             return objectMapper.readValue(replyBytes, CountMessagesByUserBetweenTwoDatesResponse.class);
-
         } catch (IOException ex) {
-            throw new RuntimeException("Failed to convert to json", ex);
-
+            log.error("Failed to convert response to JSON.", ex);
+            throw new RuntimeException("Failed to convert to JSON.", ex);
         }
+
     }
 
     private String buildJsonResponse(Object response) {

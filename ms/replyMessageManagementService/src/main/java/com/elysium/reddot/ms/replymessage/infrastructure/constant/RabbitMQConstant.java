@@ -11,7 +11,7 @@ public final class RabbitMQConstant {
 
     // ### EXCHANGES
     public static final String EXCHANGE_MESSAGE_REPLYMESSAGE = "message_replymessage.exchange";
-    public static final String EXCHANGE_STATISTIC_MESSAGE = "statistic_message.exchange";
+    public static final String EXCHANGE_STATISTIC_REPLYMESSAGE = "statistic_replymessage.exchange";
 
 
     // ### QUEUES

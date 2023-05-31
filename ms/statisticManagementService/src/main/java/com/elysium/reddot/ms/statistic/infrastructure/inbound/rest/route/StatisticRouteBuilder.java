@@ -6,16 +6,17 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.AllArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonDataFormat;
-import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
 
+/**
+ * A Camel RouteBuilder that defines the route for handling statistics in the application.
+ **/
 @Component
 @AllArgsConstructor
 public class StatisticRouteBuilder extends RouteBuilder {
 
     private final StatisticProcessorHolder statisticProcessorHolder;
     private final ObjectMapper objectMapper;
-
 
     @Override
     public void configure() {

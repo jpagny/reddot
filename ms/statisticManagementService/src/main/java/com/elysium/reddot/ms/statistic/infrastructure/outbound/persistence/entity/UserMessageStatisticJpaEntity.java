@@ -6,8 +6,10 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
+/**
+ * An entity class representing the UserMessageStatisticJpaEntity entity mapped to the "user_message_stats" table in the database.
+ **/
 @Entity
 @Table(name = "user_message_stats")
 @Data

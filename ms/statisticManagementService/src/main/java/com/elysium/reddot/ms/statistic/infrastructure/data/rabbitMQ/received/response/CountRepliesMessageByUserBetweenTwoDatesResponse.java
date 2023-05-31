@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * A Data Transfer Object (DTO) class that represents a response containing
+ **/
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

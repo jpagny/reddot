@@ -1,20 +1,32 @@
 package com.elysium.reddot.ms.statistic.application.data;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+/**
+ * This class is a Data Transfer Object (DTO) for an API response.
+ * It encapsulates the status, message, and data of a response.
+ */
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ApiResponseDTO {
 
-    private final int status;
-    private final String message;
-    private final Object data;
+    /**
+     * The status code of the API response.
+     */
+    private int status;
 
-    public ApiResponseDTO(int status, String message, Object data) {
-        this.status = status;
-        this.message = message;
-        this.data = data;
-    }
+    /**
+     * The message of the API response.
+     */
+    private String message;
 
+    /**
+     * The data of the API response.
+     */
+    private Object data;
 
 }
