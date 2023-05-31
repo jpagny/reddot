@@ -71,11 +71,11 @@ Cependant, à la fin, j'ai décidé de créer ma propre architecture hexagonale,
 
 Voici l'architecture globale de l'application basée sur une architecture de microservices :
 
-![Schema architecture microservice](doc/archi microservice.png)
+![Alt text](doc/archi microservice.png)
 
 Et l'architecture hexagonale chaque microservice :
 
-![schema architecture hexagonal](doc/archi hexagonal.png)
+![Alt schema architecture hexagonal](doc/archi hexagonal.png)
 
 **Couche domain** : Couche centrale de l'architecture hexagonale, contenant les entités ( = models) et les règles métier. Cette couche n'a pas le droit d'avoir des libaries, que du POJO. Et elle est totalement indépendante des 2 autres couches.
 
