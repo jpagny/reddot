@@ -10,8 +10,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-@TestPropertySource(locations = "classpath:application-test.properties")
-class UserManagementServiceApplicationTests extends TestContainerSetup {
+class UserManagementServiceApplicationIT extends TestContainerSetup {
 
     @Autowired
     private ApplicationContext applicationContext;

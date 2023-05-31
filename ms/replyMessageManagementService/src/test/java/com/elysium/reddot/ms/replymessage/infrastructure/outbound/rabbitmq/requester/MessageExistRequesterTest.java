@@ -38,6 +38,7 @@ class MessageExistRequesterTest {
     void givenMessageIdExists_whenVerifyMessageIdExistsOrThrow_thenNoException() throws Exception {
         // given
         Long parentMessageId = 123L;
+        String parentMessageIdString = "123";
         MessageExistsResponseDTO response = new MessageExistsResponseDTO();
         response.setExists(true);
 
@@ -45,7 +46,7 @@ class MessageExistRequesterTest {
         when(rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_MESSAGE_REPLYMESSAGE,
                 RabbitMQConstant.REQUEST_MESSAGE_EXIST,
-                parentMessageId
+                parentMessageIdString
         )).thenReturn(objectMapper.writeValueAsBytes(response));
 
         // when
@@ -60,6 +61,7 @@ class MessageExistRequesterTest {
     void givenMessageIdDoesNotExist_whenVerifyMessageIdExistsOrThrow_thenException() throws IOException {
         // given
         Long parentMessageId = 123L;
+        String parentMessageIdString = "123";
         MessageExistsResponseDTO response = new MessageExistsResponseDTO();
         response.setExists(false);
 
@@ -67,7 +69,7 @@ class MessageExistRequesterTest {
         when(rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_MESSAGE_REPLYMESSAGE,
                 RabbitMQConstant.REQUEST_MESSAGE_EXIST,
-                parentMessageId
+                parentMessageIdString
         )).thenReturn(objectMapper.writeValueAsBytes(response));
 
         // when and then

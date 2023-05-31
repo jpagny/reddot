@@ -7,7 +7,7 @@
         <groupId>com.elysium.reddot.ms</groupId>
         <artifactId>reddot-ms-parent-pom</artifactId>
         <version>1.0.0</version>
-        <relativePath>../reddot-parent-pom.xml</relativePath>
+        <relativePath>../reddot-parent-light-pom.xml</relativePath>
     </parent>
 
     <artifactId>userManagementService</artifactId>

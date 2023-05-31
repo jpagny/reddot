@@ -14,18 +14,35 @@ services:
       - "10000:10000"
     environment:
       - spring.profiles.active=demo
-      - spring.config.import=configserver:http://spring-config-server:11000/
       - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
       - keycloak.auth-server-url=http://keycloakServer:11003
       - opentracing.jaeger.http-sender.url=http://reddotJaeger:14268/api/traces
     depends_on:
-      spring-config-server:
-        condition: service_healthy
       spring-gateway-server:
         condition: service_healthy
     networks:
       - reddot_network
 
+  #user_api
+  user_api:
+    image: reddot_user-api
+    build:
+      context: ms/userManagementService
+      dockerfile: Dockerfile
+    container_name: reddot_user_api
+    ports:
+      - "10001:10001"
+    environment:
+      - spring.profiles.active=demo
+      - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
+      - keycloak.auth-server-url=http://keycloakServer:11003
+      - opentracing.jaeger.http-sender.url=http://reddotJaeger:14268/api/traces
+      - spring.rabbitmq.host=rabbitmq
+    depends_on:
+      spring-gateway-server:
+        condition: service_healthy
+    networks:
+      - reddot_network
 
   #topic api
   topic_api:
@@ -216,26 +233,6 @@ services:
 
   ### EDGES ###
 
-  # spring config
-  spring-config-server:
-    image: reddot_spring-cloud-config
-    build:
-      context: edge/springConfigServer
-      dockerfile: Dockerfile
-    container_name: reddot_spring_config
-    ports:
-      - 11000:11000
-    environment:
-      - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
-      - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
-    networks:
-      - reddot_network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://spring-config-server:11000/actuator/health"] 
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   #spring eureka
   spring-eureka-server:
     image: reddot_spring-cloud-eureka
@@ -258,12 +255,8 @@ services:
     ports:
       - "11002:11002"
     environment:
-      - spring.config.import=configserver:http://spring-config-server:11000/
       - eureka.client.serviceUrl.defaultZone=http://spring-eureka-server:11001/eureka
       - opentracing.jaeger.http-sender.url=http://jaeger:14268/api/traces
-    depends_on:
-      spring-config-server:
-        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:11002/actuator/health"] 
       interval: 10s

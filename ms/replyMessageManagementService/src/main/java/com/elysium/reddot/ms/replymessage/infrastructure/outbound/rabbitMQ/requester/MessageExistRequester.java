@@ -47,7 +47,7 @@ public class MessageExistRequester {
         byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(
                 RabbitMQConstant.EXCHANGE_MESSAGE_REPLYMESSAGE,
                 RabbitMQConstant.REQUEST_MESSAGE_EXIST,
-                messageId
+                String.valueOf(messageId)
         );
 
         assert replyBytes != null;

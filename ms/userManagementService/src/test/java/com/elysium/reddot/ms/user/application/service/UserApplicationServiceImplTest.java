@@ -62,7 +62,7 @@ class UserApplicationServiceImplTest {
     }
 
     @Test
-    @DisplayName("Given a valid user, when createUser is called, then return the created user")
+    @DisplayName("given a valid user, when createUser is called, then return the created user")
     void givenValidUser_whenCreationRequested_thenUserIsCreated() {
         // given
         UserModel userModel = new UserModel();
@@ -96,7 +96,7 @@ class UserApplicationServiceImplTest {
     }
 
     @Test
-    @DisplayName("Given a user creation failure, when createUser is called, then it should throw KeycloakApiException")
+    @DisplayName("given a user creation failure, when createUser is called, then it should throw KeycloakApiException")
     void givenUserCreationFailure_whenAttemptingToCreateUser_thenKeycloakApiExceptionIsThrown() {
         // given
         UserModel userModel = new UserModel();

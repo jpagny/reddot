@@ -29,7 +29,7 @@ public class UserApplicationServiceImpl implements IUserManagementService {
     private final IUserDomainService userDomainService;
     private final Keycloak keycloak;
 
-    @Value("${spring.profiles.active}")
+    @Value("${spring.profiles.active:prod}")
     private String activeProfile;
 
     @Value("${keycloak.realm}")
