@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MessageExistRequester.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">replyMessageManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitmq.requester</a> &gt; <span class="el_source">MessageExistRequester.java</span></div><h1>MessageExistRequester.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.replymessage.infrastructure.outbound.rabbitmq.requester;
+
+import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceNotFoundException;
+import com.elysium.reddot.ms.replymessage.infrastructure.constant.RabbitMQConstant;
+import com.elysium.reddot.ms.replymessage.infrastructure.data.rabbitmq.received.response.MessageExistsResponseDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+/**
+ * The MessageExistRequester class is responsible for requesting the existence of a message from RabbitMQ.
+ * It sends a request message to the message/reply_message exchange and waits for a response.
+ */
+@Component
+<span class="fc" id="L19">@Slf4j</span>
+public class MessageExistRequester {
+    private final RabbitTemplate rabbitTemplate;
+    private final ObjectMapper objectMapper;
+
+<span class="fc" id="L24">    public MessageExistRequester(RabbitTemplate rabbitTemplate) {</span>
+<span class="fc" id="L25">        this.rabbitTemplate = rabbitTemplate;</span>
+<span class="fc" id="L26">        this.objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L27">    }</span>
+
+    /**
+     * Verifies if a message with the given ID exists in the system. If the message does not exist, a ResourceNotFoundException is thrown.
+     *
+     * @param messageId the ID of the message to verify
+     * @throws IOException               if there is an error while processing the response message
+     * @throws ResourceNotFoundException if the message with the given ID does not exist
+     */
+    public void verifyMessageIdExistsOrThrow(Long messageId) throws IOException {
+<span class="fc" id="L37">        MessageExistsResponseDTO response = getMessageExistsResponse(messageId);</span>
+
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        if (!response.isExists()) {</span>
+<span class="fc" id="L40">            throw new ResourceNotFoundException(&quot;Message&quot;, String.valueOf(messageId));</span>
+        }
+<span class="fc" id="L42">    }</span>
+
+    private MessageExistsResponseDTO getMessageExistsResponse(Long messageId) throws IOException {
+<span class="fc" id="L45">        log.debug(&quot;Sending requester to check if messageId &quot; + messageId + &quot; is exist&quot;);</span>
+
+<span class="fc" id="L47">        byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(</span>
+                RabbitMQConstant.EXCHANGE_MESSAGE_REPLYMESSAGE,
+                RabbitMQConstant.REQUEST_MESSAGE_EXIST,
+<span class="fc" id="L50">                String.valueOf(messageId)</span>
+        );
+
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        assert replyBytes != null;</span>
+<span class="fc" id="L54">        log.debug(&quot;Received response : &quot; + Arrays.toString(replyBytes));</span>
+
+        try {
+<span class="fc" id="L57">            MessageExistsResponseDTO responseDTO = objectMapper.readValue(replyBytes, MessageExistsResponseDTO.class);</span>
+<span class="fc" id="L58">            log.debug(&quot;Response in DTO : &quot; + responseDTO.toString());</span>
+<span class="fc" id="L59">            return responseDTO;</span>
+
+<span class="nc" id="L61">        } catch (IOException ex) {</span>
+<span class="nc" id="L62">            log.error(&quot;Fail to convert to json : &quot; + ex);</span>
+<span class="nc" id="L63">            throw new IOException(&quot;Failed to convert to json&quot;, ex);</span>
+
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

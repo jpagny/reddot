@@ -1,0 +1,2 @@
+INSERT INTO topics (name, label, description) VALUES ('elysium_security','Elysium security', 'All topics about Elysium Security');
+INSERT INTO topics (name, label, description) VALUES ('root_me','Root-me', 'All topics about Root-me');

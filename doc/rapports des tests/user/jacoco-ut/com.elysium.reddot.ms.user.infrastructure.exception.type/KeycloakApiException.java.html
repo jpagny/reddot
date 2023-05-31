@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>KeycloakApiException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">userManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.user.infrastructure.exception.type</a> &gt; <span class="el_source">KeycloakApiException.java</span></div><h1>KeycloakApiException.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.user.infrastructure.exception.type;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+
+import javax.ws.rs.core.Response;
+
+
+/**
+ * Exception thrown when an error occurs while interacting with the Keycloak API.
+ * This exception provides information about the status code and response from the API.
+ */
+@Getter
+public class KeycloakApiException extends RuntimeException {
+
+    private final int status;
+    private final transient Response response;
+<span class="fc" id="L20">    private static final ObjectMapper objectMapper = new ObjectMapper();</span>
+
+    /**
+     * Constructs a KeycloakApiException with the specified response.
+     *
+     * @param response the response from the Keycloak API
+     */
+    public KeycloakApiException(Response response) {
+<span class="fc" id="L28">        super(String.format(&quot;Error Keycloak API : %s&quot;,</span>
+<span class="fc" id="L29">                getResponseBody(response)));</span>
+<span class="fc" id="L30">        this.status = response.getStatus();</span>
+<span class="fc" id="L31">        this.response = response;</span>
+<span class="fc" id="L32">    }</span>
+
+    /**
+     * Retrieves the error message from the response body, if available.
+     *
+     * @param response the response from the Keycloak API
+     * @return the error message extracted from the response body, or a default message if not found
+     */
+    private static String getResponseBody(Response response) {
+
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        if (response.hasEntity()) {</span>
+<span class="fc" id="L43">            String responseBody = response.readEntity(String.class);</span>
+
+            try {
+<span class="nc" id="L46">                JsonNode jsonNode = objectMapper.readTree(responseBody);</span>
+
+<span class="nc bnc" id="L48" title="All 2 branches missed.">                if (jsonNode.has(&quot;errorMessage&quot;)) {</span>
+<span class="nc" id="L49">                    return jsonNode.get(&quot;errorMessage&quot;).asText();</span>
+
+                } else {
+<span class="nc" id="L52">                    return &quot;Error message not found in response body&quot;;</span>
+
+                }
+
+<span class="fc" id="L56">            } catch (JsonProcessingException e) {</span>
+<span class="fc" id="L57">                return String.format(&quot;Failed to parse JSON response: %s&quot;, e.getMessage());</span>
+
+<span class="nc" id="L59">            } catch (Exception e) {</span>
+<span class="nc" id="L60">                return String.format(&quot;Unexpected exception: %s&quot;, e.getMessage());</span>
+
+            }
+        }
+
+<span class="nc" id="L65">        return &quot;No response body available&quot;;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

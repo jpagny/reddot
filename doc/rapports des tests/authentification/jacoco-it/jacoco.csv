@@ -1,0 +1,13 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+authenticationManagementService,com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.route,AuthenticationRouteEnum,0,37,0,0,0,7,0,3,0,3
+authenticationManagementService,com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.route,AuthenticationRouteBuilder,0,95,0,0,0,27,0,2,0,2
+authenticationManagementService,com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.processor,LogoutProcessor,0,40,0,0,0,8,0,2,0,2
+authenticationManagementService,com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.processor,LoginProcessor,0,44,0,0,0,9,0,2,0,2
+authenticationManagementService,com.elysium.reddot.ms.authentication.infrastructure.exception.handler,CustomAuthenticationFailureHandler,9,3,0,0,3,1,1,1,1,1
+authenticationManagementService,com.elysium.reddot.ms.authentication,AuthenticationManagementServiceApplication,5,3,0,0,2,1,1,1,1,1
+authenticationManagementService,com.elysium.reddot.ms.authentication.application.data.dto,ApiResponseDTO,0,12,0,0,0,5,0,1,0,1
+authenticationManagementService,com.elysium.reddot.ms.authentication.infrastructure.exception.processor,GlobalExceptionHandler,0,53,0,0,0,14,0,3,0,3
+authenticationManagementService,com.elysium.reddot.ms.authentication.infrastructure.exception.type,IllegalStateApiException,0,17,0,0,0,2,0,1,0,1
+authenticationManagementService,com.elysium.reddot.ms.authentication.infrastructure.exception.type,KeycloakApiException,24,59,2,4,5,13,2,4,0,3
+authenticationManagementService,com.elysium.reddot.ms.authentication.infrastructure.exception.type,LogoutException,0,5,0,0,0,2,0,1,0,1
+authenticationManagementService,com.elysium.reddot.ms.authentication.application.service,AuthenticationApplicationService,0,96,0,2,0,23,0,4,0,3

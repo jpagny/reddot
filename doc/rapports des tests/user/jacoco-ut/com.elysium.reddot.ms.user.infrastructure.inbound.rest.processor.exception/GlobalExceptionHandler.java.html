@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">userManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.user.infrastructure.inbound.rest.processor.exception</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.user.infrastructure.inbound.rest.processor.exception;
+
+import com.elysium.reddot.ms.user.domain.exception.type.BadValueException;
+import com.elysium.reddot.ms.user.infrastructure.data.exception.GlobalExceptionDTO;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.http.HttpStatus;
+import org.springframework.stereotype.Component;
+
+/**
+ * This is a global exception handler that implements Camel's Processor interface.
+ * It is annotated as a Spring component (@Component) and uses the Slf4j logger.
+ * &lt;p&gt;
+ * The handler processes all exceptions and returns a GlobalExceptionDTO
+ * object along with an appropriate HTTP status code.
+ */
+@Component
+<span class="fc" id="L19">@Slf4j</span>
+<span class="fc" id="L20">public class GlobalExceptionHandler implements Processor {</span>
+
+    /**
+     * Processes the exception and prepares the HTTP response.
+     *
+     * @param exchange the Camel exchange object that contains the exception.
+     */
+    @Override
+    public void process(Exchange exchange) {
+<span class="fc" id="L29">        log.debug(&quot;Processing global exception...&quot;);</span>
+
+<span class="fc" id="L31">        int httpStatusCode = HttpStatus.SC_INTERNAL_SERVER_ERROR;</span>
+<span class="fc" id="L32">        Exception causeOfGlobalException = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);</span>
+<span class="fc" id="L33">        log.debug(&quot;Cause of global exception : {}&quot;, causeOfGlobalException.getClass().getSimpleName());</span>
+
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (causeOfGlobalException instanceof BadValueException) {</span>
+<span class="fc" id="L36">            httpStatusCode = HttpStatus.SC_BAD_REQUEST;</span>
+
+        }
+
+<span class="fc" id="L40">        GlobalExceptionDTO response = new GlobalExceptionDTO(</span>
+<span class="fc" id="L41">                causeOfGlobalException.getClass().getSimpleName(),</span>
+<span class="fc" id="L42">                causeOfGlobalException.getMessage());</span>
+<span class="fc" id="L43">        log.debug(&quot;Created GlobalExceptionDTO: {}&quot;, response);</span>
+
+<span class="fc" id="L45">        exchange.getIn().setBody(response);</span>
+<span class="fc" id="L46">        exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, httpStatusCode);</span>
+<span class="fc" id="L47">        log.debug(&quot;Set HTTP response code to {}&quot;, httpStatusCode);</span>
+<span class="fc" id="L48">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

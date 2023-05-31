@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MessageJpaMessageModelMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">messageManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.message.application.data.mapper</a> &gt; <span class="el_source">MessageJpaMessageModelMapper.java</span></div><h1>MessageJpaMessageModelMapper.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.message.application.data.mapper;
+
+import com.elysium.reddot.ms.message.domain.model.MessageModel;
+import com.elysium.reddot.ms.message.infrastructure.outbound.persistence.entity.MessageJpaEntity;
+
+public class MessageJpaMessageModelMapper {
+
+    private MessageJpaMessageModelMapper() {
+    }
+
+    public static MessageJpaEntity toEntity(MessageModel messageModel) {
+<span class="nc" id="L12">        MessageJpaEntity messageJpaEntity = new MessageJpaEntity();</span>
+<span class="nc" id="L13">        messageJpaEntity.setId(messageModel.getId());</span>
+<span class="nc" id="L14">        messageJpaEntity.setContent(messageModel.getContent());</span>
+<span class="nc" id="L15">        messageJpaEntity.setThreadId(messageModel.getThreadId());</span>
+<span class="nc" id="L16">        messageJpaEntity.setUserId(messageModel.getUserId());</span>
+<span class="nc" id="L17">        messageJpaEntity.setCreatedAt(messageModel.getCreatedAt());</span>
+<span class="nc" id="L18">        messageJpaEntity.setUpdatedAt(messageModel.getUpdatedAt());</span>
+<span class="nc" id="L19">        return messageJpaEntity;</span>
+    }
+
+    public static MessageModel toModel(MessageJpaEntity messageJpaEntity) {
+<span class="nc" id="L23">        return new MessageModel(</span>
+<span class="nc" id="L24">                messageJpaEntity.getId(),</span>
+<span class="nc" id="L25">                messageJpaEntity.getContent(),</span>
+<span class="nc" id="L26">                messageJpaEntity.getThreadId(),</span>
+<span class="nc" id="L27">                messageJpaEntity.getUserId(),</span>
+<span class="nc" id="L28">                messageJpaEntity.getCreatedAt(),</span>
+<span class="nc" id="L29">                messageJpaEntity.getUpdatedAt()</span>
+        );
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

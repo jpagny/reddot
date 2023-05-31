@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateBoardProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">boardManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board</a> &gt; <span class="el_source">CreateBoardProcessor.java</span></div><h1>CreateBoardProcessor.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board;
+
+import com.elysium.reddot.ms.board.application.data.dto.ApiResponseDTO;
+import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
+import com.elysium.reddot.ms.board.application.data.mapper.BoardDTOBoardModelMapper;
+import com.elysium.reddot.ms.board.application.service.BoardApplicationServiceImpl;
+import com.elysium.reddot.ms.board.domain.model.BoardModel;
+import com.elysium.reddot.ms.board.infrastructure.outbound.rabbitmq.requester.TopicExistRequester;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+
+/**
+ * Processor class for creating a new board.
+ */
+@Component
+@RequiredArgsConstructor
+<span class="fc" id="L21">@Slf4j</span>
+public class CreateBoardProcessor implements Processor {
+
+    private final BoardApplicationServiceImpl boardApplicationService;
+    private final TopicExistRequester topicExistRequester;
+
+    /**
+     * Processes the incoming exchange to create a new board.
+     * Validates if the associated topic exists and then creates a new board.
+     *
+     * @param exchange the incoming exchange
+     * @throws Exception if any error occurs during the processing
+     */
+    @Override
+    public void process(Exchange exchange) throws Exception {
+<span class="fc" id="L36">        log.info(&quot;Processing CreateBoardProcessor...&quot;);</span>
+
+<span class="fc" id="L38">        BoardDTO inputBoardDTO = exchange.getIn().getBody(BoardDTO.class);</span>
+<span class="fc" id="L39">        BoardModel boardModel = BoardDTOBoardModelMapper.toModel(inputBoardDTO);</span>
+
+<span class="fc" id="L41">        log.debug(&quot;Verifying if the associated topic exists for board creation...&quot;);</span>
+<span class="fc" id="L42">        topicExistRequester.verifyTopicIdExistsOrThrow(boardModel.getTopicId());</span>
+
+<span class="fc" id="L44">        createBoardAndSetResponse(exchange, boardModel);</span>
+<span class="fc" id="L45">    }</span>
+
+    /**
+     * Creates a new board and sets the ApiResponseDTO response to the exchange.
+     *
+     * @param exchange   the incoming exchange
+     * @param boardModel the board model to be created
+     */
+    private void createBoardAndSetResponse(Exchange exchange, BoardModel boardModel) {
+<span class="fc" id="L54">        log.debug(&quot;Creating a new board...&quot;);</span>
+
+<span class="fc" id="L56">        BoardModel createdBoardModel = boardApplicationService.createBoard(boardModel);</span>
+
+<span class="fc" id="L58">        BoardDTO createdBoardDTO = BoardDTOBoardModelMapper.toDTO(createdBoardModel);</span>
+<span class="fc" id="L59">        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.CREATED.value(),</span>
+<span class="fc" id="L60">                &quot;Board with name &quot; + createdBoardModel.getName() + &quot; created successfully&quot;, createdBoardDTO);</span>
+
+<span class="fc" id="L62">        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.CREATED.value());</span>
+<span class="fc" id="L63">        exchange.getMessage().setBody(apiResponseDTO);</span>
+
+<span class="fc" id="L65">        log.info(&quot;Created board successfully. Board ID: {}&quot;, createdBoardModel.getId());</span>
+<span class="fc" id="L66">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

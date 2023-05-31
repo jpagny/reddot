@@ -1,0 +1,2 @@
+VHOST: /
+QUEUE: count_messages_by_user_in_range_dates.queue

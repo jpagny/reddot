@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BoardRouteBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">boardManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.board.infrastructure.inbound.rest.route</a> &gt; <span class="el_source">BoardRouteBuilder.java</span></div><h1>BoardRouteBuilder.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.board.infrastructure.inbound.rest.route;
+
+import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
+import com.elysium.reddot.ms.board.infrastructure.constant.BoardRouteEnum;
+import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.board.BoardProcessorHolder;
+import com.elysium.reddot.ms.board.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
+import lombok.RequiredArgsConstructor;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.rest.RestBindingMode;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class BoardRouteBuilder extends RouteBuilder {
+
+    private final GlobalExceptionHandler globalExceptionHandler;
+    private final BoardProcessorHolder boardProcessorHolder;
+
+    @Override
+    public void configure() {
+
+<span class="fc" id="L22">        String requestId = &quot;/{id}&quot;;</span>
+
+<span class="fc" id="L24">        restConfiguration()</span>
+<span class="fc" id="L25">                .component(&quot;servlet&quot;)</span>
+<span class="fc" id="L26">                .bindingMode(RestBindingMode.json)</span>
+<span class="fc" id="L27">                .dataFormatProperty(&quot;prettyPrint&quot;, &quot;true&quot;);</span>
+
+<span class="fc" id="L29">        onException(Exception.class)</span>
+<span class="fc" id="L30">                .handled(true)</span>
+<span class="fc" id="L31">                .process(globalExceptionHandler);</span>
+
+
+        // definition routes
+<span class="fc" id="L35">        rest(&quot;&quot;).</span>
+<span class="fc" id="L36">                get().to(BoardRouteEnum.GET_ALL_BOARDS.getRouteName())</span>
+<span class="fc" id="L37">                .get(requestId).to(BoardRouteEnum.GET_BOARD_BY_ID.getRouteName())</span>
+<span class="fc" id="L38">                .post().type(BoardDTO.class).to(BoardRouteEnum.CREATE_BOARD.getRouteName())</span>
+<span class="fc" id="L39">                .put(requestId).type(BoardDTO.class).to(BoardRouteEnum.UPDATE_BOARD.getRouteName());</span>
+
+        // route : get all boards
+<span class="fc" id="L42">        from(BoardRouteEnum.GET_ALL_BOARDS.getRouteName())</span>
+<span class="fc" id="L43">                .routeId(&quot;getAllBoards&quot;)</span>
+<span class="fc" id="L44">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Retrieving all boards&quot;)</span>
+<span class="fc" id="L45">                .process(boardProcessorHolder.getGetAllBoardsProcessor())</span>
+<span class="fc" id="L46">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Successfully retrieved all boards&quot;)</span>
+<span class="fc" id="L47">                .end();</span>
+
+        // route : get board by id
+<span class="fc" id="L50">        from(BoardRouteEnum.GET_BOARD_BY_ID.getRouteName())</span>
+<span class="fc" id="L51">                .routeId(&quot;getBoardById&quot;)</span>
+<span class="fc" id="L52">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Getting board with id '${header.id}'&quot;)</span>
+<span class="fc" id="L53">                .process(boardProcessorHolder.getGetBoardByIdProcessor())</span>
+<span class="fc" id="L54">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Successfully retrieved board with id '${header.id}'&quot;)</span>
+<span class="fc" id="L55">                .end();</span>
+
+        // route : create board
+<span class="fc" id="L58">        from(BoardRouteEnum.CREATE_BOARD.getRouteName())</span>
+<span class="fc" id="L59">                .routeId(&quot;createBoard&quot;)</span>
+<span class="fc" id="L60">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Creating a new board&quot;)</span>
+<span class="fc" id="L61">                .policy(&quot;adminPolicy&quot;)</span>
+<span class="fc" id="L62">                .process(boardProcessorHolder.getCreateBoardProcessor())</span>
+<span class="fc" id="L63">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Successfully created board with name '${body.data.name}'&quot;)</span>
+<span class="fc" id="L64">                .end();</span>
+
+        // route : update board
+<span class="fc" id="L67">        from(BoardRouteEnum.UPDATE_BOARD.getRouteName())</span>
+<span class="fc" id="L68">                .routeId(&quot;updateBoard&quot;)</span>
+<span class="fc" id="L69">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Updating board with id '${header.id}'&quot;)</span>
+<span class="fc" id="L70">                .policy(&quot;adminPolicy&quot;)</span>
+<span class="fc" id="L71">                .process(boardProcessorHolder.getUpdateBoardProcessor())</span>
+<span class="fc" id="L72">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Successfully updated board with id '${header.id}' and name '${body.data.name}'&quot;)</span>
+<span class="fc" id="L73">                .end();</span>
+
+<span class="fc" id="L75">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

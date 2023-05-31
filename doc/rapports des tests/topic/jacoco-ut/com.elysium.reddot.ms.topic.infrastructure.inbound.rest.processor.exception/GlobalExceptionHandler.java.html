@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">topicManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.exception</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.topic.infrastructure.inbound.rest.processor.exception;
+
+import com.elysium.reddot.ms.topic.application.exception.type.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.topic.application.exception.type.ResourceBadValueException;
+import com.elysium.reddot.ms.topic.application.exception.type.ResourceNotFoundException;
+import com.elysium.reddot.ms.topic.infrastructure.data.dto.GlobalExceptionDTO;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.http.HttpStatus;
+import org.springframework.stereotype.Component;
+
+/**
+ * Component that handles global exceptions and processes them by setting appropriate response values.
+ * It implements the Processor interface from Apache Camel.
+ */
+@Component
+<span class="fc" id="L18">@Slf4j</span>
+<span class="fc" id="L19">public class GlobalExceptionHandler implements Processor {</span>
+
+    @Override
+    public void process(Exchange exchange) {
+<span class="fc" id="L23">        log.debug(&quot;Processing global exception...&quot;);</span>
+
+<span class="fc" id="L25">        int httpStatusCode = HttpStatus.SC_INTERNAL_SERVER_ERROR;</span>
+<span class="fc" id="L26">        Exception causeOfGlobalException = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);</span>
+<span class="fc" id="L27">        log.debug(&quot;Cause of global exception : {}&quot;, causeOfGlobalException.getClass().getSimpleName());</span>
+
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if (causeOfGlobalException instanceof ResourceAlreadyExistException) {</span>
+<span class="fc" id="L30">            httpStatusCode = HttpStatus.SC_CONFLICT;</span>
+
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        } else if (causeOfGlobalException instanceof ResourceBadValueException) {</span>
+<span class="nc" id="L33">            httpStatusCode = HttpStatus.SC_BAD_REQUEST;</span>
+
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        } else if (causeOfGlobalException instanceof ResourceNotFoundException) {</span>
+<span class="fc" id="L36">            httpStatusCode = HttpStatus.SC_NOT_FOUND;</span>
+
+        }
+
+<span class="fc" id="L40">        GlobalExceptionDTO response = new GlobalExceptionDTO(</span>
+<span class="fc" id="L41">                causeOfGlobalException.getClass().getSimpleName(),</span>
+<span class="fc" id="L42">                causeOfGlobalException.getMessage());</span>
+<span class="fc" id="L43">        log.debug(&quot;Created GlobalExceptionDTO: {}&quot;, response);</span>
+
+<span class="fc" id="L45">        exchange.getIn().setBody(response);</span>
+<span class="fc" id="L46">        exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, httpStatusCode);</span>
+<span class="fc" id="L47">        log.debug(&quot;Set HTTP response code to {}&quot;, httpStatusCode);</span>
+<span class="fc" id="L48">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

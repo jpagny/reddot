@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThreadExistRequester.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">messageManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.message.infrastructure.outbound.rabbitmq.requester</a> &gt; <span class="el_source">ThreadExistRequester.java</span></div><h1>ThreadExistRequester.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.message.infrastructure.outbound.rabbitmq.requester;
+
+import com.elysium.reddot.ms.message.application.exception.type.ResourceNotFoundException;
+import com.elysium.reddot.ms.message.infrastructure.constant.RabbitMQConstant;
+import com.elysium.reddot.ms.message.infrastructure.data.rabbitmq.received.response.ThreadExistsResponseDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+/**
+ * The ThreadExistRequester class is responsible for verifying the existence of a thread
+ * by sending a request and receiving a response through RabbitMQ.
+ */
+@Service
+<span class="fc" id="L19">@Slf4j</span>
+public class ThreadExistRequester {
+    private final RabbitTemplate rabbitTemplate;
+    private final ObjectMapper objectMapper;
+
+    /**
+     * Constructs a new ThreadExistRequester with the specified RabbitTemplate.
+     *
+     * @param rabbitTemplate the RabbitTemplate to use for sending and receiving messages
+     */
+<span class="fc" id="L29">    public ThreadExistRequester(RabbitTemplate rabbitTemplate) {</span>
+<span class="fc" id="L30">        this.rabbitTemplate = rabbitTemplate;</span>
+<span class="fc" id="L31">        this.objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L32">    }</span>
+
+    /**
+     * Verifies if a thread with the specified ID exists, and throws a ResourceNotFoundException if it does not.
+     *
+     * @param threadId the ID of the thread to verify
+     * @throws IOException               if an I/O error occurs while sending or receiving the message
+     * @throws ResourceNotFoundException if the thread with the specified ID does not exist
+     */
+    public void verifyThreadIdExistsOrThrow(Long threadId) throws IOException {
+<span class="fc" id="L42">        ThreadExistsResponseDTO response = getMessageExistsResponse(threadId);</span>
+
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (!response.isExists()) {</span>
+<span class="fc" id="L45">            throw new ResourceNotFoundException(&quot;Thread&quot;, String.valueOf(threadId));</span>
+        }
+<span class="fc" id="L47">    }</span>
+
+    private ThreadExistsResponseDTO getMessageExistsResponse(Long threadId) throws IOException {
+<span class="fc" id="L50">        log.debug(&quot;Sending requester to check if threadId &quot; + threadId + &quot; is exist&quot;);</span>
+
+<span class="fc" id="L52">        byte[] replyBytes = (byte[]) rabbitTemplate.convertSendAndReceive(</span>
+                RabbitMQConstant.EXCHANGE_THREAD_MESSAGE,
+                RabbitMQConstant.REQUEST_THREAD_EXIST,
+<span class="fc" id="L55">                String.valueOf(threadId)</span>
+        );
+
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        assert replyBytes != null;</span>
+<span class="fc" id="L59">        log.debug(&quot;Received response : &quot; + Arrays.toString(replyBytes));</span>
+
+        try {
+<span class="fc" id="L62">            ThreadExistsResponseDTO responseDTO = objectMapper.readValue(replyBytes, ThreadExistsResponseDTO.class);</span>
+<span class="fc" id="L63">            log.debug(&quot;Response in DTO : &quot; + responseDTO.toString());</span>
+<span class="fc" id="L64">            return responseDTO;</span>
+
+<span class="nc" id="L66">        } catch (IOException ex) {</span>
+<span class="nc" id="L67">            log.error(&quot;Fail to convert to json : &quot; + ex);</span>
+<span class="nc" id="L68">            throw new IOException(&quot;Failed to convert to json&quot;, ex);</span>
+
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

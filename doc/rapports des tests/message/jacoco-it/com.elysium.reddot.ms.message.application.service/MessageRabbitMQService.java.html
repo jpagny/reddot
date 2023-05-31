@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MessageRabbitMQService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">messageManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.message.application.service</a> &gt; <span class="el_source">MessageRabbitMQService.java</span></div><h1>MessageRabbitMQService.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.message.application.service;
+
+import com.elysium.reddot.ms.message.domain.model.MessageModel;
+import com.elysium.reddot.ms.message.infrastructure.outbound.persistence.MessageRepositoryAdapter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * This service is responsible for interacting with RabbitMQ and perform operations related to Messages.
+ */
+@Service
+@RequiredArgsConstructor
+public class MessageRabbitMQService {
+
+    private final MessageRepositoryAdapter messageRepository;
+
+    /**
+     * Checks if a Message exists in the database with the given id.
+     *
+     * @param id - Id of the Message.
+     * @return - true if the Message exists, false otherwise.
+     */
+    public boolean checkMessageIdExists(Long id) {
+<span class="fc" id="L28">        Optional&lt;MessageModel&gt; messageModel = messageRepository.findMessageById(id);</span>
+<span class="fc" id="L29">        return messageModel.isPresent();</span>
+    }
+
+    /**
+     * Counts the number of Messages made by a user between two dates.
+     *
+     * @param userId - User's id.
+     * @param onStart - The start of the date range.
+     * @param onEnd - The end of the date range.
+     * @return - The number of Messages made by the user between onStart and onEnd dates.
+     */
+    public Integer countMessageByUserIdBetweenTwoDates(String userId, LocalDateTime onStart, LocalDateTime onEnd) {
+<span class="fc" id="L41">        List&lt;MessageModel&gt; listMessages = messageRepository.listMessagesByUserAndRangeDate(userId, onStart, onEnd);</span>
+<span class="fc" id="L42">        return listMessages.size();</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

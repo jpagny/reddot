@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BoardDomainServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">boardManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.board.domain.service</a> &gt; <span class="el_source">BoardDomainServiceImpl.java</span></div><h1>BoardDomainServiceImpl.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.board.domain.service;
+
+
+import com.elysium.reddot.ms.board.domain.exception.type.FieldEmptyException;
+import com.elysium.reddot.ms.board.domain.exception.type.FieldWithSpaceException;
+import com.elysium.reddot.ms.board.domain.model.BoardModel;
+
+/**
+ * Implementation of the IBoardDomainService interface.
+ * This class provides methods for validating and updating BoardModel objects.
+ */
+<span class="fc" id="L12">public class BoardDomainServiceImpl implements IBoardDomainService {</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validateBoardForCreation(BoardModel boardModel) {
+<span class="fc" id="L19">        validateName(boardModel.getName());</span>
+<span class="fc" id="L20">        validateLabel(boardModel.getLabel());</span>
+<span class="fc" id="L21">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validateBoardForUpdate(BoardModel boardModel) {
+<span class="fc" id="L28">        validateLabel(boardModel.getLabel());</span>
+<span class="fc" id="L29">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BoardModel updateExistingBoardWithUpdates(BoardModel existingBoard, BoardModel boardUpdates) {
+<span class="fc" id="L36">        validateBoardForUpdate(boardUpdates);</span>
+
+<span class="fc" id="L38">        existingBoard.setLabel(boardUpdates.getLabel());</span>
+<span class="fc" id="L39">        existingBoard.setDescription(boardUpdates.getDescription());</span>
+
+<span class="fc" id="L41">        return existingBoard;</span>
+    }
+
+    private void validateName(String name) {
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if (isBlank(name)) {</span>
+<span class="fc" id="L46">            throw new FieldEmptyException(&quot;name&quot;);</span>
+        }
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        if (containsSpace(name)) {</span>
+<span class="fc" id="L49">            throw new FieldWithSpaceException(&quot;name&quot;);</span>
+        }
+<span class="fc" id="L51">    }</span>
+
+    private void validateLabel(String label) {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (isBlank(label)) {</span>
+<span class="fc" id="L55">            throw new FieldEmptyException(&quot;label&quot;);</span>
+        }
+<span class="fc" id="L57">    }</span>
+
+    private boolean isBlank(String str) {
+<span class="fc bfc" id="L60" title="All 4 branches covered.">        return str == null || str.trim().isEmpty();</span>
+    }
+
+    private boolean containsSpace(String str) {
+<span class="fc" id="L64">        return str.contains(&quot; &quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

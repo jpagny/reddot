@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LogoutProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">authenticationManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.processor</a> &gt; <span class="el_source">LogoutProcessor.java</span></div><h1>LogoutProcessor.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.processor;
+
+import com.elysium.reddot.ms.authentication.application.data.dto.ApiResponseDTO;
+import com.elysium.reddot.ms.authentication.application.service.AuthenticationApplicationService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+<span class="fc" id="L15">@Slf4j</span>
+public class LogoutProcessor implements Processor {
+
+    private final AuthenticationApplicationService authenticationApplicationService;
+
+    /**
+     * Processes the request to log out a user.
+     *
+     * &lt;p&gt;This method retrieves the HttpServletRequest from the Exchange's input body, which is used
+     * to log out the user via the authenticationApplicationService. It then creates an ApiResponseDTO
+     * with the logout status and sets it as the body of the Exchange's message.
+     * It also sets the HTTP response code to FOUND (302).
+     *
+     * @param exchange the Exchange containing the input HttpServletRequest and the output ApiResponseDTO
+     */
+    @Override
+    public void process(Exchange exchange) {
+<span class="fc" id="L32">        String inputToken = exchange.getIn().getHeader(&quot;Authorization&quot;, String.class);</span>
+<span class="fc" id="L33">        log.debug(&quot;Received input token: {}&quot;, inputToken);</span>
+
+<span class="fc" id="L35">        ResponseEntity&lt;String&gt; response = authenticationApplicationService.logout(inputToken);</span>
+
+<span class="fc" id="L37">        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(),</span>
+                &quot;You have been logged out successfully.&quot;, response);
+
+<span class="fc" id="L40">        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.FOUND.value());</span>
+<span class="fc" id="L41">        exchange.getMessage().setBody(apiResponseDTO);</span>
+<span class="fc" id="L42">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

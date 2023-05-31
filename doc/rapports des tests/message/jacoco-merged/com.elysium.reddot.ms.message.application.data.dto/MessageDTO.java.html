@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MessageDTO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">messageManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.message.application.data.dto</a> &gt; <span class="el_source">MessageDTO.java</span></div><h1>MessageDTO.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.message.application.data.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+/**
+ * Data Transfer Object (DTO) class for transferring message data between different application layers.
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ApiModel(description = &quot;Data Transfer Object for Message&quot;)
+public class MessageDTO {
+
+    @ApiModelProperty(notes = &quot;The unique ID of the message&quot;)
+    private Long id;
+
+    @ApiModelProperty(notes = &quot;The content of the message&quot;)
+    private String content;
+
+    @ApiModelProperty(notes = &quot;The ID of the thread that the message belongs to&quot;)
+    private Long threadId;
+
+    @ApiModelProperty(notes = &quot;The ID of the user who created the message&quot;)
+    private String userId;
+
+    @JsonFormat(pattern = &quot;yyyy-MM-dd HH:mm:ss&quot;)
+    @ApiModelProperty(notes = &quot;The creation timestamp of the message&quot;, example = &quot;2023-05-29 13:00:00&quot;)
+    private LocalDateTime createdAt;
+
+    @JsonFormat(pattern = &quot;yyyy-MM-dd HH:mm:ss&quot;)
+    @ApiModelProperty(notes = &quot;The last update timestamp of the message&quot;, example = &quot;2023-05-29 13:00:00&quot;)
+    private LocalDateTime updatedAt;
+
+    /**
+     * Constructor for creating a new MessageDTO with a given id, content, threadId, and userId.
+     */
+<span class="fc" id="L44">    public MessageDTO(Long id, String content, Long threadId, String userId) {</span>
+<span class="fc" id="L45">        this.id = id;</span>
+<span class="fc" id="L46">        this.content = content;</span>
+<span class="fc" id="L47">        this.threadId = threadId;</span>
+<span class="fc" id="L48">        this.userId = userId;</span>
+<span class="fc" id="L49">    }</span>
+
+    /**
+     * Constructor for creating a new MessageDTO with a given content, threadId, and userId.
+     */
+<span class="fc" id="L54">    public MessageDTO(String content, Long threadId, String userId) {</span>
+<span class="fc" id="L55">        this.content = content;</span>
+<span class="fc" id="L56">        this.threadId = threadId;</span>
+<span class="fc" id="L57">        this.userId = userId;</span>
+<span class="fc" id="L58">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

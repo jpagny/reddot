@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthenticationRouteBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">authenticationManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.route</a> &gt; <span class="el_source">AuthenticationRouteBuilder.java</span></div><h1>AuthenticationRouteBuilder.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.route;
+
+import com.elysium.reddot.ms.authentication.application.data.dto.LoginRequestDTO;
+import com.elysium.reddot.ms.authentication.infrastructure.exception.processor.GlobalExceptionHandler;
+import com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.processor.AuthenticationProcessorHolder;
+import lombok.RequiredArgsConstructor;
+import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.rest.RestBindingMode;
+import org.keycloak.adapters.springsecurity.KeycloakAuthenticationException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.stereotype.Component;
+
+
+@Component
+@RequiredArgsConstructor
+public class AuthenticationRouteBuilder extends RouteBuilder {
+
+    private final GlobalExceptionHandler globalExceptionHandler;
+    private final AuthenticationProcessorHolder authenticationProcessorHolder;
+
+    @Override
+    public void configure() {
+
+<span class="fc" id="L25">        onException(Exception.class)</span>
+<span class="fc" id="L26">                .handled(true)</span>
+<span class="fc" id="L27">                .process(globalExceptionHandler);</span>
+
+<span class="fc" id="L29">        restConfiguration()</span>
+<span class="fc" id="L30">                .component(&quot;servlet&quot;)</span>
+<span class="fc" id="L31">                .bindingMode(RestBindingMode.json)</span>
+<span class="fc" id="L32">                .dataFormatProperty(&quot;prettyPrint&quot;, &quot;true&quot;);</span>
+
+<span class="fc" id="L34">        rest()</span>
+<span class="fc" id="L35">                .post(&quot;/login&quot;).type(LoginRequestDTO.class).to(AuthenticationRouteEnum.LOGIN.getRouteName())</span>
+<span class="fc" id="L36">                .post(&quot;/logout&quot;).to(AuthenticationRouteEnum.LOGOUT.getRouteName());</span>
+
+<span class="fc" id="L38">        from(AuthenticationRouteEnum.LOGIN.getRouteName())</span>
+<span class="fc" id="L39">                .routeId(&quot;login&quot;)</span>
+<span class="fc" id="L40">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': try to authenticate&quot;)</span>
+<span class="fc" id="L41">                .process(authenticationProcessorHolder.getLoginProcessor())</span>
+<span class="fc" id="L42">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Successfully authenticated&quot;)</span>
+<span class="fc" id="L43">                .end();</span>
+
+<span class="fc" id="L45">        from(AuthenticationRouteEnum.LOGOUT.getRouteName())</span>
+<span class="fc" id="L46">                .routeId(&quot;logout&quot;)</span>
+<span class="fc" id="L47">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': try to logout&quot;)</span>
+<span class="fc" id="L48">                .process(authenticationProcessorHolder.getLogoutProcessor())</span>
+<span class="fc" id="L49">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Successfully logged out&quot;)</span>
+<span class="fc" id="L50">                .end();</span>
+
+<span class="fc" id="L52">        from(&quot;direct:handleAuthFailure&quot;)</span>
+<span class="fc" id="L53">                .process(exchange -&gt; {</span>
+<span class="fc" id="L54">                    System.out.println(&quot;KeycloakAuthenticationException &quot; + exchange.getIn().getBody().toString());</span>
+<span class="fc" id="L55">                    throw new Exception(exchange.getIn().getBody(KeycloakAuthenticationException.class));</span>
+                });
+
+<span class="fc" id="L58">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

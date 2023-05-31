@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReplyMessageRouteBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">replyMessageManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.route</a> &gt; <span class="el_source">ReplyMessageRouteBuilder.java</span></div><h1>ReplyMessageRouteBuilder.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.route;
+
+import com.elysium.reddot.ms.replymessage.application.data.dto.ReplyMessageDTO;
+import com.elysium.reddot.ms.replymessage.infrastructure.constant.ReplyMessageRouteEnum;
+import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
+import com.elysium.reddot.ms.replymessage.infrastructure.inbound.rest.processor.replymessage.ReplyMessageProcessorHolder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jackson.JacksonDataFormat;
+import org.springframework.stereotype.Component;
+
+@Component
+@AllArgsConstructor
+public class ReplyMessageRouteBuilder extends RouteBuilder {
+
+    private final GlobalExceptionHandler globalExceptionHandler;
+    private final ReplyMessageProcessorHolder replyMessageProcessorHolder;
+    private final ObjectMapper objectMapper;
+
+    @Override
+    public void configure() {
+
+<span class="fc" id="L24">        JacksonDataFormat format = new JacksonDataFormat();</span>
+<span class="fc" id="L25">        format.setObjectMapper(objectMapper);</span>
+
+<span class="fc" id="L27">        String requestId = &quot;/{id}&quot;;</span>
+
+<span class="fc" id="L29">        restConfiguration()</span>
+<span class="fc" id="L30">                .component(&quot;servlet&quot;)</span>
+<span class="fc" id="L31">                .dataFormatProperty(&quot;prettyPrint&quot;, &quot;true&quot;);</span>
+
+<span class="fc" id="L33">        onException(Exception.class)</span>
+<span class="fc" id="L34">                .handled(true)</span>
+<span class="fc" id="L35">                .process(globalExceptionHandler)</span>
+<span class="fc" id="L36">                .marshal(format);</span>
+
+
+        // definition routes
+<span class="fc" id="L40">        rest().</span>
+<span class="fc" id="L41">                get().to(ReplyMessageRouteEnum.GET_ALL_REPLIES_MESSAGE.getRouteName())</span>
+<span class="fc" id="L42">                .get(requestId).to(ReplyMessageRouteEnum.GET_REPLY_MESSAGE_BY_ID.getRouteName())</span>
+<span class="fc" id="L43">                .post().type(ReplyMessageDTO.class).to(ReplyMessageRouteEnum.CREATE_REPLY_MESSAGE.getRouteName())</span>
+<span class="fc" id="L44">                .put(requestId).type(ReplyMessageDTO.class).to(ReplyMessageRouteEnum.UPDATE_REPLY_MESSAGE.getRouteName());</span>
+
+        // route : get all replyMessages
+<span class="fc" id="L47">        from(ReplyMessageRouteEnum.GET_ALL_REPLIES_MESSAGE.getRouteName())</span>
+<span class="fc" id="L48">                .routeId(&quot;getAllReplyMessages&quot;)</span>
+<span class="fc" id="L49">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Retrieving all replyMessages&quot;)</span>
+<span class="fc" id="L50">                .process(replyMessageProcessorHolder.getGetAllRepliesMessageProcessor())</span>
+<span class="fc" id="L51">                .marshal(format)</span>
+<span class="fc" id="L52">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Successfully retrieved all replyMessages&quot;)</span>
+<span class="fc" id="L53">                .end();</span>
+
+        // route : get replyMessage by id
+<span class="fc" id="L56">        from(ReplyMessageRouteEnum.GET_REPLY_MESSAGE_BY_ID.getRouteName())</span>
+<span class="fc" id="L57">                .routeId(&quot;getReplyMessageById&quot;)</span>
+<span class="fc" id="L58">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Getting replyMessage with id '${header.id}'&quot;)</span>
+<span class="fc" id="L59">                .process(replyMessageProcessorHolder.getGetReplyMessageByIdProcessor())</span>
+<span class="fc" id="L60">                .marshal(format)</span>
+<span class="fc" id="L61">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Successfully retrieved replyMessage with id '${header.id}'&quot;)</span>
+<span class="fc" id="L62">                .end();</span>
+
+        // route : create replyMessage
+<span class="fc" id="L65">        from(ReplyMessageRouteEnum.CREATE_REPLY_MESSAGE.getRouteName())</span>
+<span class="fc" id="L66">                .routeId(&quot;createReplyMessage&quot;)</span>
+<span class="fc" id="L67">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Creating a new replyMessage&quot;)</span>
+<span class="fc" id="L68">                .process(replyMessageProcessorHolder.getCreateReplyMessageProcessor())</span>
+<span class="fc" id="L69">                .marshal(format)</span>
+<span class="fc" id="L70">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Successfully created replyMessage&quot;)</span>
+<span class="fc" id="L71">                .end();</span>
+
+        // route : update replyMessage
+<span class="fc" id="L74">        from(ReplyMessageRouteEnum.UPDATE_REPLY_MESSAGE.getRouteName())</span>
+<span class="fc" id="L75">                .routeId(&quot;updateReplyMessage&quot;)</span>
+<span class="fc" id="L76">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Updating replyMessage with id '${header.id}'&quot;)</span>
+<span class="fc" id="L77">                .process(replyMessageProcessorHolder.getUpdateReplyMessageProcessor())</span>
+<span class="fc" id="L78">                .marshal(format)</span>
+<span class="fc" id="L79">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Successfully updated replyMessage with id '${header.id}'&quot;)</span>
+<span class="fc" id="L80">                .end();</span>
+
+<span class="fc" id="L82">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

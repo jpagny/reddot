@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BoardDTOBoardModelMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">boardManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.board.application.data.mapper</a> &gt; <span class="el_source">BoardDTOBoardModelMapper.java</span></div><h1>BoardDTOBoardModelMapper.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.board.application.data.mapper;
+
+import com.elysium.reddot.ms.board.application.data.dto.BoardDTO;
+import com.elysium.reddot.ms.board.domain.model.BoardModel;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * A utility class that provides methods for converting between BoardDTO and BoardModel objects.
+ * This class should not be instantiated.
+ */
+public class BoardDTOBoardModelMapper {
+
+    private BoardDTOBoardModelMapper() {
+    }
+
+    /**
+     * Converts a BoardModel object into a BoardDTO object.
+     *
+     * @param boardModel the BoardModel to be converted
+     * @return the converted BoardDTO
+     */
+    public static BoardDTO toDTO(BoardModel boardModel) {
+<span class="fc" id="L25">        BoardDTO boardDTO = new BoardDTO();</span>
+<span class="fc" id="L26">        boardDTO.setId(boardModel.getId());</span>
+<span class="fc" id="L27">        boardDTO.setLabel(boardModel.getLabel());</span>
+<span class="fc" id="L28">        boardDTO.setName(boardModel.getName());</span>
+<span class="fc" id="L29">        boardDTO.setDescription(boardModel.getDescription());</span>
+<span class="fc" id="L30">        boardDTO.setTopicId(boardModel.getTopicId());</span>
+<span class="fc" id="L31">        return boardDTO;</span>
+    }
+
+    /**
+     * Converts a list of BoardModel objects to a list of BoardDTO objects.
+     *
+     * @param boardModels the list of BoardModel objects to convert
+     * @return the list of converted BoardDTO objects
+     */
+    public static List&lt;BoardDTO&gt; toDTOList(List&lt;BoardModel&gt; boardModels) {
+<span class="fc" id="L41">        return boardModels.stream()</span>
+<span class="fc" id="L42">                .map(BoardDTOBoardModelMapper::toDTO)</span>
+<span class="fc" id="L43">                .collect(Collectors.toList());</span>
+    }
+
+    /**
+     * Converts a BoardDTO object into a BoardModel object.
+     *
+     * @param boardDTO the BoardDTO to be converted
+     * @return the converted BoardModel
+     */
+    public static BoardModel toModel(BoardDTO boardDTO) {
+<span class="fc" id="L53">        return new BoardModel(</span>
+<span class="fc" id="L54">                boardDTO.getId(),</span>
+<span class="fc" id="L55">                boardDTO.getName(),</span>
+<span class="fc" id="L56">                boardDTO.getLabel(),</span>
+<span class="fc" id="L57">                boardDTO.getDescription(),</span>
+<span class="fc" id="L58">                boardDTO.getTopicId()</span>
+        );
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReplyMessageRabbitMQListener.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">replyMessageManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.replymessage.infrastructure.inbound.rabbitmq.listener</a> &gt; <span class="el_source">ReplyMessageRabbitMQListener.java</span></div><h1>ReplyMessageRabbitMQListener.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.replymessage.infrastructure.inbound.rabbitmq.listener;
+
+import com.elysium.reddot.ms.replymessage.application.service.ReplyMessageRabbitMQService;
+import com.elysium.reddot.ms.replymessage.infrastructure.constant.RabbitMQConstant;
+import com.elysium.reddot.ms.replymessage.infrastructure.data.rabbitmq.received.request.CountRepliesMessageByUserBetweenTwoDatesRequest;
+import com.elysium.reddot.ms.replymessage.infrastructure.data.rabbitmq.response.CountRepliesMessageByUserBetweenTwoDatesResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.stereotype.Component;
+
+/**
+ * RabbitMQ listener for reply message operations.
+ * Listens to the specified RabbitMQ queue for count messages by user between two dates.
+ */
+@Component
+@RequiredArgsConstructor
+<span class="fc" id="L25">@Slf4j</span>
+public class ReplyMessageRabbitMQListener {
+
+    private final RabbitTemplate rabbitTemplate;
+    private final ReplyMessageRabbitMQService replyMessageRabbitMQService;
+
+    /**
+     * Listens to the RabbitMQ queue for count messages by user between two dates.
+     * Processes the received message, performs the count operation, and sends the response back to the caller.
+     *
+     * @param message the received RabbitMQ message
+     * @throws JsonProcessingException if an error occurs while processing the JSON message
+     */
+    @RabbitListener(queues = RabbitMQConstant.QUEUE_COUNT_REPLIES_MESSAGES_BY_USER_IN_RANGE_DATES_QUEUE)
+    public void countMessagesByUserBetweenTwoDates(Message message) throws JsonProcessingException {
+<span class="fc" id="L40">        log.debug(&quot;Received RabbitMQ message for counting messages by user between two dates.&quot;);</span>
+
+<span class="fc" id="L42">        MessageConverter messageConverter = rabbitTemplate.getMessageConverter();</span>
+
+<span class="fc" id="L44">        String jsonMessage = (String) messageConverter.fromMessage(message);</span>
+
+<span class="fc" id="L46">        log.debug(&quot;Received JSON message: {}&quot;, jsonMessage);</span>
+
+<span class="fc" id="L48">        ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L49">        objectMapper.registerModule(new JavaTimeModule());</span>
+<span class="fc" id="L50">        CountRepliesMessageByUserBetweenTwoDatesRequest requestReceived = objectMapper.readValue(jsonMessage, CountRepliesMessageByUserBetweenTwoDatesRequest.class);</span>
+
+<span class="fc" id="L52">        log.debug(&quot;Deserialized request object: {}&quot;, requestReceived);</span>
+
+<span class="fc" id="L54">        Integer countMessagesTotalOnRangeDate = replyMessageRabbitMQService.countRepliesMessageByUserIdBetweenTwoDates(</span>
+<span class="fc" id="L55">                requestReceived.getUserId(),</span>
+<span class="fc" id="L56">                requestReceived.getOnStart(),</span>
+<span class="fc" id="L57">                requestReceived.getOnEnd());</span>
+
+<span class="fc" id="L59">        CountRepliesMessageByUserBetweenTwoDatesResponse response = new CountRepliesMessageByUserBetweenTwoDatesResponse(countMessagesTotalOnRangeDate);</span>
+
+<span class="fc" id="L61">        log.debug(&quot;Total count of reply messages between two dates: {}&quot;, countMessagesTotalOnRangeDate);</span>
+
+<span class="fc" id="L63">        MessageProperties messageProperties = buildMessageProperties(message);</span>
+<span class="fc" id="L64">        String jsonResponse = buildJsonResponse(response);</span>
+<span class="fc" id="L65">        Message responseMessage = buildMessageResponse(jsonResponse, messageProperties);</span>
+
+<span class="fc" id="L67">        sendResponseToRabbit(message, responseMessage);</span>
+<span class="fc" id="L68">        log.debug(&quot;Sent response message: {}&quot;, jsonResponse);</span>
+<span class="fc" id="L69">    }</span>
+
+    private MessageProperties buildMessageProperties(Message message) {
+<span class="fc" id="L72">        MessageProperties messageProperties = new MessageProperties();</span>
+<span class="fc" id="L73">        messageProperties.setReplyTo(message.getMessageProperties().getReplyTo());</span>
+<span class="fc" id="L74">        messageProperties.setCorrelationId(message.getMessageProperties().getCorrelationId());</span>
+<span class="fc" id="L75">        messageProperties.setContentType(MessageProperties.CONTENT_TYPE_JSON);</span>
+<span class="fc" id="L76">        return messageProperties;</span>
+    }
+
+    private String buildJsonResponse(Object response) throws JsonProcessingException {
+<span class="fc" id="L80">        ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L81">        return objectMapper.writeValueAsString(response);</span>
+    }
+
+    private Message buildMessageResponse(String jsonResponse, MessageProperties messageProperties) {
+<span class="fc" id="L85">        return new Message(jsonResponse.getBytes(), messageProperties);</span>
+    }
+
+    private void sendResponseToRabbit(Message message, Message responseMessage) {
+<span class="fc" id="L89">        rabbitTemplate.send(</span>
+<span class="fc" id="L90">                message.getMessageProperties().getReplyTo(),</span>
+                responseMessage
+        );
+<span class="fc" id="L93">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

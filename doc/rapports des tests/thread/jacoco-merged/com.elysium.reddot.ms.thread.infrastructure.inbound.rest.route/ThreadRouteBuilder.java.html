@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThreadRouteBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">threadManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.thread.infrastructure.inbound.rest.route</a> &gt; <span class="el_source">ThreadRouteBuilder.java</span></div><h1>ThreadRouteBuilder.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.thread.infrastructure.inbound.rest.route;
+
+import com.elysium.reddot.ms.thread.application.data.dto.ThreadDTO;
+import com.elysium.reddot.ms.thread.infrastructure.constant.ThreadRouteEnum;
+import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.exception.GlobalExceptionHandler;
+import com.elysium.reddot.ms.thread.infrastructure.inbound.rest.processor.thread.ThreadProcessorHolder;
+import lombok.RequiredArgsConstructor;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.rest.RestBindingMode;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class ThreadRouteBuilder extends RouteBuilder {
+
+    private final GlobalExceptionHandler globalExceptionHandler;
+    private final ThreadProcessorHolder threadProcessorHolder;
+
+    @Override
+    public void configure() {
+
+<span class="fc" id="L22">        String requestId = &quot;/{id}&quot;;</span>
+
+<span class="fc" id="L24">        restConfiguration()</span>
+<span class="fc" id="L25">                .component(&quot;servlet&quot;)</span>
+<span class="fc" id="L26">                .bindingMode(RestBindingMode.json)</span>
+<span class="fc" id="L27">                .dataFormatProperty(&quot;prettyPrint&quot;, &quot;true&quot;);</span>
+
+<span class="fc" id="L29">        onException(Exception.class)</span>
+<span class="fc" id="L30">                .handled(true)</span>
+<span class="fc" id="L31">                .process(globalExceptionHandler);</span>
+
+
+        // definition routes
+<span class="fc" id="L35">        rest().</span>
+<span class="fc" id="L36">                get().to(ThreadRouteEnum.GET_ALL_THREADS.getRouteName())</span>
+<span class="fc" id="L37">                .get(requestId).to(ThreadRouteEnum.GET_THREAD_BY_ID.getRouteName())</span>
+<span class="fc" id="L38">                .post().type(ThreadDTO.class).to(ThreadRouteEnum.CREATE_THREAD.getRouteName())</span>
+<span class="fc" id="L39">                .put(requestId).type(ThreadDTO.class).to(ThreadRouteEnum.UPDATE_THREAD.getRouteName());</span>
+
+        // route : get all threads
+<span class="fc" id="L42">        from(ThreadRouteEnum.GET_ALL_THREADS.getRouteName())</span>
+<span class="fc" id="L43">                .routeId(&quot;getAllThreads&quot;)</span>
+<span class="fc" id="L44">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Retrieving all threads&quot;)</span>
+<span class="fc" id="L45">                .process(threadProcessorHolder.getGetAllThreadsProcessor())</span>
+<span class="fc" id="L46">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Successfully retrieved all threads&quot;)</span>
+<span class="fc" id="L47">                .end();</span>
+
+        // route : get thread by id
+<span class="fc" id="L50">        from(ThreadRouteEnum.GET_THREAD_BY_ID.getRouteName())</span>
+<span class="fc" id="L51">                .routeId(&quot;getThreadById&quot;)</span>
+<span class="fc" id="L52">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Getting thread with id '${header.id}'&quot;)</span>
+<span class="fc" id="L53">                .process(threadProcessorHolder.getGetThreadByIdProcessor())</span>
+<span class="fc" id="L54">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Successfully retrieved thread with id '${header.id}'&quot;)</span>
+<span class="fc" id="L55">                .end();</span>
+
+        // route : create thread
+<span class="fc" id="L58">        from(ThreadRouteEnum.CREATE_THREAD.getRouteName())</span>
+<span class="fc" id="L59">                .routeId(&quot;createThread&quot;)</span>
+<span class="fc" id="L60">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Creating a new thread&quot;)</span>
+<span class="fc" id="L61">                .process(threadProcessorHolder.getCreateThreadProcessor())</span>
+<span class="fc" id="L62">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Successfully created thread with name '${body.data.name}'&quot;)</span>
+<span class="fc" id="L63">                .end();</span>
+
+        // route : update thread
+<span class="fc" id="L66">        from(ThreadRouteEnum.UPDATE_THREAD.getRouteName())</span>
+<span class="fc" id="L67">                .routeId(&quot;updateThread&quot;)</span>
+<span class="fc" id="L68">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Updating thread with id '${header.id}'&quot;)</span>
+<span class="fc" id="L69">                .process(threadProcessorHolder.getUpdateThreadProcessor())</span>
+<span class="fc" id="L70">                .log(&quot;Route '${routeId}': Path '${header.CamelHttpUri}': Successfully updated thread with id '${header.id}' and name '${body.data.name}'&quot;)</span>
+<span class="fc" id="L71">                .end();</span>
+
+<span class="fc" id="L73">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

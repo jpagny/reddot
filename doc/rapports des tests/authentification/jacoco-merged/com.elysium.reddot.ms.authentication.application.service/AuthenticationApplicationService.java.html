@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthenticationApplicationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">authenticationManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.authentication.application.service</a> &gt; <span class="el_source">AuthenticationApplicationService.java</span></div><h1>AuthenticationApplicationService.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.authentication.application.service;
+
+import com.elysium.reddot.ms.authentication.application.data.factory.KeycloakFactory;
+import com.elysium.reddot.ms.authentication.infrastructure.exception.type.IllegalStateApiException;
+import com.elysium.reddot.ms.authentication.infrastructure.exception.type.KeycloakApiException;
+import com.elysium.reddot.ms.authentication.infrastructure.exception.type.LogoutException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.representations.AccessTokenResponse;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.core.Response;
+import java.util.Objects;
+
+@Service
+@RequiredArgsConstructor
+<span class="fc" id="L25">@Slf4j</span>
+public class AuthenticationApplicationService {
+
+    @Value(&quot;${keycloak.realm}&quot;)
+    private String realm;
+    @Value(&quot;${keycloak.auth-server-url}&quot;)
+    private String authServerUrl;
+
+    private final KeycloakFactory keycloakFactory;
+    private final RestTemplate restTemplate;
+
+    /**
+     * Retrieves an access token for the given username and password.
+     *
+     * &lt;p&gt;This method attempts to build a Keycloak client using the provided username and password.
+     * If successful, it retrieves an access token from the Keycloak token manager. If not authorized,
+     * a KeycloakApiException is thrown. If the Keycloak client cannot be built, an IllegalStateApiException
+     * is thrown.
+     *
+     * @param username the username to be used to retrieve the access token
+     * @param password the password to be used to retrieve the access token
+     * @return the access token response from Keycloak
+     * @throws KeycloakApiException     if a NotAuthorizedException is encountered when trying to get the access token
+     * @throws IllegalStateApiException if an IllegalStateException is encountered when trying to build the Keycloak client
+     */
+    public AccessTokenResponse getAccessToken(String username, String password) {
+<span class="fc" id="L51">        log.debug(&quot;Fetching access token with username {}&quot;, username);</span>
+
+        AccessTokenResponse accessTokenResponse;
+
+<span class="fc" id="L55">        try (Keycloak keycloak = keycloakFactory.buildKeycloak(username, password)) {</span>
+<span class="fc" id="L56">            log.debug(&quot;Keycloak client built successfully&quot;);</span>
+
+<span class="fc" id="L58">            accessTokenResponse = keycloak.tokenManager().getAccessToken();</span>
+<span class="fc" id="L59">            log.debug(&quot;Access token retrieved successfully&quot;);</span>
+
+<span class="fc" id="L61">        } catch (NotAuthorizedException exception) {</span>
+<span class="fc" id="L62">            log.error(&quot;Error getting access token: NotAuthorizedException&quot;);</span>
+<span class="fc" id="L63">            Response response = exception.getResponse();</span>
+<span class="fc" id="L64">            throw new KeycloakApiException(response);</span>
+
+<span class="fc" id="L66">        } catch (IllegalStateException exception) {</span>
+<span class="fc" id="L67">            log.error(&quot;Error build keycloak client: IllegalStateException: {}&quot;, exception.getMessage());</span>
+<span class="fc" id="L68">            throw new IllegalStateApiException(&quot;failed to build Keycloak client&quot;, exception);</span>
+
+<span class="fc" id="L70">        }</span>
+
+<span class="fc" id="L72">        return accessTokenResponse;</span>
+    }
+
+
+    public ResponseEntity&lt;String&gt; logout(String token) {
+<span class="fc" id="L77">        String logoutUrl = authServerUrl + &quot;/realms/&quot; + realm + &quot;/protocol/openid-connect/logout&quot;;</span>
+<span class="fc" id="L78">        HttpHeaders headers = new HttpHeaders();</span>
+<span class="fc" id="L79">        headers.add(&quot;Authorization&quot;, &quot;Bearer &quot; + token);</span>
+<span class="fc" id="L80">        HttpEntity&lt;String&gt; request = new HttpEntity&lt;&gt;(headers);</span>
+
+<span class="fc" id="L82">        ResponseEntity&lt;String&gt; response = restTemplate.exchange(logoutUrl, HttpMethod.POST, request, String.class);</span>
+
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        if (!response.getStatusCode().is2xxSuccessful()) {</span>
+<span class="fc" id="L85">            throw new LogoutException(Objects.requireNonNull(response.getBody()));</span>
+        }
+
+<span class="fc" id="L88">        return response;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

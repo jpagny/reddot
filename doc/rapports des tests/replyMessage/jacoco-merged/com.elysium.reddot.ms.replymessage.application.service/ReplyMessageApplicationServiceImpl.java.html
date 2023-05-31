@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReplyMessageApplicationServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">replyMessageManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.replymessage.application.service</a> &gt; <span class="el_source">ReplyMessageApplicationServiceImpl.java</span></div><h1>ReplyMessageApplicationServiceImpl.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.replymessage.application.service;
+
+import com.elysium.reddot.ms.replymessage.application.exception.type.IsNotOwnerMessageException;
+import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceBadValueException;
+import com.elysium.reddot.ms.replymessage.application.exception.type.ResourceNotFoundException;
+import com.elysium.reddot.ms.replymessage.domain.constant.ApplicationDefaults;
+import com.elysium.reddot.ms.replymessage.domain.exception.DifferentUserException;
+import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
+import com.elysium.reddot.ms.replymessage.domain.port.inbound.IReplyMessageManagementService;
+import com.elysium.reddot.ms.replymessage.domain.port.outbound.IReplyMessageRepository;
+import com.elysium.reddot.ms.replymessage.domain.service.ReplyMessageDomainServiceImpl;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+<span class="fc" id="L27">@Slf4j</span>
+public class ReplyMessageApplicationServiceImpl implements IReplyMessageManagementService {
+
+    @Value(&quot;${message.max.nested.replies:&quot; + ApplicationDefaults.DEFAULT_MAX_NESTED_REPLIES + &quot;}&quot;)
+    private Integer maxNestedReplies;
+
+    private static final String RESOURCE_NAME_REPLY_MESSAGE = &quot;reply message&quot;;
+    private final ReplyMessageDomainServiceImpl replyMessageDomainService;
+    private final IReplyMessageRepository replyMessageRepository;
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ReplyMessageModel getReplyMessageById(Long id) {
+<span class="fc" id="L43">        log.debug(&quot;Fetching replyMessage with id {}&quot;, id);</span>
+
+<span class="fc" id="L45">        ReplyMessageModel foundReplyMessageModel = replyMessageRepository.findReplyMessageById(id).orElseThrow(</span>
+<span class="fc" id="L46">                () -&gt; new ResourceNotFoundException(RESOURCE_NAME_REPLY_MESSAGE, String.valueOf(id))</span>
+        );
+
+<span class="fc" id="L49">        log.info(&quot;Successfully retrieved replyMessage with id {}, name '{}'&quot;,</span>
+<span class="fc" id="L50">                id, foundReplyMessageModel.getContent());</span>
+
+<span class="fc" id="L52">        return foundReplyMessageModel;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List&lt;ReplyMessageModel&gt; getAllRepliesMessage() {
+<span class="fc" id="L60">        log.info(&quot;Fetching all replyMessages from database...&quot;);</span>
+
+<span class="fc" id="L62">        return replyMessageRepository.findAllRepliesMessage()</span>
+<span class="fc" id="L63">                .parallelStream()</span>
+<span class="fc" id="L64">                .collect(Collectors.toList());</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ReplyMessageModel createReplyMessage(ReplyMessageModel replyMessageToCreateModel) {
+
+<span class="fc" id="L73">        log.debug(&quot;Creating new replyMessage with content '{}'&quot;,</span>
+<span class="fc" id="L74">                replyMessageToCreateModel.getContent());</span>
+
+<span class="fc" id="L76">        Optional&lt;ReplyMessageModel&gt; existingReplyMessage = replyMessageRepository</span>
+<span class="fc" id="L77">                .findFirstByContentAndParentMessageId(replyMessageToCreateModel.getContent(),</span>
+<span class="fc" id="L78">                        replyMessageToCreateModel.getParentMessageID());</span>
+
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if (existingReplyMessage.isPresent()) {</span>
+<span class="fc" id="L81">            throw new ResourceAlreadyExistException(RESOURCE_NAME_REPLY_MESSAGE, &quot;content&quot;,</span>
+<span class="fc" id="L82">                    replyMessageToCreateModel.getContent(), replyMessageToCreateModel.getParentMessageID());</span>
+        }
+
+<span class="fc" id="L85">        replyMessageToCreateModel.setCreatedAt(LocalDateTime.now());</span>
+<span class="fc" id="L86">        replyMessageToCreateModel.setUpdatedAt(replyMessageToCreateModel.getCreatedAt());</span>
+
+        try {
+            // check validate replyMessage
+<span class="fc" id="L90">            replyMessageDomainService.validateReplyMessageForCreation(replyMessageToCreateModel);</span>
+
+            // check nested replies limit
+<span class="fc" id="L93">            int countTotalRepliedForThisMessage = replyMessageRepository</span>
+<span class="fc" id="L94">                    .countRepliesByMessageId(replyMessageToCreateModel.getParentMessageID());</span>
+<span class="fc" id="L95">            log.debug(&quot;count total replies : &quot; + countTotalRepliedForThisMessage);</span>
+<span class="fc" id="L96">            replyMessageDomainService.verifyNestedRepliesLimit(countTotalRepliedForThisMessage, maxNestedReplies);</span>
+
+            // other check ...
+
+<span class="fc" id="L100">        } catch (Exception exception) {</span>
+<span class="fc" id="L101">            throw new ResourceBadValueException(RESOURCE_NAME_REPLY_MESSAGE, exception.getMessage());</span>
+
+<span class="fc" id="L103">        }</span>
+
+<span class="fc" id="L105">        ReplyMessageModel createdReplyMessageModel = replyMessageRepository.createReplyMessage(replyMessageToCreateModel);</span>
+
+<span class="fc" id="L107">        log.info(&quot;Successfully created replyMessage with id {}, content '{}'&quot;,</span>
+<span class="fc" id="L108">                createdReplyMessageModel.getId(),</span>
+<span class="fc" id="L109">                createdReplyMessageModel.getContent());</span>
+
+<span class="fc" id="L111">        return createdReplyMessageModel;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ReplyMessageModel updateReplyMessage(Long id, ReplyMessageModel replyMessageToUpdateModel) {
+
+<span class="fc" id="L120">        log.debug(&quot;Updating replyMessage with id '{}', content '{}'&quot;,</span>
+<span class="fc" id="L121">                id, replyMessageToUpdateModel.getContent());</span>
+
+<span class="fc" id="L123">        Optional&lt;ReplyMessageModel&gt; existingReplyMessageModel = replyMessageRepository.findReplyMessageById(id);</span>
+
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (existingReplyMessageModel.isEmpty()) {</span>
+<span class="fc" id="L126">            throw new ResourceNotFoundException(RESOURCE_NAME_REPLY_MESSAGE, String.valueOf(id));</span>
+        }
+
+        try {
+<span class="fc" id="L130">            replyMessageDomainService.validateReplyMessageForUpdate(replyMessageToUpdateModel, existingReplyMessageModel.get());</span>
+
+<span class="fc" id="L132">        } catch (DifferentUserException exception) {</span>
+<span class="fc" id="L133">            log.error(exception.getMessage());</span>
+<span class="fc" id="L134">            throw new IsNotOwnerMessageException();</span>
+
+<span class="nc" id="L136">        } catch (Exception exception) {</span>
+<span class="nc" id="L137">            throw new ResourceBadValueException(RESOURCE_NAME_REPLY_MESSAGE, exception.getMessage());</span>
+
+<span class="fc" id="L139">        }</span>
+
+<span class="fc" id="L141">        replyMessageToUpdateModel.setMessageId(existingReplyMessageModel.get().getParentMessageID());</span>
+<span class="fc" id="L142">        replyMessageToUpdateModel.setCreatedAt(existingReplyMessageModel.get().getCreatedAt());</span>
+<span class="fc" id="L143">        replyMessageToUpdateModel.setUpdatedAt(LocalDateTime.now());</span>
+
+<span class="fc" id="L145">        ReplyMessageModel updatedReplyMessageModel = replyMessageRepository.updateReplyMessage(replyMessageToUpdateModel);</span>
+
+<span class="fc" id="L147">        log.info(&quot;Successfully updated replyMessage with id '{}', content'{}&quot;,</span>
+<span class="fc" id="L148">                updatedReplyMessageModel.getId(),</span>
+<span class="fc" id="L149">                updatedReplyMessageModel.getContent());</span>
+
+<span class="fc" id="L151">        return updatedReplyMessageModel;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

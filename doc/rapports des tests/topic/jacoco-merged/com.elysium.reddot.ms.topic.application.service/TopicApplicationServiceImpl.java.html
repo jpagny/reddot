@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TopicApplicationServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">topicManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.topic.application.service</a> &gt; <span class="el_source">TopicApplicationServiceImpl.java</span></div><h1>TopicApplicationServiceImpl.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.topic.application.service;
+
+import com.elysium.reddot.ms.topic.application.exception.type.ResourceAlreadyExistException;
+import com.elysium.reddot.ms.topic.application.exception.type.ResourceBadValueException;
+import com.elysium.reddot.ms.topic.application.exception.type.ResourceNotFoundException;
+import com.elysium.reddot.ms.topic.domain.model.TopicModel;
+import com.elysium.reddot.ms.topic.domain.port.inbound.ITopicManagementService;
+import com.elysium.reddot.ms.topic.domain.port.outbound.ITopicRepository;
+import com.elysium.reddot.ms.topic.domain.service.TopicDomainServiceImpl;
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+/**
+ * Implementation of the {@link ITopicManagementService} interface, providing methods for managing Topic objects.
+ */
+@Api(tags = &quot;Topic Management&quot;)
+@Service
+@Transactional
+<span class="fc" id="L26">@Slf4j</span>
+public class TopicApplicationServiceImpl implements ITopicManagementService {
+
+    private static final String RESOURCE_NAME_TOPIC = &quot;topic&quot;;
+    private final TopicDomainServiceImpl topicDomainService;
+    private final ITopicRepository topicRepository;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Autowired
+<span class="fc" id="L37">    public TopicApplicationServiceImpl(ITopicRepository topicRepository) {</span>
+<span class="fc" id="L38">        this.topicDomainService = new TopicDomainServiceImpl();</span>
+<span class="fc" id="L39">        this.topicRepository = topicRepository;</span>
+<span class="fc" id="L40">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TopicModel getTopicById(Long id) {
+<span class="fc" id="L47">        log.debug(&quot;Fetching topic with id {}&quot;, id);</span>
+
+<span class="fc" id="L49">        TopicModel foundTopicModel = topicRepository.findTopicById(id).orElseThrow(</span>
+<span class="fc" id="L50">                () -&gt; new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))</span>
+        );
+
+<span class="fc" id="L53">        log.info(&quot;Successfully retrieved topic with id {}, name '{}', description '{}'&quot;,</span>
+<span class="fc" id="L54">                id, foundTopicModel.getName(), foundTopicModel.getDescription());</span>
+
+<span class="fc" id="L56">        return foundTopicModel;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List&lt;TopicModel&gt; getAllTopics() {
+<span class="fc" id="L64">        log.info(&quot;Fetching all topics from database...&quot;);</span>
+
+<span class="fc" id="L66">        return topicRepository.findAllTopics()</span>
+<span class="fc" id="L67">                .parallelStream()</span>
+<span class="fc" id="L68">                .collect(Collectors.toList());</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TopicModel createTopic(TopicModel topicToCreateModel) {
+<span class="fc" id="L76">        log.debug(&quot;Creating new topic with name '{}', label '{}, description '{}'&quot;,</span>
+<span class="fc" id="L77">                topicToCreateModel.getName(),</span>
+<span class="fc" id="L78">                topicToCreateModel.getLabel(),</span>
+<span class="fc" id="L79">                topicToCreateModel.getDescription());</span>
+
+<span class="fc" id="L81">        Optional&lt;TopicModel&gt; existingTopic = topicRepository.findTopicByName(topicToCreateModel.getName());</span>
+
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (existingTopic.isPresent()) {</span>
+<span class="fc" id="L84">            throw new ResourceAlreadyExistException(RESOURCE_NAME_TOPIC, &quot;name&quot;, topicToCreateModel.getName());</span>
+        }
+
+        try {
+<span class="fc" id="L88">            topicDomainService.validateTopicForCreation(topicToCreateModel);</span>
+<span class="fc" id="L89">        } catch (Exception exception) {</span>
+<span class="fc" id="L90">            throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, exception.getMessage());</span>
+<span class="fc" id="L91">        }</span>
+
+<span class="fc" id="L93">        TopicModel createdTopicModel = topicRepository.createTopic(topicToCreateModel);</span>
+
+<span class="fc" id="L95">        log.info(&quot;Successfully created topic with id {}, name '{}', label '{}' description '{}'&quot;,</span>
+<span class="fc" id="L96">                createdTopicModel.getId(),</span>
+<span class="fc" id="L97">                createdTopicModel.getName(),</span>
+<span class="fc" id="L98">                createdTopicModel.getLabel(),</span>
+<span class="fc" id="L99">                createdTopicModel.getDescription());</span>
+
+<span class="fc" id="L101">        return createdTopicModel;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TopicModel updateTopic(Long id, TopicModel topicToUpdateModel) {
+<span class="fc" id="L109">        log.debug(&quot;Updating topic with id '{}', name '{}', label '{}', description '{}'&quot;,</span>
+<span class="fc" id="L110">                id, topicToUpdateModel.getName(), topicToUpdateModel.getLabel(), topicToUpdateModel.getDescription());</span>
+
+<span class="fc" id="L112">        TopicModel existingTopicModel = topicRepository.findTopicById(id).orElseThrow(</span>
+<span class="fc" id="L113">                () -&gt; new ResourceNotFoundException(RESOURCE_NAME_TOPIC, String.valueOf(id))</span>
+        );
+
+        try {
+<span class="fc" id="L117">            TopicModel topicModelWithUpdates = topicDomainService.updateExistingTopicWithUpdates(existingTopicModel, topicToUpdateModel);</span>
+
+<span class="fc" id="L119">            TopicModel updatedTopicModel = topicRepository.updateTopic(topicModelWithUpdates);</span>
+
+<span class="fc" id="L121">            log.info(&quot;Successfully updated topic with id '{}', name '{}', label'{}, description '{}'&quot;,</span>
+<span class="fc" id="L122">                    updatedTopicModel.getId(),</span>
+<span class="fc" id="L123">                    updatedTopicModel.getName(),</span>
+<span class="fc" id="L124">                    updatedTopicModel.getLabel(),</span>
+<span class="fc" id="L125">                    updatedTopicModel.getDescription());</span>
+
+<span class="fc" id="L127">            return updatedTopicModel;</span>
+
+<span class="fc" id="L129">        } catch (Exception ex) {</span>
+<span class="fc" id="L130">            throw new ResourceBadValueException(RESOURCE_NAME_TOPIC, ex.getMessage());</span>
+
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

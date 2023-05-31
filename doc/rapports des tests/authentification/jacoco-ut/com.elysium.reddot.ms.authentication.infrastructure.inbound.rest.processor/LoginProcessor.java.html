@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoginProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">authenticationManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.processor</a> &gt; <span class="el_source">LoginProcessor.java</span></div><h1>LoginProcessor.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.authentication.infrastructure.inbound.rest.processor;
+
+import com.elysium.reddot.ms.authentication.application.data.dto.ApiResponseDTO;
+import com.elysium.reddot.ms.authentication.application.data.dto.LoginRequestDTO;
+import com.elysium.reddot.ms.authentication.application.service.AuthenticationApplicationService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.keycloak.representations.AccessTokenResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+<span class="fc" id="L16">@Slf4j</span>
+public class LoginProcessor implements Processor {
+
+    private final AuthenticationApplicationService authenticationApplicationService;
+
+    /**
+     * Processes the input login request to authenticate a user.
+     *
+     * &lt;p&gt;This method retrieves the LoginRequestDTO from the Exchange's input body, which contains
+     * the user's username and password. It then requests an access token via the
+     * authenticationApplicationService. If successful, it creates an ApiResponseDTO with the
+     * authentication status and token and sets it as the body of the Exchange's message.
+     * It also sets the HTTP response code to CREATED (201).
+     *
+     * @param exchange the Exchange containing the input LoginRequestDTO and the output ApiResponseDTO
+     */
+    @Override
+    public void process(Exchange exchange) {
+<span class="fc" id="L34">        LoginRequestDTO inputLoginRequest = exchange.getIn().getBody(LoginRequestDTO.class);</span>
+<span class="fc" id="L35">        log.debug(&quot;Received input UserDTO: {}&quot;, inputLoginRequest);</span>
+
+<span class="fc" id="L37">        AccessTokenResponse token = authenticationApplicationService.getAccessToken(inputLoginRequest.getUsername(), inputLoginRequest.getPassword());</span>
+<span class="fc" id="L38">        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(HttpStatus.OK.value(),</span>
+<span class="fc" id="L39">                &quot;Authenticated with name &quot; + inputLoginRequest.getUsername() + &quot; successfully&quot;, token);</span>
+
+<span class="fc" id="L41">        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.OK.value());</span>
+<span class="fc" id="L42">        exchange.getMessage().setBody(apiResponseDTO);</span>
+<span class="fc" id="L43">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

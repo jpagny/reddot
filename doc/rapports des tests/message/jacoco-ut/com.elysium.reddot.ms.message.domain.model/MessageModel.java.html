@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MessageModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">messageManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.message.domain.model</a> &gt; <span class="el_source">MessageModel.java</span></div><h1>MessageModel.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.message.domain.model;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+/**
+ * This class represents a model of a Message within the application.
+ * &lt;p&gt;
+ * Each MessageModel instance represents a unique message in a thread. It contains details about the
+ * message content, associated thread id, user id and the timestamps of when the message was created
+ * and last updated.
+ */
+public class MessageModel {
+
+    private Long id;
+    private String content;
+    private Long threadId;
+    private String userId;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+<span class="fc" id="L22">    public MessageModel(){}</span>
+
+    /**
+     * Constructs a MessageModel with all fields.
+     *
+     * @param id the unique identifier of the message
+     * @param content the content of the message
+     * @param threadId the id of the thread that this message belongs to
+     * @param userId the id of the user who created the message
+     * @param createdAt the timestamp of when the message was created
+     * @param updatedAt the timestamp of when the message was last updated
+     */
+<span class="fc" id="L34">    public MessageModel(Long id, String content, Long threadId, String userId, LocalDateTime createdAt, LocalDateTime updatedAt) {</span>
+<span class="fc" id="L35">        this.id = id;</span>
+<span class="fc" id="L36">        this.content = content;</span>
+<span class="fc" id="L37">        this.threadId = threadId;</span>
+<span class="fc" id="L38">        this.userId = userId;</span>
+<span class="fc" id="L39">        this.createdAt = createdAt;</span>
+<span class="fc" id="L40">        this.updatedAt = updatedAt;</span>
+<span class="fc" id="L41">    }</span>
+
+    /**
+     * Constructs a MessageModel with content, threadId and userId.
+     *
+     * @param content the content of the message
+     * @param threadId the id of the thread that this message belongs to
+     * @param userId the id of the user who created the message
+     */
+<span class="fc" id="L50">    public MessageModel(String content, Long threadId, String userId){</span>
+<span class="fc" id="L51">        this.content = content;</span>
+<span class="fc" id="L52">        this.threadId = threadId;</span>
+<span class="fc" id="L53">        this.userId = userId;</span>
+<span class="fc" id="L54">    }</span>
+
+    public Long getId() {
+<span class="fc" id="L57">        return id;</span>
+    }
+
+    public void setId(Long id){
+<span class="fc" id="L61">        this.id = id;</span>
+<span class="fc" id="L62">    }</span>
+
+
+    public String getContent() {
+<span class="fc" id="L66">        return content;</span>
+    }
+
+    public void setContent(String content) {
+<span class="fc" id="L70">        this.content = content;</span>
+<span class="fc" id="L71">    }</span>
+
+    public Long getThreadId() {
+<span class="fc" id="L74">        return threadId;</span>
+    }
+
+    public void setThreadId(Long threadId) {
+<span class="fc" id="L78">        this.threadId = threadId;</span>
+<span class="fc" id="L79">    }</span>
+
+    public String getUserId() {
+<span class="fc" id="L82">        return userId;</span>
+    }
+
+    public void setUserId(String userId) {
+<span class="fc" id="L86">        this.userId = userId;</span>
+<span class="fc" id="L87">    }</span>
+
+    public LocalDateTime getCreatedAt() {
+<span class="fc" id="L90">        return createdAt;</span>
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+<span class="fc" id="L94">        this.createdAt = createdAt;</span>
+<span class="fc" id="L95">    }</span>
+
+    public LocalDateTime getUpdatedAt() {
+<span class="fc" id="L98">        return updatedAt;</span>
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+<span class="fc" id="L102">        this.updatedAt = updatedAt;</span>
+<span class="fc" id="L103">    }</span>
+
+
+
+    @Override
+    public boolean equals(Object o) {
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (this == o) return true;</span>
+<span class="pc bpc" id="L110" title="2 of 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+
+<span class="fc" id="L112">        MessageModel messageModel = (MessageModel) o;</span>
+
+<span class="fc" id="L114">        return Objects.equals(id, messageModel.id);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        return id != null ? id.hashCode() : 0;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L124">        return &quot;Message{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, content='&quot; + content + '\'' +
+                &quot;, threadId='&quot; + threadId + '\'' +
+                &quot;, userId='&quot; + userId + '\'' +
+                '}';
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

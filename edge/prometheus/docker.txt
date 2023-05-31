@@ -1,0 +1,1 @@
+docker run -d -p 11002:9090 -v E:\developpement\web\reddot\edge\prometheus\prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus

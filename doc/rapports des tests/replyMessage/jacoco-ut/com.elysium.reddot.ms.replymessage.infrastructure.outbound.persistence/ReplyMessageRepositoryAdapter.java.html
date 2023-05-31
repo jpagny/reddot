@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReplyMessageRepositoryAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">replyMessageManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.replymessage.infrastructure.outbound.persistence</a> &gt; <span class="el_source">ReplyMessageRepositoryAdapter.java</span></div><h1>ReplyMessageRepositoryAdapter.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.replymessage.infrastructure.outbound.persistence;
+
+
+import com.elysium.reddot.ms.replymessage.domain.model.ReplyMessageModel;
+import com.elysium.reddot.ms.replymessage.domain.port.outbound.IReplyMessageRepository;
+import com.elysium.reddot.ms.replymessage.infrastructure.mapper.ReplyMessageJpaReplyMessageModelMapper;
+import com.elysium.reddot.ms.replymessage.infrastructure.outbound.persistence.entity.ReplyMessageJpaEntity;
+import com.elysium.reddot.ms.replymessage.infrastructure.outbound.persistence.repository.ReplyMessageJpaRepository;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Component
+public class ReplyMessageRepositoryAdapter implements IReplyMessageRepository {
+
+    private final ReplyMessageJpaRepository replyMessageJpaRepository;
+
+<span class="nc" id="L21">    public ReplyMessageRepositoryAdapter(ReplyMessageJpaRepository replyMessageJpaRepository) {</span>
+<span class="nc" id="L22">        this.replyMessageJpaRepository = replyMessageJpaRepository;</span>
+<span class="nc" id="L23">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ReplyMessageModel createReplyMessage(ReplyMessageModel replyMessageModel) {
+<span class="nc" id="L30">        ReplyMessageJpaEntity replyMessageEntity = ReplyMessageJpaReplyMessageModelMapper.toEntity(replyMessageModel);</span>
+<span class="nc" id="L31">        ReplyMessageJpaEntity savedReplyMessage = replyMessageJpaRepository.save(replyMessageEntity);</span>
+<span class="nc" id="L32">        return ReplyMessageJpaReplyMessageModelMapper.toModel(savedReplyMessage);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional&lt;ReplyMessageModel&gt; findReplyMessageById(Long id) {
+<span class="nc" id="L40">        return replyMessageJpaRepository.findById(id)</span>
+<span class="nc" id="L41">                .map(ReplyMessageJpaReplyMessageModelMapper::toModel);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List&lt;ReplyMessageModel&gt; findAllRepliesMessage() {
+<span class="nc" id="L49">        return replyMessageJpaRepository.findAll()</span>
+<span class="nc" id="L50">                .stream()</span>
+<span class="nc" id="L51">                .map(ReplyMessageJpaReplyMessageModelMapper::toModel)</span>
+<span class="nc" id="L52">                .collect(Collectors.toList());</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional&lt;ReplyMessageModel&gt; findFirstByContentAndParentMessageId(String content, Long parentMessageId) {
+<span class="nc" id="L60">        return replyMessageJpaRepository.findFirstByContentAndThreadId(content,parentMessageId)</span>
+<span class="nc" id="L61">                .map(ReplyMessageJpaReplyMessageModelMapper::toModel);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ReplyMessageModel updateReplyMessage(ReplyMessageModel replyMessageModel) {
+<span class="nc" id="L69">        ReplyMessageJpaEntity replyMessageEntity = ReplyMessageJpaReplyMessageModelMapper.toEntity(replyMessageModel);</span>
+<span class="nc" id="L70">        ReplyMessageJpaEntity updatedReplyMessage = replyMessageJpaRepository.save(replyMessageEntity);</span>
+<span class="nc" id="L71">        return ReplyMessageJpaReplyMessageModelMapper.toModel(updatedReplyMessage);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int countRepliesByMessageId(Long messageId) {
+<span class="nc" id="L79">        return replyMessageJpaRepository.countRepliesByMessageId(messageId);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List&lt;ReplyMessageModel&gt; listMessagesByUserAndRangeDate(String userId, LocalDateTime onStart, LocalDateTime onEnd) {
+<span class="nc" id="L87">        return replyMessageJpaRepository.findRepliesMessageByUserIdAndDateRange(userId, onStart, onEnd)</span>
+<span class="nc" id="L88">                .stream()</span>
+<span class="nc" id="L89">                .map(ReplyMessageJpaReplyMessageModelMapper::toModel)</span>
+<span class="nc" id="L90">                .collect(Collectors.toList());</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

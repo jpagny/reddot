@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BoardRepositoryAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">boardManagementService</a> &gt; <a href="index.source.html" class="el_package">com.elysium.reddot.ms.board.infrastructure.outbound.persistence</a> &gt; <span class="el_source">BoardRepositoryAdapter.java</span></div><h1>BoardRepositoryAdapter.java</h1><pre class="source lang-java linenums">package com.elysium.reddot.ms.board.infrastructure.outbound.persistence;
+
+
+import com.elysium.reddot.ms.board.domain.model.BoardModel;
+import com.elysium.reddot.ms.board.domain.port.outbound.IBoardRepository;
+import com.elysium.reddot.ms.board.application.data.mapper.BoardJpaBoardModelMapper;
+import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.entity.BoardJpaEntity;
+import com.elysium.reddot.ms.board.infrastructure.outbound.persistence.repository.BoardJpaRepository;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Component
+public class BoardRepositoryAdapter implements IBoardRepository {
+
+    private final BoardJpaRepository boardJpaRepository;
+
+<span class="fc" id="L20">    public BoardRepositoryAdapter(BoardJpaRepository boardJpaRepository) {</span>
+<span class="fc" id="L21">        this.boardJpaRepository = boardJpaRepository;</span>
+<span class="fc" id="L22">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BoardModel createBoard(BoardModel boardModel) {
+<span class="fc" id="L29">        BoardJpaEntity boardEntity = BoardJpaBoardModelMapper.toEntity(boardModel);</span>
+<span class="fc" id="L30">        BoardJpaEntity savedBoard = boardJpaRepository.save(boardEntity);</span>
+<span class="fc" id="L31">        return BoardJpaBoardModelMapper.toModel(savedBoard);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional&lt;BoardModel&gt; findBoardById(Long id) {
+<span class="fc" id="L39">        return boardJpaRepository.findById(id)</span>
+<span class="fc" id="L40">                .map(BoardJpaBoardModelMapper::toModel);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional&lt;BoardModel&gt; findFirstByNameAndTopicId(String name, Long topicId) {
+<span class="fc" id="L48">        return boardJpaRepository.findFirstByNameAndTopicId(name, topicId)</span>
+<span class="fc" id="L49">                .map(BoardJpaBoardModelMapper::toModel);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List&lt;BoardModel&gt; findAllBoards() {
+<span class="fc" id="L57">        return boardJpaRepository.findAll()</span>
+<span class="fc" id="L58">                .stream()</span>
+<span class="fc" id="L59">                .map(BoardJpaBoardModelMapper::toModel)</span>
+<span class="fc" id="L60">                .collect(Collectors.toList());</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BoardModel updateBoard(BoardModel boardModel) {
+<span class="fc" id="L68">        BoardJpaEntity boardEntity = BoardJpaBoardModelMapper.toEntity(boardModel);</span>
+<span class="fc" id="L69">        BoardJpaEntity updatedBoard = boardJpaRepository.save(boardEntity);</span>
+<span class="fc" id="L70">        return BoardJpaBoardModelMapper.toModel(updatedBoard);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
