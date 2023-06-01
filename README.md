@@ -29,7 +29,7 @@ Il s'agit d'un test des techniques.
 
 A partir de la liste des fonctionnalités attendues, j'ai réalisé une modélisation UML 2 simplifiée :
 
-![diagramme de classe](doc/diagramme de classe.png)
+![diagramme de classe](doc/diagramme_classe.png)
 
 J'hésitais à inclure la table Topic dans la table Board. Finalement, j'ai décidé de les séparer en deux tables distinctes car cela permet une meilleure visibilité et organisation.
 
